@@ -1,0 +1,1319 @@
+</helmet>
+<sc-if value="{{ needLogin }}" hint-placeholder-val="{{ true }}">
+<div class="hub-login" style="position:fixed;inset:0;z-index:100;background:#fff;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);font-family:'Geist',sans-serif;overflow:auto">
+  <div class="hub-login-hero" style="background:#0b3d7a;color:#fff;padding:48px 56px;display:flex;flex-direction:column;justify-content:space-between;gap:40px;position:relative;overflow:hidden">
+    <div style="display:flex;gap:14px;align-items:center">
+      <img src="552723aa-cb77-48c9-bb00-2226fceeef20" alt="" style="width:52px;height:52px;border-radius:14px;object-fit:cover">
+      <div style="display:flex;flex-direction:column"><span style="font-size:20px;font-weight:600;letter-spacing:-0.02em">Hub SCPMA</span><span style="font-size:13px;color:#c9d8ec">Secretaria da Economia · Goiás</span></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px;max-width:520px">
+      <h1 style="margin:0;font-size:52px;font-weight:600;letter-spacing:-0.045em;line-height:1.02;text-wrap:pretty">Agenda, pessoas e férias da SCPMA em um só lugar.</h1>
+      <p style="margin:0;font-size:16px;line-height:1.5;color:#c9d8ec;max-width:440px">Subsecretaria Central de Planejamento, Monitoramento e Avaliação.</p>
+    </div>
+    <div style="display:flex;gap:8px">
+      <span style="width:40px;height:6px;border-radius:6px;background:#1f9d4c"></span>
+      <span style="width:40px;height:6px;border-radius:6px;background:#5b8fd6"></span>
+      <span style="width:40px;height:6px;border-radius:6px;background:#f5c518"></span>
+    </div>
+  </div>
+  <div style="display:grid;place-items:center;padding:48px 32px">
+    <div style="width:100%;max-width:380px;display:flex;flex-direction:column;gap:26px">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:13px;font-weight:600;color:#1f9d4c;letter-spacing:0.08em;text-transform:uppercase">Acesso restrito</span>
+        <span style="font-size:32px;font-weight:600;letter-spacing:-0.035em">{{ login.title }}</span>
+        <span style="font-size:14px;color:#5f6b65">{{ login.sub }}</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Usuário ou e-mail
+          <span style="position:relative;display:flex"><i class="ph-duotone ph-user" style="position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#7a867f;font-size:17px"></i><input value="{{ login.user }}" sc-camel-on-input="{{ login.setUser }}" sc-camel-on-key-down="{{ login.onKey }}" placeholder="nome.sobrenome" style="width:100%;box-sizing:border-box;padding:14px 14px 14px 44px;border:1px solid #e4e8e6;border-radius:14px;font-size:15px;background:#fff;color:#122019;border-color:{{ login.border }}"></span>
+        </label>
+        <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Senha
+          <span style="position:relative;display:flex"><i class="ph-duotone ph-lock" style="position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#7a867f;font-size:17px"></i><input type="{{ login.pwType }}" value="{{ login.pw }}" sc-camel-on-input="{{ login.setPw }}" sc-camel-on-key-down="{{ login.onKey }}" placeholder="••••••••" style="width:100%;box-sizing:border-box;padding:14px 14px 14px 44px;border:1px solid #e4e8e6;border-radius:14px;font-size:15px;background:#fff;color:#122019;padding-right:48px;border-color:{{ login.border }}"><button sc-camel-on-click="{{ login.togglePw }}" title="Mostrar senha" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);width:34px;height:34px;border:0;border-radius:10px;background:transparent;color:#5f6b65" style-hover="background:#f2f5f4"><i class="{{ login.eye }}"></i></button></span>
+        </label>
+        <sc-if value="{{ login.isCreate }}" hint-placeholder-val="{{ false }}">
+        <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Confirmar senha
+          <span style="position:relative;display:flex"><i class="ph-duotone ph-lock-key" style="position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#7a867f;font-size:17px"></i><input type="{{ login.pwType }}" value="{{ login.pw2 }}" sc-camel-on-input="{{ login.setPw2 }}" sc-camel-on-key-down="{{ login.onKey }}" placeholder="Repita a senha" style="width:100%;box-sizing:border-box;padding:14px 14px 14px 44px;border:1px solid #e4e8e6;border-radius:14px;font-size:15px;background:#fff;color:#122019;border-color:{{ login.border }}"></span>
+        </label>
+        </sc-if>
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px">
+          <label style="display:flex;gap:8px;align-items:center;color:#3d4943"><input type="checkbox" checked="{{ login.remember }}" sc-camel-on-change="{{ login.toggleRemember }}" style="width:16px;height:16px;accent-color:#1f9d4c">Manter conectado</label>
+          <a href="#" sc-camel-on-click="{{ login.forgot }}" style="font-weight:600">Esqueci a senha</a>
+        </div>
+        <sc-if value="{{ login.hasMsg }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:{{ login.msgColor }};background:{{ login.msgBg }};border-radius:10px;padding:10px 12px">{{ login.msg }}</span></sc-if>
+        <button sc-camel-on-click="{{ login.submit }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:14px;padding:15px;font-size:15px;font-weight:600;display:flex;gap:8px;align-items:center;justify-content:center;margin-top:4px" style-hover="background:#178040">{{ login.btn }}<i class="ph-bold ph-arrow-right"></i></button>
+        <sc-if value="{{ login.isCreate }}" hint-placeholder-val="{{ false }}"><a href="#" sc-camel-on-click="{{ login.back }}" style="font-size:13px;font-weight:600;text-align:center">← Voltar</a></sc-if>
+      </div>
+      <span style="font-size:12px;color:#9aa5a0;display:flex;gap:6px;align-items:center"><i class="ph-duotone ph-shield-check"></i>Seus dados de perfil são visíveis apenas para você.</span>
+    </div>
+  </div>
+</div>
+</sc-if>
+<div class="hub-app" style="display:grid;grid-template-columns:72px minmax(0,1fr);min-height:100vh;font-family:'Geist',sans-serif;background:#fff">
+  <div style="position:relative">
+  <aside class="hub-aside" data-open="{{ railOpenS }}" sc-camel-on-mouse-enter="{{ railIn }}" sc-camel-on-mouse-leave="{{ railOut }}" style="background:#0b3d7a;display:flex;flex-direction:column;gap:4px;padding:20px 14px;position:fixed;top:0;left:0;height:100vh;box-sizing:border-box;width:{{ railW }};transition:width .18s ease;overflow:hidden;z-index:40;box-shadow:{{ railShadow }}">
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:18px;white-space:nowrap">
+      <img src="552723aa-cb77-48c9-bb00-2226fceeef20" alt="Hub SCPMA" style="width:44px;height:44px;flex:none;border-radius:12px;object-fit:cover">
+      <span style="color:#fff;font-weight:600;font-size:17px;letter-spacing:-0.02em;opacity:{{ railTextOp }};transition:opacity .15s">Hub SCPMA</span>
+    </div>
+    <div style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:4px;scrollbar-width:none">
+    <sc-for list="{{ navGroups }}" as="g" hint-placeholder-count="4">
+      <div style="display:flex;flex-direction:column;gap:2px;padding-top:{{ g.pt }}">
+        <span style="height:18px;display:flex;align-items:center;padding-left:12px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#f5c518;white-space:nowrap;opacity:{{ g.labelOp }}">{{ g.label }}</span>
+        <sc-for list="{{ g.items }}" as="n" hint-placeholder-count="2">
+          <a href="{{ n.href }}" target="{{ n.target }}" sc-camel-on-click="{{ n.go }}" title="{{ n.label }}" style="height:40px;border-radius:999px;display:flex;align-items:center;gap:12px;padding:0 11px;white-space:nowrap;font-size:14px;font-weight:500;color:{{ n.color }};background:{{ n.bg }}" style-hover="background:#ffffff1f;color:#fff"><i class="{{ n.icon }}" style="font-size:20px;flex:none"></i><span style="opacity:{{ railTextOp }};transition:opacity .15s">{{ n.label }}</span></a>
+        </sc-for>
+      </div>
+    </sc-for>
+    </div>
+    <button sc-camel-on-click="{{ goPerfil }}" style="flex:none;margin-top:12px;display:flex;align-items:center;gap:12px;border:0;background:transparent;padding:0 2px;white-space:nowrap;text-align:left;color:#fff">
+      <span style="position:relative;overflow:hidden;width:40px;height:40px;flex:none;border:2px solid {{ perfilRing }};border-radius:50%;background:#f5c518;color:#0b3d7a;display:grid;place-items:center;font-size:13px;font-weight:600;box-sizing:border-box">{{ my.initials }}<span style="position:absolute;inset:0;background-size:cover;background-position:center;background-image:{{ photoBg }}"></span></span>
+      <span style="display:flex;flex-direction:column;opacity:{{ railTextOp }}"><span style="font-size:14px;font-weight:600">{{ my.name }}</span><span style="font-size:12px;color:#a9c1e0">{{ my.role }} · {{ my.unit }}</span></span>
+    </button>
+    <button sc-camel-on-click="{{ logout }}" title="Sair" style="flex:none;margin-top:8px;display:flex;align-items:center;gap:12px;border:0;background:transparent;border-radius:12px;padding:10px 12px;white-space:nowrap;color:#c9d8ec" style-hover="background:#ffffff1f;color:#fff"><i class="ph-duotone ph-sign-out" style="font-size:20px;flex:none"></i><span style="opacity:{{ railTextOp }};transition:opacity .15s;font-size:14px">Sair</span></button>
+  </aside>
+  </div>
+
+  <sc-if value="{{ rail }}" hint-placeholder-val="{{ false }}"><div class="hub-scrim" sc-camel-on-click="{{ railOut }}" style="display:none;position:fixed;inset:0;background:#0b2b5566;z-index:39"></div></sc-if>
+  <main class="hub-main" style="padding:24px 48px 80px;display:flex;flex-direction:column;gap:36px;box-sizing:border-box;width:100%;min-width:0">
+    <header style="display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+      <button class="hub-menu-btn" sc-camel-on-click="{{ railToggle }}" title="Menu" style="display:none;width:42px;height:42px;border:1px solid #e4e8e6;border-radius:12px;background:#fff;color:#0b3d7a;font-size:20px;place-items:center">☰</button>
+      <div style="position:relative;flex:1;max-width:360px;min-width:200px">
+        <i class="ph-duotone ph-magnifying-glass" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7a867f"></i>
+        <input placeholder="Buscar pessoas, eventos, unidades…" value="{{ q }}" sc-camel-on-input="{{ onSearch }}" style="width:100%;box-sizing:border-box;padding:10px 14px 10px 38px;border-radius:999px;border:1px solid #e4e8e6;background:#f6f8f7;font-size:14px">
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div style="position:relative">
+          <button sc-camel-on-click="{{ notif.toggle }}" title="Notificações" style="width:40px;height:40px;border-radius:50%;border:1px solid #e4e8e6;background:#fff;position:relative;display:grid;place-items:center"><i class="ph-duotone ph-bell" style="font-size:18px"></i><sc-if value="{{ notif.has }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;border-radius:999px;background:#d64545;color:#fff;font-size:11px;font-weight:600;display:grid;place-items:center;padding:0 5px;box-sizing:border-box">{{ notif.count }}</span></sc-if></button>
+          <sc-if value="{{ notif.open }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;right:0;top:50px;z-index:45;width:360px;max-width:90vw;max-height:440px;overflow:auto;background:#fff;border:1px solid #e4e8e6;border-radius:20px;box-shadow:0 20px 50px #0b2b5522;padding:8px;display:flex;flex-direction:column;gap:2px">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px"><span style="font-size:15px;font-weight:600">Notificações</span><button sc-camel-on-click="{{ notif.close }}" style="border:0;background:transparent;color:#7a867f;width:28px;height:28px;border-radius:8px"><i class="ph-bold ph-x"></i></button></div>
+              <sc-if value="{{ notif.empty }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#7a867f;padding:10px">Nenhuma notificação.</span></sc-if>
+              <sc-for list="{{ notif.list }}" as="n" hint-placeholder-count="3">
+                <button sc-camel-on-click="{{ n.open }}" style="text-align:left;border:0;background:{{ n.bg }};border-radius:12px;padding:10px;display:flex;gap:10px;align-items:flex-start" style-hover="background:#f6f8f7">
+                  <i class="{{ n.icon }}" style="font-size:18px;color:#0b4f9c;margin-top:1px"></i>
+                  <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:13px;font-weight:600">{{ n.title }}</span><sc-if value="{{ n.hasMsg }}" hint-placeholder-val="{{ true }}"><span style="font-size:12px;color:#5f6b65;line-height:1.35">{{ n.msg }}</span></sc-if><span style="font-size:11px;color:#9aa5a0">{{ n.when }}</span></span>
+                </button>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+        <button sc-camel-on-click="{{ openNew }}" style="border:0;border-radius:999px;background:#1f9d4c;color:#fff;padding:10px 18px;font-size:14px;font-weight:500;display:flex;gap:6px;align-items:center" style-hover="background:#178040"><i class="ph-bold ph-plus"></i>Novo evento</button>
+      </div>
+    </header>
+
+    <sc-if value="{{ v.inicio }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:48px">
+        <section style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:15px;color:#5f6b65">{{ my.today }}</span>
+          <h1 style="margin:0;font-weight:600;font-size:clamp(36px,4.6vw,52px);line-height:1.08;letter-spacing:-0.035em;text-wrap:balance">{{ my.greet }}</h1>
+        </section>
+        <section style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px">
+          <button sc-camel-on-click="{{ goCal }}" style="text-align:left;border:0;background:#0b3d7a;color:#fff;border-radius:20px;padding:22px;display:flex;flex-direction:column;justify-content:space-between;gap:20px;min-height:160px">
+            <div style="display:flex;justify-content:space-between;width:100%;font-size:14px;color:#c9d8ec"><span>Próximo evento</span><i class="ph-bold ph-arrow-up-right"></i></div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-weight:600;font-size:30px;line-height:1.1;letter-spacing:-0.03em">{{ nextEv.title }}</span>
+              <span style="font-size:13px;color:#c9d8ec">{{ nextEv.meta }}{{ nextEv.dot }}<span style="color:#f5c518">{{ nextEv.rel }}</span></span>
+            </div>
+          </button>
+          <button sc-camel-on-click="{{ goFerias }}" style="text-align:left;border:0;background:#f6f8f7;border-radius:20px;padding:22px;display:flex;flex-direction:column;justify-content:space-between;gap:16px" style-hover="background:#edf1ef">
+            <span style="width:36px;height:36px;border-radius:50%;background:#dcf2e3;color:#1f9d4c;display:grid;place-items:center;font-size:18px"><i class="ph-duotone ph-umbrella"></i></span>
+            <div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:600;font-size:40px;line-height:1;letter-spacing:-0.04em">{{ stat.ferias }}</span><span style="font-size:13px;color:#5f6b65">de férias hoje</span></div>
+          </button>
+          <div style="background:#f6f8f7;border-radius:20px;padding:22px;display:flex;flex-direction:column;justify-content:space-between;gap:16px">
+            <span style="width:36px;height:36px;border-radius:50%;background:#fdf1c4;color:#9a7700;display:grid;place-items:center;font-size:18px"><i class="ph-duotone ph-cake"></i></span>
+            <div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:600;font-size:40px;line-height:1;letter-spacing:-0.04em">{{ anivCount }}</span><span style="font-size:13px;color:#5f6b65">aniversariantes no mês</span><span style="font-size:12px;color:#7a5d00;margin-top:6px;line-height:1.4">{{ anivNames }}</span></div>
+          </div>
+        </section>
+        <section style="display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <h2 style="margin:0;font-weight:600;font-size:20px;letter-spacing:-0.02em">Próximos compromissos</h2>
+            <a href="#" sc-camel-on-click="{{ goCal }}" style="font-size:14px">Ver calendário →</a>
+          </div>
+          <div data-mk="two" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px">
+            <sc-for list="{{ upcoming }}" as="u" hint-placeholder-count="5">
+              <div style="background:{{ u.bg }};color:{{ u.fg }};border:1px solid {{ u.border }};border-radius:20px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;min-height:140px">
+                <div style="display:flex;align-items:baseline;gap:8px">
+                  <span style="font-weight:600;font-size:28px;line-height:1;letter-spacing:-0.04em">{{ u.day }}</span>
+                  <span style="font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:0.06em;color:{{ u.sub }}">{{ u.mon }} · {{ u.dow }}</span>
+                </div>
+                <span style="font-size:15px;line-height:1.3;font-weight:500;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ u.title }}</span>
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:{{ u.sub }}">
+                  <span style="display:flex;gap:6px;align-items:center;font-weight:600"><span style="width:7px;height:7px;border-radius:50%;background:{{ u.color }}"></span>{{ u.unit }}</span>
+                  <span style="white-space:nowrap">{{ u.rel }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:28px;align-items:start">
+          <section style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline">
+              <h2 style="margin:0;font-weight:600;font-size:20px;letter-spacing:-0.02em">Férias</h2>
+              <a href="#" sc-camel-on-click="{{ goFerias }}" style="font-size:14px">Ver todas →</a>
+            </div>
+            <div style="background:#f6f8f7;border-radius:20px;display:flex;flex-direction:column;padding:8px 18px">
+              <sc-for list="{{ feriasRows }}" as="p" hint-placeholder-count="4">
+                <div data-mk="keep" style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:12px 0">
+                  <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                    <span style="font-size:14px;font-weight:500">{{ p.name }}</span>
+                    <span style="font-size:12px;color:#5f6b65">{{ p.unit }} · {{ p.kind }} · {{ p.period }}</span>
+                  </div>
+                  <span style="font-size:12px;font-weight:500;padding:3px 10px;border-radius:999px;background:{{ p.badgeBg }};color:{{ p.badgeFg }};white-space:nowrap">{{ p.rel }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </section>
+          <section style="display:flex;flex-direction:column;gap:16px">
+            <h2 style="margin:0;font-weight:600;font-size:20px;letter-spacing:-0.02em">Sistemas</h2>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+              <sc-for list="{{ links }}" as="l" hint-placeholder-count="4">
+                <a href="{{ l.url }}" target="_blank" style="background:#f6f8f7;border-radius:20px;display:flex;gap:12px;align-items:center;color:#122019;padding:14px" style-hover="background:#edf1ef">
+                  <span style="width:40px;height:40px;flex:none;border-radius:50%;background:{{ l.bg }};color:{{ l.fg }};display:grid;place-items:center;font-size:18px"><i class="{{ l.icon }}"></i></span>
+                  <span style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:15px;font-weight:600">{{ l.name }}</span><span style="font-size:12px;color:#5f6b65">{{ l.desc }}</span></span>
+                  <i class="ph-bold ph-arrow-up-right" style="color:#9aa5a0"></i>
+                </a>
+              </sc-for>
+            </div>
+          </section>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ v.agenda }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:22px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <span style="font-size:12px;color:#7a867f">Início › Agenda</span>
+            <h1 style="margin:0;font-weight:600;font-size:40px;letter-spacing:-0.04em;line-height:1.05">{{ ag.title }}</h1>
+            <span style="font-size:14px;color:#5f6b65">{{ ag.sub }}</span>
+          </div>
+          <div style="display:flex;gap:2px;background:#f2f5f4;border-radius:999px;padding:4px;align-self:flex-end">
+            <sc-for list="{{ ag.tabs }}" as="t" hint-placeholder-count="3">
+              <button sc-camel-on-click="{{ t.pick }}" style="border:0;background:{{ t.bg }};color:{{ t.fg }};border-radius:999px;padding:8px 16px;font-size:14px;font-weight:{{ t.fw }};display:flex;gap:7px;align-items:center"><i class="{{ t.icon }}"></i>{{ t.name }}</button>
+            </sc-for>
+          </div>
+        </div>
+
+        <sc-if value="{{ ag.isCal }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+              <div style="display:flex;gap:8px;align-items:center">
+                <button sc-camel-on-click="{{ prevMonth }}" style="width:38px;height:38px;border-radius:50%;border:1px solid #e4e8e6;background:#fff;display:grid;place-items:center"><i class="ph-bold ph-caret-left"></i></button>
+                <button sc-camel-on-click="{{ nextMonth }}" style="width:38px;height:38px;border-radius:50%;border:1px solid #e4e8e6;background:#fff;display:grid;place-items:center"><i class="ph-bold ph-caret-right"></i></button>
+                <button sc-camel-on-click="{{ pickToday }}" style="border:1px solid #e4e8e6;background:#fff;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:600">Hoje</button>
+                <span style="font-size:24px;font-weight:600;letter-spacing:-0.02em;margin-left:8px">{{ cal.title }}</span>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <div style="display:flex;gap:2px;background:#f2f5f4;border-radius:12px;padding:3px">
+                  <sc-for list="{{ cal.modes }}" as="md" hint-placeholder-count="4">
+                    <button sc-camel-on-click="{{ md.pick }}" style="border:0;background:{{ md.bg }};color:{{ md.fg }};box-shadow:{{ md.sh }};border-radius:10px;padding:7px 12px;font-size:13px;font-weight:{{ md.fw }};display:flex;gap:6px;align-items:center"><i class="{{ md.icon }}"></i>{{ md.name }}</button>
+                  </sc-for>
+                </div>
+                <div style="position:relative">
+                <button sc-camel-on-click="{{ calF.toggle }}" style="border:1px solid {{ calF.border }};background:{{ calF.bg }};border-radius:14px;padding:11px 16px;font-size:14px;font-weight:600;display:flex;gap:8px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-sliders-horizontal"></i>Filtros<sc-if value="{{ calF.hasActive }}" hint-placeholder-val="{{ false }}"><span style="min-width:20px;height:20px;border-radius:999px;background:#1f9d4c;color:#fff;font-size:11px;display:grid;place-items:center;padding:0 6px;box-sizing:border-box">{{ calF.activeCount }}</span></sc-if></button>
+                <sc-if value="{{ calF.open }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute;right:0;top:54px;z-index:30;width:400px;max-width:90vw;background:#fff;border:1px solid #e4e8e6;border-radius:20px;box-shadow:0 20px 50px #0b2b5522;padding:18px;display:flex;flex-direction:column;gap:14px">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:#3d4943">Mês<sc-raw-select value="{{ cal.m }}" sc-camel-on-change="{{ cal.setMonth }}" style="padding:9px 10px;border:1px solid #e4e8e6;border-radius:10px;font-size:14px;background:#fff;font-weight:400;color:#122019"><sc-for list="{{ cal.months }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.n }}</option></sc-for></sc-raw-select></label><label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:#3d4943">Ano<sc-raw-select value="{{ cal.y }}" sc-camel-on-change="{{ cal.setYear }}" style="padding:9px 10px;border:1px solid #e4e8e6;border-radius:10px;font-size:14px;background:#fff;font-weight:400;color:#122019"><sc-for list="{{ cal.years }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.n }}</option></sc-for></sc-raw-select></label></div><div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;font-weight:600;color:#3d4943">Unidades</span><div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ calF.units }}" as="u" hint-placeholder-count="7"><button sc-camel-on-click="{{ u.pick }}" style="border:1px solid {{ u.border }};background:{{ u.bg }};color:{{ u.fg }};font-weight:{{ u.fw }};border-radius:999px;padding:5px 11px;font-size:12px;display:flex;gap:6px;align-items:center"><span style="width:7px;height:7px;border-radius:50%;background:{{ u.color }}"></span>{{ u.name }}</button></sc-for></div></div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid #f0f3f1">
+                      <button sc-camel-on-click="{{ calF.clear }}" style="border:0;background:transparent;color:#5f6b65;font-size:13px;font-weight:500">Limpar tudo</button>
+                      <button sc-camel-on-click="{{ calF.toggle }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600">Aplicar</button>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+              </div>
+            </div>
+            <sc-if value="{{ calF.hasActive }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;min-height:24px">
+              <span style="font-size:13px;color:#5f6b65">{{ calF.summary }}</span>
+              <sc-for list="{{ calF.active }}" as="c" hint-placeholder-count="0"><span style="background:#e7eef8;color:#0b3d7a;border-radius:999px;padding:3px 5px 3px 11px;font-size:12px;font-weight:500;display:flex;gap:6px;align-items:center">{{ c.label }}<button sc-camel-on-click="{{ c.remove }}" style="width:18px;height:18px;border:0;border-radius:50%;background:#0b3d7a1a;color:#0b3d7a;display:grid;place-items:center;padding:0"><i class="ph-bold ph-x" style="font-size:10px"></i></button></span></sc-for>
+            </div></sc-if>
+            <sc-if value="{{ cal.isMes }}" hint-placeholder-val="{{ true }}">
+              <div style="display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:16px;align-items:stretch">
+                <div style="border:1px solid #e4e8e6;border-radius:24px;padding:16px">
+                  <div data-mk="keep" style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px">
+                    <sc-for list="{{ dows }}" as="w" hint-placeholder-count="7"><span style="font-size:11px;font-weight:500;letter-spacing:0.08em;color:#7a867f;padding:0 10px 6px">{{ w }}</span></sc-for>
+                    <sc-for list="{{ cal.cells }}" as="c" hint-placeholder-count="35">
+                      <button sc-camel-on-click="{{ c.pick }}" style="text-align:left;border:0;min-height:86px;border-radius:14px;padding:8px 10px;display:flex;flex-direction:column;gap:4px;background:{{ c.bg }};visibility:{{ c.vis }};outline:{{ c.outline }}" style-hover="background:#eef3f9">
+                        <span style="width:24px;height:24px;margin-left:-4px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:600;background:{{ c.numBg }};color:{{ c.numFg }}">{{ c.n }}</span>
+                        <sc-for list="{{ c.ev }}" as="e" hint-placeholder-count="0"><span style="display:flex;gap:5px;align-items:center;font-size:11px;min-width:0;width:100%"><i class="{{ e.icon }}" style="color:{{ e.color }};font-size:10px;flex:none"></i><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ e.title }}</span></span></sc-for>
+                      </button>
+                    </sc-for>
+                  </div>
+                </div>
+                <aside style="background:#0b3d7a;color:#fff;border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:18px">
+                  <div style="display:flex;flex-direction:column;gap:2px">
+                    <span style="font-size:13px;color:#c9d8ec">{{ sel.label }}</span>
+                    <span style="font-weight:600;font-size:56px;line-height:1;letter-spacing:-0.04em">{{ sel.n }}</span>
+                    <span style="font-size:13px;color:#c9d8ec">{{ sel.sub }}</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:10px">
+                    <sc-if value="{{ sel.empty }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;color:#c9d8ec">Nenhum compromisso neste dia.</span></sc-if>
+                    <sc-for list="{{ sel.ev }}" as="e" hint-placeholder-count="1">
+                      <button sc-camel-on-click="{{ e.view }}" style="text-align:left;border:0;color:#fff;background:#ffffff14;border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:4px" style-hover="background:#ffffff22">
+                        <div style="display:flex;justify-content:space-between;width:100%;font-size:12px;color:#c9d8ec"><span style="display:flex;gap:4px;align-items:center"><i class="ph-duotone ph-clock"></i>{{ e.time }}</span><span style="display:flex;gap:5px;align-items:center;font-weight:500"><span style="width:6px;height:6px;border-radius:50%;background:{{ e.color }}"></span>{{ e.unit }}</span></div>
+                        <span style="font-size:15px;font-weight:500">{{ e.title }}</span>
+                        <span style="font-size:12px;color:#c9d8ec;display:flex;gap:4px;align-items:center"><i class="ph-duotone ph-map-pin"></i>{{ e.loc }}</span>
+                      </button>
+                    </sc-for>
+                  </div>
+                  <sc-if value="{{ sel.hasFer }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;flex-direction:column;gap:6px">
+                      <span style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#f5c518">Em férias neste dia</span>
+                      <sc-for list="{{ sel.fer }}" as="p" hint-placeholder-count="1"><span style="font-size:14px;display:flex;flex-direction:column;gap:1px"><span>{{ p.name }} <span style="color:#c9d8ec">· {{ p.unit }}</span></span><span style="font-size:12px;color:#f5c518">{{ p.until }}</span></span></sc-for>
+                    </div>
+                  </sc-if>
+                  <button sc-camel-on-click="{{ openNewOnDay }}" style="margin-top:auto;border:0;border-radius:999px;background:#f5c518;color:#0b2b55;padding:12px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;justify-content:center" style-hover="background:#e6b600"><i class="ph-bold ph-plus"></i>Adicionar neste dia</button>
+                </aside>
+              </div>
+            </sc-if>
+            <sc-if value="{{ cal.isSemana }}" hint-placeholder-val="{{ false }}">
+              <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px">
+                <sc-for list="{{ cal.week }}" as="d" hint-placeholder-count="7">
+                  <div style="background:{{ d.bg }};color:{{ d.fg }};border:1px solid {{ d.border }};border-radius:18px;padding:12px;min-height:260px;display:flex;flex-direction:column;gap:10px">
+                    <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:11px;letter-spacing:0.08em;font-weight:500;color:{{ d.sub }}">{{ d.dow }}</span><span style="font-size:22px;font-weight:600;letter-spacing:-0.03em">{{ d.num }}</span></div>
+                    <sc-if value="{{ d.empty }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:{{ d.sub }}">Livre</span></sc-if>
+                    <sc-for list="{{ d.ev }}" as="e" hint-placeholder-count="1">
+                      <button sc-camel-on-click="{{ e.view }}" style="text-align:left;border:0;border-left:3px solid {{ e.color }};background:{{ e.bg }};color:#122019;border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;color:#5f6b65">{{ e.time }} · {{ e.unit }}</span><span style="font-size:13px;line-height:1.25">{{ e.title }}</span></button>
+                    </sc-for>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ cal.isAgenda }}" hint-placeholder-val="{{ false }}">
+              <sc-if value="{{ cal.agendaEmpty }}" hint-placeholder-val="{{ false }}"><span style="font-size:15px;color:#5f6b65">Nenhum compromisso neste mês.</span></sc-if>
+              <div style="display:flex;flex-direction:column;gap:22px">
+          <sc-for list="{{ cal.agendaGroups }}" as="g" hint-placeholder-count="2">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;gap:8px;align-items:baseline"><span style="font-size:16px;font-weight:600;letter-spacing:-0.01em">{{ g.label }}</span><span style="font-size:13px;color:#7a867f">{{ g.wd }}</span></div>
+              <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="1">
+                <button sc-camel-on-click="{{ r.view }}" data-mk="keep" style="border:0;text-align:left;width:100%;display:grid;grid-template-columns:4px 64px minmax(0,1fr) auto 20px;gap:14px;align-items:center;background:#fff;border-radius:14px;padding:12px 14px 12px 10px;box-shadow:inset 0 0 0 1px #e4e8e6" style-hover="background:#f8fafd">
+                  <span style="width:4px;height:36px;border-radius:4px;background:{{ r.color }}"></span>
+                  <span style="font-size:14px;font-weight:600;color:#122019">{{ r.t1 }}</span>
+                  <span style="display:flex;flex-direction:column;gap:3px;min-width:0">
+                    <span style="font-size:15px;font-weight:500;color:#122019;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.title }}</span>
+                    <span style="font-size:12px;color:#7a867f;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.meta }}</span>
+                    <sc-if value="{{ r.hasConf }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#146c35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;gap:4px;align-items:center"><i class="ph-bold ph-check-circle"></i>{{ r.conf }}</span></sc-if>
+                  </span>
+                  <span style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:{{ r.tagBg }};color:{{ r.tagFg }};white-space:nowrap">{{ r.tag }}</span>
+                  <i class="ph-bold ph-caret-right" style="color:#9aa5a0"></i>
+                </button>
+              </sc-for>
+            </div>
+          </sc-for>
+        </div>
+            </sc-if>
+            <sc-if value="{{ cal.isTl }}" hint-placeholder-val="{{ false }}">
+              <div style="border:1px solid #e4e8e6;border-radius:24px;padding:16px;display:flex;flex-direction:column;gap:6px;overflow-x:auto">
+                <div data-mk="keep" style="display:grid;grid-template-columns:90px minmax(620px,1fr);gap:10px">
+                  <span></span>
+                  <div data-mk="keep" style="display:grid;grid-template-columns:{{ cal.tlCols }};gap:2px">
+                    <sc-for list="{{ cal.tlDays }}" as="d" hint-placeholder-count="31"><span style="font-size:11px;text-align:center;border-radius:6px;padding:3px 0;background:{{ d.bg }};color:{{ d.fg }};font-weight:600">{{ d.n }}</span></sc-for>
+                  </div>
+                </div>
+                <sc-for list="{{ cal.tlRows }}" as="u" hint-placeholder-count="7">
+                  <div data-mk="keep" style="display:grid;grid-template-columns:90px minmax(620px,1fr);gap:10px;align-items:start;padding:6px 0;border-top:1px solid #f0f3f1">
+                    <span style="display:flex;gap:6px;align-items:center;font-size:12px;font-weight:600;padding-top:6px"><span style="width:8px;height:8px;border-radius:50%;background:{{ u.color }}"></span>{{ u.name }}</span>
+                    <div data-mk="keep" style="display:grid;grid-template-columns:{{ cal.tlCols }};grid-auto-rows:26px;gap:4px 2px;min-height:{{ u.minH }}">
+                      <sc-for list="{{ u.bars }}" as="b" hint-placeholder-count="0">
+                        <button sc-camel-on-click="{{ b.view }}" title="{{ b.title }}" style="grid-column:{{ b.col }};grid-row:{{ b.row }};opacity:{{ b.opacity }};border:0;border-radius:8px;background:{{ b.bg }};color:{{ b.fg }};font-size:11px;font-weight:500;padding:0 8px;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ b.title }}</button>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+        <sc-if value="{{ ag.isLista }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                <button sc-camel-on-click="{{ lista.prevM }}" title="Mês anterior" style="width:38px;height:38px;border-radius:50%;border:1px solid #e4e8e6;background:#fff;display:grid;place-items:center"><i class="ph-bold ph-caret-left"></i></button>
+                <button sc-camel-on-click="{{ lista.nextM }}" title="Próximo mês" style="width:38px;height:38px;border-radius:50%;border:1px solid #e4e8e6;background:#fff;display:grid;place-items:center"><i class="ph-bold ph-caret-right"></i></button>
+                <button sc-camel-on-click="{{ lista.thisM }}" style="border:1px solid #e4e8e6;background:#fff;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:600">Este mês</button>
+                <span style="font-size:24px;font-weight:600;letter-spacing:-0.02em;margin-left:8px">{{ lista.monthTitle }}</span>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <sc-raw-select value="{{ lista.lm }}" sc-camel-on-change="{{ lista.setLm }}" title="Mês" style="padding:9px 10px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;background:#fff"><sc-for list="{{ lista.monthOpts }}" as="o" hint-placeholder-count="12"><option value="{{ o.v }}">{{ o.n }}</option></sc-for></sc-raw-select>
+                <sc-raw-select value="{{ lista.ly }}" sc-camel-on-change="{{ lista.setLy }}" title="Ano" style="padding:9px 10px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;background:#fff"><sc-for list="{{ lista.yearOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.n }}</option></sc-for></sc-raw-select>
+                <button sc-camel-on-click="{{ lista.showAll }}" style="border:0;background:transparent;color:#0b4f9c;font-size:13px;font-weight:600;padding:0 4px">Ver todos</button>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;position:relative">
+              <div style="position:relative;flex:1;min-width:0">
+                <i class="ph-duotone ph-magnifying-glass" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7a867f;font-size:16px"></i>
+                <input value="{{ lista.q }}" sc-camel-on-input="{{ lista.setQ }}" placeholder="Buscar evento, local ou responsável" style="width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border:1px solid #e4e8e6;border-radius:14px;font-size:14px;background:#f6f8f7">
+              </div>
+              <button sc-camel-on-click="{{ lista.toggleFilt }}" style="border:1px solid {{ lista.filtBorder }};background:{{ lista.filtBg }};border-radius:14px;padding:11px 16px;font-size:14px;font-weight:600;display:flex;gap:8px;align-items:center"><i class="ph-duotone ph-sliders-horizontal"></i>Filtros<sc-if value="{{ lista.hasActive }}" hint-placeholder-val="{{ false }}"><span style="min-width:20px;height:20px;border-radius:999px;background:#1f9d4c;color:#fff;font-size:11px;display:grid;place-items:center;padding:0 6px;box-sizing:border-box">{{ lista.activeCount }}</span></sc-if></button>
+              <button sc-camel-on-click="{{ lista.toggleExp }}" title="Exportar" style="width:46px;height:46px;border:1px solid #e4e8e6;background:#fff;border-radius:14px;display:grid;place-items:center;font-size:18px"><i class="ph-duotone ph-export"></i></button>
+              <sc-if value="{{ lista.filtOpen }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;right:54px;top:54px;z-index:30;width:440px;max-width:90vw;background:#fff;border:1px solid #e4e8e6;border-radius:20px;box-shadow:0 20px 50px #0b2b5522;padding:18px;display:flex;flex-direction:column;gap:14px">
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                    <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:#3d4943">Período<sc-raw-select value="{{ lista.per }}" sc-camel-on-change="{{ lista.setPer }}" style="padding:9px 10px;border:1px solid #e4e8e6;border-radius:10px;font-size:14px;background:#fff;font-weight:400;color:#122019"><sc-for list="{{ lista.perOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.n }}</option></sc-for></sc-raw-select></label>
+                    <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:#3d4943">Status<sc-raw-select value="{{ lista.fSt }}" sc-camel-on-change="{{ lista.setSt }}" style="padding:9px 10px;border:1px solid #e4e8e6;border-radius:10px;font-size:14px;background:#fff;font-weight:400;color:#122019"><sc-for list="{{ lista.stOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.n }}</option></sc-for></sc-raw-select></label>
+                    <sc-if value="{{ lista.isCustom }}" hint-placeholder-val="{{ false }}">
+                      <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:#3d4943">De<input type="date" value="{{ lista.from }}" sc-camel-on-input="{{ lista.setFrom }}" style="padding:8px 10px;border:1px solid #e4e8e6;border-radius:10px;font-size:13px"></label>
+                      <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:#3d4943">Até<input type="date" value="{{ lista.to }}" sc-camel-on-input="{{ lista.setTo }}" style="padding:8px 10px;border:1px solid #e4e8e6;border-radius:10px;font-size:13px"></label>
+                    </sc-if>
+                    <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:#3d4943">Categoria<sc-raw-select value="{{ lista.fCat }}" sc-camel-on-change="{{ lista.setCat }}" style="padding:9px 10px;border:1px solid #e4e8e6;border-radius:10px;font-size:14px;background:#fff;font-weight:400;color:#122019"><sc-for list="{{ lista.catOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.n }}</option></sc-for></sc-raw-select></label>
+                    <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:#3d4943">Prioridade<sc-raw-select value="{{ lista.fPrio }}" sc-camel-on-change="{{ lista.setPrio }}" style="padding:9px 10px;border:1px solid #e4e8e6;border-radius:10px;font-size:14px;background:#fff;font-weight:400;color:#122019"><sc-for list="{{ lista.prioOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.n }}</option></sc-for></sc-raw-select></label>
+                    <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:#3d4943">Situação das férias<sc-raw-select value="{{ lista.fFst }}" sc-camel-on-change="{{ lista.setFst }}" style="padding:9px 10px;border:1px solid #e4e8e6;border-radius:10px;font-size:14px;background:#fff;font-weight:400;color:#122019"><sc-for list="{{ lista.fstOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.n }}</option></sc-for></sc-raw-select></label>
+                    <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:#3d4943">Ordenar<sc-raw-select value="{{ lista.sort }}" sc-camel-on-change="{{ lista.setSort }}" style="padding:9px 10px;border:1px solid #e4e8e6;border-radius:10px;font-size:14px;background:#fff;font-weight:400;color:#122019"><sc-for list="{{ lista.sortOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.n }}</option></sc-for></sc-raw-select></label>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px">
+                    <span style="font-size:12px;font-weight:600;color:#3d4943">Unidades</span>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap">
+                      <sc-for list="{{ lista.units }}" as="u" hint-placeholder-count="7"><button sc-camel-on-click="{{ u.pick }}" style="border:1px solid {{ u.border }};background:{{ u.bg }};color:{{ u.fg }};font-weight:{{ u.fw }};border-radius:999px;padding:5px 11px;font-size:12px;display:flex;gap:6px;align-items:center"><span style="width:7px;height:7px;border-radius:50%;background:{{ u.color }}"></span>{{ u.name }}</button></sc-for>
+                    </div>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid #f0f3f1">
+                    <button sc-camel-on-click="{{ lista.clear }}" style="border:0;background:transparent;color:#5f6b65;font-size:13px;font-weight:500">Limpar tudo</button>
+                    <button sc-camel-on-click="{{ lista.toggleFilt }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600">Ver {{ lista.n }} eventos</button>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ lista.expOpen }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;right:0;top:54px;z-index:30;width:200px;background:#fff;border:1px solid #e4e8e6;border-radius:16px;box-shadow:0 20px 50px #0b2b5522;padding:6px;display:flex;flex-direction:column">
+                  <button sc-camel-on-click="{{ lista.print }}" style="border:0;background:transparent;border-radius:10px;padding:9px 10px;font-size:13px;text-align:left;display:flex;gap:8px;align-items:center" style-hover="background:#f2f5f4"><i class="ph-duotone ph-file-pdf" style="color:#b42318"></i>PDF</button>
+                  <button sc-camel-on-click="{{ lista.csv }}" style="border:0;background:transparent;border-radius:10px;padding:9px 10px;font-size:13px;text-align:left;display:flex;gap:8px;align-items:center" style-hover="background:#f2f5f4"><i class="ph-duotone ph-file-xls" style="color:#1f9d4c"></i>Excel</button>
+                  <button sc-camel-on-click="{{ lista.ics }}" style="border:0;background:transparent;border-radius:10px;padding:9px 10px;font-size:13px;text-align:left;display:flex;gap:8px;align-items:center" style-hover="background:#f2f5f4"><i class="ph-duotone ph-calendar-plus" style="color:#0b4f9c"></i>Calendário (ICS)</button>
+                  <button sc-camel-on-click="{{ lista.print }}" style="border:0;background:transparent;border-radius:10px;padding:9px 10px;font-size:13px;text-align:left;display:flex;gap:8px;align-items:center" style-hover="background:#f2f5f4"><i class="ph-duotone ph-printer" style="color:#3d4943"></i>Imprimir</button>
+                </div>
+              </sc-if>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;min-height:24px">
+              <span style="font-size:13px;color:#5f6b65">{{ lista.summary }}</span>
+              <sc-for list="{{ lista.active }}" as="c" hint-placeholder-count="0"><span style="background:#e7eef8;color:#0b3d7a;border-radius:999px;padding:3px 5px 3px 11px;font-size:12px;font-weight:500;display:flex;gap:6px;align-items:center">{{ c.label }}<button sc-camel-on-click="{{ c.remove }}" style="width:18px;height:18px;border:0;border-radius:50%;background:#0b3d7a1a;color:#0b3d7a;display:grid;place-items:center;padding:0"><i class="ph-bold ph-x" style="font-size:10px"></i></button></span></sc-for>
+            </div>
+            <sc-if value="{{ lista.empty }}" hint-placeholder-val="{{ false }}"><span style="font-size:15px;color:#5f6b65;padding:20px 0">Nenhum evento com esses filtros.</span></sc-if>
+            <div style="display:flex;flex-direction:column;gap:22px">
+          <sc-for list="{{ lista.groups }}" as="g" hint-placeholder-count="2">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;gap:8px;align-items:baseline"><span style="font-size:16px;font-weight:600;letter-spacing:-0.01em">{{ g.label }}</span><span style="font-size:13px;color:#7a867f">{{ g.wd }}</span></div>
+              <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="1">
+                <button sc-camel-on-click="{{ r.view }}" data-mk="keep" style="border:0;text-align:left;width:100%;display:grid;grid-template-columns:4px 64px minmax(0,1fr) auto 20px;gap:14px;align-items:center;background:#fff;border-radius:14px;padding:12px 14px 12px 10px;box-shadow:inset 0 0 0 1px #e4e8e6" style-hover="background:#f8fafd">
+                  <span style="width:4px;height:36px;border-radius:4px;background:{{ r.color }}"></span>
+                  <span style="font-size:14px;font-weight:600;color:#122019">{{ r.t1 }}</span>
+                  <span style="display:flex;flex-direction:column;gap:3px;min-width:0">
+                    <span style="font-size:15px;font-weight:500;color:#122019;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.title }}</span>
+                    <span style="font-size:12px;color:#7a867f;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.meta }}</span>
+                    <sc-if value="{{ r.hasConf }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#146c35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;gap:4px;align-items:center"><i class="ph-bold ph-check-circle"></i>{{ r.conf }}</span></sc-if>
+                  </span>
+                  <span style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:{{ r.tagBg }};color:{{ r.tagFg }};white-space:nowrap">{{ r.tag }}</span>
+                  <i class="ph-bold ph-caret-right" style="color:#9aa5a0"></i>
+                </button>
+              </sc-for>
+            </div>
+          </sc-for>
+        </div>
+          
+          
+          </div>
+        </sc-if>
+        <sc-if value="{{ ag.isUnidade }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px">
+              <sc-for list="{{ porUnidade.list }}" as="u" hint-placeholder-count="8">
+                <button sc-camel-on-click="{{ u.pick }}" style="text-align:left;border:1px solid {{ u.border }};background:{{ u.bg }};color:{{ u.fg }};border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden" style-hover="box-shadow:0 4px 14px #0b2b551a">
+                  <span style="position:absolute;left:0;top:0;bottom:0;width:4px;background:{{ u.color }}"></span>
+                  <span style="display:flex;justify-content:space-between;align-items:center;gap:6px"><span style="font-size:14px;font-weight:600">{{ u.name }}</span><sc-if value="{{ u.mine }}" hint-placeholder-val="{{ false }}"><span style="font-size:10px;font-weight:700;color:{{ u.mineFg }};background:{{ u.mineBg }};border-radius:999px;padding:1px 7px">sua</span></sc-if></span>
+                  <span style="font-size:12px;color:{{ u.sub }}">{{ u.count }}</span>
+                </button>
+              </sc-for>
+            </div>
+            <div style="background:{{ porUnidade.color }};color:#fff;border-radius:24px;padding:24px;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-end">
+              <div style="display:flex;flex-direction:column;gap:10px;min-width:240px;flex:1">
+                <span style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;font-weight:600;opacity:.85">{{ porUnidade.sigla }}</span>
+                <span style="font-size:28px;font-weight:600;letter-spacing:-0.03em;line-height:1.1;max-width:560px;text-wrap:balance">{{ porUnidade.full }}</span>
+                <button sc-camel-on-click="{{ porUnidade.head.open }}" style="align-self:flex-start;border:0;background:#ffffff1f;color:#fff;border-radius:999px;padding:5px 14px 5px 5px;display:flex;gap:8px;align-items:center;margin-top:4px" style-hover="background:#ffffff33"><span style="position:relative;width:28px;height:28px;border-radius:50%;background:#fff;color:#0b3d7a;display:grid;place-items:center;font-size:10px;font-weight:600;overflow:hidden">{{ porUnidade.head.initials }}<span style="position:absolute;inset:0;background-position:center;background-size:cover;background-image:{{ porUnidade.head.bgImg }}"></span></span><span style="font-size:13px"><span style="opacity:.8">Chefia</span> <b style="font-weight:600">{{ porUnidade.head.name }}</b></span></button>
+              </div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <sc-for list="{{ porUnidade.stats }}" as="k" hint-placeholder-count="3">
+                  <div style="background:#ffffff1a;border-radius:16px;padding:12px 16px;min-width:110px;display:flex;flex-direction:column;gap:2px"><span style="font-size:30px;font-weight:600;letter-spacing:-0.04em;line-height:1">{{ k.v }}</span><span style="font-size:12px;opacity:.85">{{ k.l }}</span></div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <div style="position:relative;flex:1;min-width:0">
+                <i class="ph-duotone ph-magnifying-glass" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7a867f;font-size:16px"></i>
+                <input value="{{ uniF.q }}" sc-camel-on-input="{{ uniF.setQ }}" placeholder="Buscar nesta unidade" style="width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border:1px solid #e4e8e6;border-radius:14px;font-size:14px;background:#f6f8f7">
+              </div>
+              <div style="position:relative">
+                <button sc-camel-on-click="{{ uniF.toggle }}" style="border:1px solid {{ uniF.border }};background:{{ uniF.bg }};border-radius:14px;padding:11px 16px;font-size:14px;font-weight:600;display:flex;gap:8px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-sliders-horizontal"></i>Filtros<sc-if value="{{ uniF.hasActive }}" hint-placeholder-val="{{ false }}"><span style="min-width:20px;height:20px;border-radius:999px;background:#1f9d4c;color:#fff;font-size:11px;display:grid;place-items:center;padding:0 6px;box-sizing:border-box">{{ uniF.activeCount }}</span></sc-if></button>
+                <sc-if value="{{ uniF.open }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute;right:0;top:54px;z-index:30;width:400px;max-width:90vw;background:#fff;border:1px solid #e4e8e6;border-radius:20px;box-shadow:0 20px 50px #0b2b5522;padding:18px;display:flex;flex-direction:column;gap:14px">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:#3d4943">Quando<sc-raw-select value="{{ uniF.when }}" sc-camel-on-change="{{ uniF.setWhen }}" style="padding:9px 10px;border:1px solid #e4e8e6;border-radius:10px;font-size:14px;background:#fff;font-weight:400;color:#122019"><sc-for list="{{ uniF.whenOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.n }}</option></sc-for></sc-raw-select></label><label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:#3d4943">Categoria<sc-raw-select value="{{ uniF.cat }}" sc-camel-on-change="{{ uniF.setCat }}" style="padding:9px 10px;border:1px solid #e4e8e6;border-radius:10px;font-size:14px;background:#fff;font-weight:400;color:#122019"><sc-for list="{{ uniF.catOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.n }}</option></sc-for></sc-raw-select></label></div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid #f0f3f1">
+                      <button sc-camel-on-click="{{ uniF.clear }}" style="border:0;background:transparent;color:#5f6b65;font-size:13px;font-weight:500">Limpar tudo</button>
+                      <button sc-camel-on-click="{{ uniF.toggle }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600">Aplicar</button>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;min-height:24px">
+              <span style="font-size:13px;color:#5f6b65">{{ uniF.summary }}</span>
+              <sc-for list="{{ uniF.active }}" as="c" hint-placeholder-count="0"><span style="background:#e7eef8;color:#0b3d7a;border-radius:999px;padding:3px 5px 3px 11px;font-size:12px;font-weight:500;display:flex;gap:6px;align-items:center">{{ c.label }}<button sc-camel-on-click="{{ c.remove }}" style="width:18px;height:18px;border:0;border-radius:50%;background:#0b3d7a1a;color:#0b3d7a;display:grid;place-items:center;padding:0"><i class="ph-bold ph-x" style="font-size:10px"></i></button></span></sc-for>
+            </div>
+            <sc-if value="{{ porUnidade.empty }}" hint-placeholder-val="{{ false }}"><div style="border:1px dashed #cfd8d3;border-radius:18px;padding:28px;text-align:center;font-size:14px;color:#5f6b65">Nenhum compromisso nesta seleção.</div></sc-if>
+            <div style="display:flex;flex-direction:column;gap:22px">
+          <sc-for list="{{ porUnidade.groups }}" as="g" hint-placeholder-count="2">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;gap:8px;align-items:baseline"><span style="font-size:16px;font-weight:600;letter-spacing:-0.01em">{{ g.label }}</span><span style="font-size:13px;color:#7a867f">{{ g.wd }}</span></div>
+              <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="1">
+                <button sc-camel-on-click="{{ r.view }}" data-mk="keep" style="border:0;text-align:left;width:100%;display:grid;grid-template-columns:4px 64px minmax(0,1fr) auto 20px;gap:14px;align-items:center;background:#fff;border-radius:14px;padding:12px 14px 12px 10px;box-shadow:inset 0 0 0 1px #e4e8e6" style-hover="background:#f8fafd">
+                  <span style="width:4px;height:36px;border-radius:4px;background:{{ r.color }}"></span>
+                  <span style="font-size:14px;font-weight:600;color:#122019">{{ r.t1 }}</span>
+                  <span style="display:flex;flex-direction:column;gap:3px;min-width:0">
+                    <span style="font-size:15px;font-weight:500;color:#122019;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.title }}</span>
+                    <span style="font-size:12px;color:#7a867f;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.meta }}</span>
+                    <sc-if value="{{ r.hasConf }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#146c35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;gap:4px;align-items:center"><i class="ph-bold ph-check-circle"></i>{{ r.conf }}</span></sc-if>
+                  </span>
+                  <span style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:{{ r.tagBg }};color:{{ r.tagFg }};white-space:nowrap">{{ r.tag }}</span>
+                  <i class="ph-bold ph-caret-right" style="color:#9aa5a0"></i>
+                </button>
+              </sc-for>
+            </div>
+          </sc-for>
+        </div>
+            
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ v.pessoas }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:22px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <span style="font-size:12px;color:#7a867f">Início › Pessoas</span>
+            <h1 style="margin:0;font-weight:600;font-size:40px;letter-spacing:-0.04em;line-height:1.05">{{ pe.title }}</h1>
+            <span style="font-size:14px;color:#5f6b65">{{ pe.sub }}</span>
+          </div>
+          <div style="display:flex;gap:2px;background:#f2f5f4;border-radius:999px;padding:4px;align-self:flex-end">
+            <sc-for list="{{ pe.tabs }}" as="t" hint-placeholder-count="3">
+              <button sc-camel-on-click="{{ t.pick }}" style="border:0;background:{{ t.bg }};color:{{ t.fg }};border-radius:999px;padding:8px 16px;font-size:14px;font-weight:{{ t.fw }};display:flex;gap:7px;align-items:center"><i class="{{ t.icon }}"></i>{{ t.name }}</button>
+            </sc-for>
+          </div>
+        </div>
+
+        <sc-if value="{{ pe.isUnidades }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;padding:18px 20px;border-radius:20px;background:{{ pe.tree.top.color }};color:{{ pe.tree.top.fg }};position:relative;overflow:hidden">
+                  
+                  <button sc-camel-on-click="{{ pe.tree.top.open }}" style="border:0;background:transparent;color:inherit;padding:0;text-align:left;display:flex;flex-direction:column;gap:4px;flex:1 1 220px;min-width:180px">
+                    <span style="font-size:20px;font-weight:600;letter-spacing:-0.02em">{{ pe.tree.top.sigla }}</span>
+                    <span style="font-size:13px;opacity:.85;color:inherit;line-height:1.35">{{ pe.tree.top.full }}</span>
+                  </button>
+                  <button sc-camel-on-click="{{ pe.tree.top.head.open }}" title="Ver chefia" style="border:0;background:#ffffff1f;color:inherit;border-radius:999px;padding:4px 12px 4px 4px;display:flex;gap:8px;align-items:center;flex:none" style-hover="filter:brightness(0.97)"><span style="position:relative;flex:none;width:30px;height:30px;border-radius:50%;background:#e7eef8;color:#0b3d7a;display:grid;place-items:center;font-size:10px;font-weight:600;overflow:hidden">{{ pe.tree.top.head.initials }}<span style="position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;background-image:{{ pe.tree.top.head.bgImg }}"></span></span><span style="display:flex;flex-direction:column;text-align:left"><span style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;opacity:.7">Chefia</span><span style="font-size:13px;font-weight:600;white-space:nowrap">{{ pe.tree.top.head.short }}</span></span></button>
+                  <button sc-camel-on-click="{{ pe.tree.top.open }}" title="Ver equipe" style="border:0;background:transparent;color:inherit;padding:0;display:flex;align-items:center;gap:8px;flex:none">
+                    <span style="display:flex;padding-left:8px"><sc-for list="{{ pe.tree.top.avs }}" as="a" hint-placeholder-count="3"><span style="margin-left:-8px;border:2px solid {{ pe.tree.top.color }};border-radius:50%;display:flex"><span style="position:relative;flex:none;width:28px;height:28px;border-radius:50%;background:#e7eef8;color:#0b3d7a;display:grid;place-items:center;font-size:9px;font-weight:600;overflow:hidden">{{ a.initials }}<span style="position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;background-image:{{ a.bgImg }}"></span></span></span></sc-for></span>
+                    <span style="font-size:13px;font-weight:600;white-space:nowrap">{{ pe.tree.top.nLabel }}</span>
+                    <i class="ph-bold ph-caret-right" style="opacity:.6"></i>
+                  </button>
+                </div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start">
+              <sc-for list="{{ pe.tree.branches }}" as="br" hint-placeholder-count="2">
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;padding:18px 20px;border-radius:20px;background:{{ br.main.color }};color:{{ br.main.fg }};position:relative;overflow:hidden">
+                  
+                  <button sc-camel-on-click="{{ br.main.open }}" style="border:0;background:transparent;color:inherit;padding:0;text-align:left;display:flex;flex-direction:column;gap:4px;flex:1 1 220px;min-width:180px">
+                    <span style="font-size:20px;font-weight:600;letter-spacing:-0.02em">{{ br.main.sigla }}</span>
+                    <span style="font-size:13px;opacity:.85;color:inherit;line-height:1.35">{{ br.main.full }}</span>
+                  </button>
+                  <button sc-camel-on-click="{{ br.main.head.open }}" title="Ver chefia" style="border:0;background:#ffffff1f;color:inherit;border-radius:999px;padding:4px 12px 4px 4px;display:flex;gap:8px;align-items:center;flex:none" style-hover="filter:brightness(0.97)"><span style="position:relative;flex:none;width:30px;height:30px;border-radius:50%;background:#e7eef8;color:#0b3d7a;display:grid;place-items:center;font-size:10px;font-weight:600;overflow:hidden">{{ br.main.head.initials }}<span style="position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;background-image:{{ br.main.head.bgImg }}"></span></span><span style="display:flex;flex-direction:column;text-align:left"><span style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;opacity:.7">Chefia</span><span style="font-size:13px;font-weight:600;white-space:nowrap">{{ br.main.head.short }}</span></span></button>
+                  <button sc-camel-on-click="{{ br.main.open }}" title="Ver equipe" style="border:0;background:transparent;color:inherit;padding:0;display:flex;align-items:center;gap:8px;flex:none">
+                    <span style="display:flex;padding-left:8px"><sc-for list="{{ br.main.avs }}" as="a" hint-placeholder-count="3"><span style="margin-left:-8px;border:2px solid {{ br.main.color }};border-radius:50%;display:flex"><span style="position:relative;flex:none;width:28px;height:28px;border-radius:50%;background:#e7eef8;color:#0b3d7a;display:grid;place-items:center;font-size:9px;font-weight:600;overflow:hidden">{{ a.initials }}<span style="position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;background-image:{{ a.bgImg }}"></span></span></span></sc-for></span>
+                    <span style="font-size:13px;font-weight:600;white-space:nowrap">{{ br.main.nLabel }}</span>
+                    <i class="ph-bold ph-caret-right" style="opacity:.6"></i>
+                  </button>
+                </div>
+                  <div style="display:flex;flex-direction:column;gap:8px;padding-left:18px;border-left:2px solid #e4e8e6;margin-left:20px">
+                    <sc-for list="{{ br.subs }}" as="sb" hint-placeholder-count="2"><div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;padding:14px 16px;border-radius:16px;background:#fff;color:#122019;box-shadow:inset 0 0 0 1px #e4e8e6;position:relative;overflow:hidden">
+                  <span style="position:absolute;left:0;top:0;bottom:0;width:4px;background:{{ sb.color }}"></span>
+                  <button sc-camel-on-click="{{ sb.open }}" style="border:0;background:transparent;color:inherit;padding:0;text-align:left;display:flex;flex-direction:column;gap:4px;flex:1 1 220px;min-width:180px">
+                    <span style="font-size:16px;font-weight:600;letter-spacing:-0.02em">{{ sb.sigla }}</span>
+                    <span style="font-size:13px;opacity:1;color:#5f6b65;line-height:1.35">{{ sb.full }}</span>
+                  </button>
+                  <button sc-camel-on-click="{{ sb.head.open }}" title="Ver chefia" style="border:0;background:#f6f8f7;color:inherit;border-radius:999px;padding:4px 12px 4px 4px;display:flex;gap:8px;align-items:center;flex:none" style-hover="filter:brightness(0.97)"><span style="position:relative;flex:none;width:30px;height:30px;border-radius:50%;background:#e7eef8;color:#0b3d7a;display:grid;place-items:center;font-size:10px;font-weight:600;overflow:hidden">{{ sb.head.initials }}<span style="position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;background-image:{{ sb.head.bgImg }}"></span></span><span style="display:flex;flex-direction:column;text-align:left"><span style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;opacity:.7">Chefia</span><span style="font-size:13px;font-weight:600;white-space:nowrap">{{ sb.head.short }}</span></span></button>
+                  <button sc-camel-on-click="{{ sb.open }}" title="Ver equipe" style="border:0;background:transparent;color:inherit;padding:0;display:flex;align-items:center;gap:8px;flex:none">
+                    <span style="display:flex;padding-left:8px"><sc-for list="{{ sb.avs }}" as="a" hint-placeholder-count="3"><span style="margin-left:-8px;border:2px solid #fff;border-radius:50%;display:flex"><span style="position:relative;flex:none;width:28px;height:28px;border-radius:50%;background:#e7eef8;color:#0b3d7a;display:grid;place-items:center;font-size:9px;font-weight:600;overflow:hidden">{{ a.initials }}<span style="position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;background-image:{{ a.bgImg }}"></span></span></span></sc-for></span>
+                    <span style="font-size:13px;font-weight:600;white-space:nowrap">{{ sb.nLabel }}</span>
+                    <i class="ph-bold ph-caret-right" style="opacity:.6"></i>
+                  </button>
+                </div></sc-for>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ pe.isDir }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;gap:8px;align-items:center">
+              <div style="position:relative;flex:1;min-width:0">
+                <i class="ph-duotone ph-magnifying-glass" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7a867f;font-size:16px"></i>
+                <input value="{{ dirF.q }}" sc-camel-on-input="{{ dirF.setQ }}" placeholder="Buscar por nome, cargo ou unidade" style="width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border:1px solid #e4e8e6;border-radius:14px;font-size:14px;background:#f6f8f7">
+              </div>
+              <button sc-camel-on-click="{{ pe.excel }}" title="Exportar para Excel" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:11px 14px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-file-xls" style="color:#1f9d4c"></i>Excel</button><button sc-camel-on-click="{{ pe.pdf }}" title="Gerar PDF" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:11px 14px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-file-pdf" style="color:#b42318"></i>PDF</button>
+              <div style="position:relative">
+                <button sc-camel-on-click="{{ dirF.toggle }}" style="border:1px solid {{ dirF.border }};background:{{ dirF.bg }};border-radius:14px;padding:11px 16px;font-size:14px;font-weight:600;display:flex;gap:8px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-sliders-horizontal"></i>Filtros<sc-if value="{{ dirF.hasActive }}" hint-placeholder-val="{{ false }}"><span style="min-width:20px;height:20px;border-radius:999px;background:#1f9d4c;color:#fff;font-size:11px;display:grid;place-items:center;padding:0 6px;box-sizing:border-box">{{ dirF.activeCount }}</span></sc-if></button>
+                <sc-if value="{{ dirF.open }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute;right:0;top:54px;z-index:30;width:400px;max-width:90vw;background:#fff;border:1px solid #e4e8e6;border-radius:20px;box-shadow:0 20px 50px #0b2b5522;padding:18px;display:flex;flex-direction:column;gap:14px">
+                    <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;font-weight:600;color:#3d4943">Unidades</span><div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ dirF.units }}" as="u" hint-placeholder-count="7"><button sc-camel-on-click="{{ u.pick }}" style="border:1px solid {{ u.border }};background:{{ u.bg }};color:{{ u.fg }};font-weight:{{ u.fw }};border-radius:999px;padding:5px 11px;font-size:12px;display:flex;gap:6px;align-items:center"><span style="width:7px;height:7px;border-radius:50%;background:{{ u.color }}"></span>{{ u.name }}</button></sc-for></div></div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid #f0f3f1">
+                      <button sc-camel-on-click="{{ dirF.clear }}" style="border:0;background:transparent;color:#5f6b65;font-size:13px;font-weight:500">Limpar tudo</button>
+                      <button sc-camel-on-click="{{ dirF.toggle }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600">Aplicar</button>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;min-height:24px">
+              <span style="font-size:13px;color:#5f6b65">{{ dirF.summary }}</span>
+              <sc-for list="{{ dirF.active }}" as="c" hint-placeholder-count="0"><span style="background:#e7eef8;color:#0b3d7a;border-radius:999px;padding:3px 5px 3px 11px;font-size:12px;font-weight:500;display:flex;gap:6px;align-items:center">{{ c.label }}<button sc-camel-on-click="{{ c.remove }}" style="width:18px;height:18px;border:0;border-radius:50%;background:#0b3d7a1a;color:#0b3d7a;display:grid;place-items:center;padding:0"><i class="ph-bold ph-x" style="font-size:10px"></i></button></span></sc-for>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px">
+              <sc-for list="{{ pe.list }}" as="p" hint-placeholder-count="9">
+                <button sc-camel-on-click="{{ p.open }}" style="text-align:left;border:0;background:#f6f8f7;border-radius:20px;padding:16px;display:flex;gap:12px;align-items:flex-start" style-hover="background:#edf1ef">
+                  <span style="position:relative;flex:none;width:44px;height:44px;border-radius:50%;background:#e7eef8;color:#0b3d7a;display:grid;place-items:center;font-size:14px;font-weight:600;overflow:hidden">{{ p.initials }}<span style="position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;background-image:{{ p.bgImg }}"></span></span>
+                  <div style="display:flex;flex-direction:column;gap:3px;min-width:0">
+                    <span style="font-size:15px;font-weight:600">{{ p.name }}</span>
+                    <span style="font-size:13px;color:#3d4943;line-height:1.3">{{ p.role }}</span>
+                    <span style="display:flex;gap:6px;align-items:center;font-size:12px;color:#5f6b65;margin-top:4px"><span style="width:7px;height:7px;border-radius:50%;background:{{ p.color }}"></span>{{ p.unit }}</span>
+                  </div>
+                </button>
+              </sc-for>
+            </div>
+            <sc-if value="{{ pe.none }}" hint-placeholder-val="{{ false }}"><span style="font-size:15px;color:#5f6b65">Ninguém encontrado.</span></sc-if>
+          </div>
+        </sc-if>
+        <sc-if value="{{ pe.isOrg }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:20px;align-items:start">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:0;overflow-x:auto;padding-bottom:12px">
+              <button sc-camel-on-click="{{ org.top.open }}" style="border:0;background:#0b3d7a;color:#fff;border-radius:18px;padding:14px 18px;display:flex;gap:12px;align-items:center;text-align:left" style-hover="background:#0b4f9c"><span style="position:relative;flex:none;width:44px;height:44px;border-radius:50%;background:#e7eef8;color:#0b3d7a;display:grid;place-items:center;font-size:14px;font-weight:600;overflow:hidden">{{ org.top.initials }}<span style="position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;background-image:{{ org.top.bgImg }}"></span></span><span style="display:flex;flex-direction:column"><span style="font-size:16px;font-weight:600">{{ org.top.name }}</span><span style="font-size:12px;color:#c9d8ec">{{ org.top.role }}</span></span></button>
+              <div style="display:grid;grid-template-columns:minmax(0,1fr) 2px minmax(0,1fr);width:100%;align-items:start">
+                <div style="display:flex;justify-content:flex-end;align-items:flex-start;padding-top:18px">
+                  <div style="width:min(300px,100%);border:1px solid #cfe6d6;border-radius:18px;overflow:hidden;background:#fff">
+                    <div style="background:#eaf6ee;color:#146c35;padding:10px 14px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;font-weight:600;line-height:1.4">{{ org.staff.head.role }}</div>
+                    <div style="padding:12px;display:flex;flex-direction:column;align-items:stretch">
+                      <button sc-camel-on-click="{{ org.staff.head.open }}" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:8px 10px;display:flex;gap:10px;align-items:center;text-align:left;width:100%;box-sizing:border-box" style-hover="border-color:#0b4f9c;background:#f8fafd"><span style="position:relative;flex:none;width:32px;height:32px;border-radius:50%;background:#e7eef8;color:#0b3d7a;display:grid;place-items:center;font-size:11px;font-weight:600;overflow:hidden">{{ org.staff.head.initials }}<span style="position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;background-image:{{ org.staff.head.bgImg }}"></span></span><span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ org.staff.head.name }}</span><span style="font-size:11px;color:#5f6b65;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ org.staff.head.role }}</span></span></button>
+                      <span style="align-self:center;width:2px;height:12px;background:#cfd8d3"></span>
+                      <span style="align-self:center;width:10px;height:10px;border-radius:50%;border:2px solid #1f9d4c;background:#fff"></span>
+                      <span style="align-self:center;width:2px;height:12px;background:#cfd8d3"></span>
+                      <div style="display:flex;flex-direction:column;gap:6px;border-top:3px solid #c99a00;border-radius:14px;padding:8px;background:#f6f8f7">
+                        <sc-for list="{{ org.staff.members }}" as="m" hint-placeholder-count="4"><button sc-camel-on-click="{{ m.open }}" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:8px 10px;display:flex;gap:10px;align-items:center;text-align:left;width:100%;box-sizing:border-box" style-hover="border-color:#0b4f9c;background:#f8fafd"><span style="position:relative;flex:none;width:32px;height:32px;border-radius:50%;background:#e7eef8;color:#0b3d7a;display:grid;place-items:center;font-size:11px;font-weight:600;overflow:hidden">{{ m.initials }}<span style="position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;background-image:{{ m.bgImg }}"></span></span><span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ m.name }}</span><span style="font-size:11px;color:#5f6b65;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ m.role }}</span></span></button></sc-for>
+                      </div>
+                    </div>
+                  </div>
+                  <span style="width:28px;height:2px;background:#cfd8d3;margin-top:22px;flex:none"></span>
+                </div>
+                <span style="background:#cfd8d3;align-self:stretch"></span>
+                <span></span>
+              </div>
+              <span style="width:2px;height:20px;background:#cfd8d3"></span>
+              <div style="display:grid;grid-template-columns:repeat(2,minmax(300px,1fr));gap:18px;width:100%;border-top:2px solid #cfd8d3;padding-top:18px">
+                <sc-for list="{{ org.branches }}" as="b" hint-placeholder-count="2">
+                  <div style="display:flex;flex-direction:column;gap:10px;align-items:stretch">
+                    <button sc-camel-on-click="{{ b.head.open }}" style="border:0;background:{{ b.color }};color:#fff;border-radius:16px;padding:12px 14px;display:flex;gap:10px;align-items:center;text-align:left" style-hover="filter:brightness(1.08)"><span style="position:relative;flex:none;width:40px;height:40px;border-radius:50%;background:#e7eef8;color:#0b3d7a;display:grid;place-items:center;font-size:13px;font-weight:600;overflow:hidden">{{ b.head.initials }}<span style="position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;background-image:{{ b.head.bgImg }}"></span></span><span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;opacity:.85">{{ b.unit }}</span><span style="font-size:15px;font-weight:600">{{ b.head.name }}</span><span style="font-size:11px;opacity:.85">{{ b.head.role }}</span></span></button>
+                    <sc-if value="{{ b.hasAss }}" hint-placeholder-val="{{ true }}">
+                      <div style="background:#f6f8f7;border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:6px">
+                        <span style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#7a867f;font-weight:600">Assessoria</span>
+                        <sc-for list="{{ b.assessores }}" as="a" hint-placeholder-count="2"><button sc-camel-on-click="{{ a.open }}" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:8px 10px;display:flex;gap:10px;align-items:center;text-align:left;width:100%;box-sizing:border-box" style-hover="border-color:#0b4f9c;background:#f8fafd"><span style="position:relative;flex:none;width:32px;height:32px;border-radius:50%;background:#e7eef8;color:#0b3d7a;display:grid;place-items:center;font-size:11px;font-weight:600;overflow:hidden">{{ a.initials }}<span style="position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;background-image:{{ a.bgImg }}"></span></span><span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ a.name }}</span><span style="font-size:11px;color:#5f6b65;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ a.role }}</span></span></button></sc-for>
+                      </div>
+                    </sc-if>
+                    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+                      <sc-for list="{{ b.groups }}" as="g" hint-placeholder-count="2">
+                        <div style="border:1px solid #e4e8e6;border-top:4px solid {{ g.color }};border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:6px">
+                          <span style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#5f6b65;font-weight:600">{{ g.unit }}</span>
+                          <button sc-camel-on-click="{{ g.head.open }}" style="border:0;background:{{ g.color }};color:#fff;border-radius:12px;padding:10px;display:flex;gap:10px;align-items:center;text-align:left;width:100%;box-sizing:border-box;box-shadow:0 6px 16px #0b2b5522" style-hover="filter:brightness(1.08)"><span style="position:relative;flex:none;width:40px;height:40px;border-radius:50%;background:#fff;color:#0b3d7a;display:grid;place-items:center;font-size:13px;font-weight:600;overflow:hidden;border:2px solid #ffffffaa">{{ g.head.initials }}<span style="position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;background-image:{{ g.head.bgImg }}"></span></span><span style="display:flex;flex-direction:column;min-width:0;gap:1px"><span style="align-self:flex-start;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;font-weight:700;background:#ffffff2e;border-radius:999px;padding:2px 7px">Gerente</span><span style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ g.head.name }}</span><span style="font-size:11px;opacity:.85;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ g.head.role }}</span></span></button>
+                          <sc-for list="{{ g.members }}" as="m" hint-placeholder-count="4"><button sc-camel-on-click="{{ m.open }}" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:8px 10px;display:flex;gap:10px;align-items:center;text-align:left;width:100%;box-sizing:border-box" style-hover="border-color:#0b4f9c;background:#f8fafd"><span style="position:relative;flex:none;width:32px;height:32px;border-radius:50%;background:#e7eef8;color:#0b3d7a;display:grid;place-items:center;font-size:11px;font-weight:600;overflow:hidden">{{ m.initials }}<span style="position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;background-image:{{ m.bgImg }}"></span></span><span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ m.name }}</span><span style="font-size:11px;color:#5f6b65;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ m.role }}</span></span></button></sc-for>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="background:#f6f8f7;border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px;position:sticky;top:20px">
+              <span style="font-size:15px;font-weight:600;display:flex;gap:8px;align-items:center"><i class="ph-duotone ph-cake" style="color:#c99a00"></i>Aniversariantes</span>
+              <span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#7a867f;font-weight:600">{{ my.month }}</span>
+              <sc-for list="{{ aniv }}" as="p" hint-placeholder-count="3"><button sc-camel-on-click="{{ p.open }}" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:8px 10px;display:flex;gap:10px;align-items:center;text-align:left;width:100%;box-sizing:border-box" style-hover="border-color:#0b4f9c;background:#f8fafd"><span style="position:relative;flex:none;width:32px;height:32px;border-radius:50%;background:#e7eef8;color:#0b3d7a;display:grid;place-items:center;font-size:11px;font-weight:600;overflow:hidden">{{ p.initials }}<span style="position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;background-image:{{ p.bgImg }}"></span></span><span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ p.name }}</span><span style="font-size:11px;color:#5f6b65;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ p.d }}</span></span></button></sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ v.colegiados }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <span style="font-size:13px;color:#7a867f">Pessoas</span>
+            <h1 style="margin:0;font-weight:600;font-size:44px;letter-spacing:-0.04em;line-height:1">Colegiados</h1>
+            <span style="font-size:15px;color:#5f6b65">{{ col.summary }}</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button sc-camel-on-click="{{ col.excel }}" title="Exportar para Excel" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:11px 14px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-file-xls" style="color:#1f9d4c"></i>Excel</button>
+            <button sc-camel-on-click="{{ col.pdf }}" title="Gerar PDF" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:11px 14px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-file-pdf" style="color:#b42318"></i>PDF</button>
+            <sc-if value="{{ col.isAdm }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ col.add }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:14px;padding:11px 16px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap" style-hover="background:#178040"><i class="ph-bold ph-plus"></i>Novo colegiado</button></sc-if>
+          </div>
+        </div>
+        <div data-mk="two" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
+          <sc-for list="{{ col.stats }}" as="k" hint-placeholder-count="4"><div style="background:#f6f8f7;border-radius:20px;padding:18px 20px;display:flex;flex-direction:column;gap:2px"><span style="font-size:34px;font-weight:600;letter-spacing:-0.04em;line-height:1">{{ k.v }}</span><span style="font-size:13px;color:#5f6b65">{{ k.l }}</span></div></sc-for>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:start">
+          <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <div style="position:relative;flex:1;min-width:220px">
+                <i class="ph-duotone ph-magnifying-glass" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7a867f;font-size:16px"></i>
+                <input value="{{ col.q }}" sc-camel-on-input="{{ col.setQ }}" placeholder="Buscar colegiado, sigla ou servidor" style="width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border:1px solid #e4e8e6;border-radius:14px;font-size:14px;background:#f6f8f7">
+              </div>
+              <button sc-camel-on-click="{{ col.mine.pick }}" style="border:1px solid {{ col.mine.border }};background:{{ col.mine.bg }};color:{{ col.mine.fg }};border-radius:14px;padding:11px 16px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-user-circle"></i>{{ col.mine.label }}</button>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <span style="font-size:13px;color:#5f6b65">{{ col.count }}</span>
+              <sc-if value="{{ col.filtering }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;background:#e7eef8;color:#0b3d7a;border-radius:999px;padding:4px 6px 4px 10px;display:flex;gap:4px;align-items:center">{{ col.filtName }}<button sc-camel-on-click="{{ col.clearP }}" style="border:0;background:transparent;padding:0 2px;color:#0b3d7a"><i class="ph-bold ph-x"></i></button></span></sc-if>
+            </div>
+            <sc-if value="{{ col.loading }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#7a867f">Carregando…</span></sc-if>
+            <sc-if value="{{ col.empty }}" hint-placeholder-val="{{ false }}"><div style="border:1px dashed #d5dcd8;border-radius:20px;padding:32px;text-align:center;color:#7a867f;font-size:14px">Nenhum colegiado encontrado.</div></sc-if>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:12px">
+              <sc-for list="{{ col.list }}" as="c" hint-placeholder-count="4">
+                <div style="border:1px solid {{ c.border }};border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:14px;background:#fff">
+                  <div style="display:flex;gap:12px;align-items:flex-start">
+                    <span style="min-width:52px;height:52px;padding:0 8px;box-sizing:border-box;border-radius:14px;background:#0b3d7a;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:700;letter-spacing:0.02em;text-align:center;line-height:1.1;max-width:110px">{{ c.mark }}</span>
+                    <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0"><span style="font-size:15px;font-weight:600;line-height:1.3">{{ c.nome }}</span><sc-if value="{{ c.mine }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:600;color:#7a5d00;background:#fdf1c4;border-radius:999px;padding:2px 8px;align-self:flex-start;margin-top:4px">Você participa</span></sc-if></div>
+                    <sc-if value="{{ col.isAdm }}" hint-placeholder-val="{{ false }}"><span style="display:flex;gap:4px"><button sc-camel-on-click="{{ c.edit }}" title="Editar" style="width:30px;height:30px;border:1px solid #e4e8e6;border-radius:8px;background:#fff;display:grid;place-items:center"><i class="ph-duotone ph-pencil-simple"></i></button><button sc-camel-on-click="{{ c.del }}" title="Excluir" style="width:30px;height:30px;border:1px solid #f3c7c7;border-radius:8px;background:#fff;color:#b42318;display:grid;place-items:center"><i class="ph-duotone ph-trash"></i></button></span></sc-if>
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                    <div style="display:flex;flex-direction:column;gap:6px;min-width:0"><span style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#1f9d4c;font-weight:600">Titular</span><sc-for list="{{ c.tits }}" as="p" hint-placeholder-count="1"><button sc-camel-on-click="{{ p.open }}" style="border:0;background:#f6f8f7;border-radius:999px;padding:4px 12px 4px 4px;display:flex;gap:8px;align-items:center;text-align:left;max-width:100%" style-hover="background:#edf1ef"><span style="position:relative;overflow:hidden;width:28px;height:28px;flex:none;border-radius:50%;background:#e7eef8;color:#0b3d7a;display:grid;place-items:center;font-size:10px;font-weight:600">{{ p.initials }}<span style="position:absolute;inset:0;background-size:cover;background-position:center;background-image:{{ p.bgImg }}"></span></span><span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.nome }}</span><sc-if value="{{ p.hasUnit }}" hint-placeholder-val="{{ false }}"><span style="font-size:10px;color:{{ p.color }};font-weight:600">{{ p.unit }}</span></sc-if></span></button></sc-for><sc-if value="{{ c.noTit }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#b42318">A definir</span></sc-if></div>
+                    <div style="display:flex;flex-direction:column;gap:6px;min-width:0"><span style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#0b4f9c;font-weight:600">Suplente</span><sc-for list="{{ c.sups }}" as="p" hint-placeholder-count="1"><button sc-camel-on-click="{{ p.open }}" style="border:0;background:#f6f8f7;border-radius:999px;padding:4px 12px 4px 4px;display:flex;gap:8px;align-items:center;text-align:left;max-width:100%" style-hover="background:#edf1ef"><span style="position:relative;overflow:hidden;width:28px;height:28px;flex:none;border-radius:50%;background:#e7eef8;color:#0b3d7a;display:grid;place-items:center;font-size:10px;font-weight:600">{{ p.initials }}<span style="position:absolute;inset:0;background-size:cover;background-position:center;background-image:{{ p.bgImg }}"></span></span><span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.nome }}</span><sc-if value="{{ p.hasUnit }}" hint-placeholder-val="{{ false }}"><span style="font-size:10px;color:{{ p.color }};font-weight:600">{{ p.unit }}</span></sc-if></span></button></sc-for><sc-if value="{{ c.noSup }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#b42318">A definir</span></sc-if></div>
+                  </div>
+                  <sc-if value="{{ c.hasObs }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#3d4943;background:#f6f8f7;border-radius:10px;padding:8px 10px">{{ c.observacoes }}</span></sc-if>
+                  <div style="border-top:1px solid #f0f3f1;padding-top:12px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+                    <sc-if value="{{ c.hasSei }}" hint-placeholder-val="{{ true }}"><a href="{{ c.sei }}" target="_blank" rel="noopener" style="font-size:13px;font-weight:600;display:flex;gap:6px;align-items:center"><i class="ph-duotone ph-files"></i>{{ c.seiLabel }} ↗</a></sc-if>
+                    <sc-if value="{{ c.noSei }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#9aa5a0;display:flex;gap:6px;align-items:center"><i class="ph-duotone ph-files"></i>Sem processo SEI cadastrado</span></sc-if>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <aside style="background:#f6f8f7;border-radius:24px;padding:18px;display:flex;flex-direction:column;gap:10px;position:sticky;top:20px">
+            <span style="font-size:15px;font-weight:600">Servidores nos colegiados</span>
+            <span style="font-size:12px;color:#7a867f">Clique em um nome para filtrar.</span>
+            <div style="display:flex;flex-direction:column;gap:2px;max-height:65vh;overflow:auto">
+              <sc-for list="{{ col.people }}" as="p" hint-placeholder-count="6"><button sc-camel-on-click="{{ p.pick }}" style="border:1px solid {{ p.border }};background:{{ p.bg }};border-radius:12px;padding:6px 8px;display:flex;gap:10px;align-items:center;text-align:left" style-hover="background:#edf1ef"><span style="position:relative;overflow:hidden;width:30px;height:30px;flex:none;border-radius:50%;background:#e7eef8;color:#0b3d7a;display:grid;place-items:center;font-size:10px;font-weight:600">{{ p.initials }}<span style="position:absolute;inset:0;background-size:cover;background-position:center;background-image:{{ p.bgImg }}"></span></span><span style="display:flex;flex-direction:column;min-width:0;flex:1"><span style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.nome }}</span><span style="font-size:11px;color:#7a867f">{{ p.det }}</span></span><span style="font-size:12px;font-weight:600;color:#0b3d7a;background:#fff;border-radius:999px;min-width:24px;height:22px;display:grid;place-items:center">{{ p.n }}</span></button></sc-for>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ v.relatorios }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <span style="font-size:12px;color:#7a867f">Gestão</span>
+            <h1 style="margin:0;font-weight:600;font-size:44px;letter-spacing:-0.04em;line-height:1">Relatórios</h1>
+            <span style="font-size:15px;color:#5f6b65">Indicadores da agenda institucional · {{ rel.period }}</span>
+          </div>
+          <div style="display:flex;gap:8px"><button sc-camel-on-click="{{ rel.excel }}" title="Exportar para Excel" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:11px 14px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-file-xls" style="color:#1f9d4c"></i>Excel</button><button sc-camel-on-click="{{ rel.pdf }}" title="Gerar PDF" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:11px 14px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-file-pdf" style="color:#b42318"></i>PDF</button></div>
+          <div style="display:flex;gap:2px;background:#f2f5f4;border-radius:12px;padding:3px;flex-wrap:wrap">
+            <sc-for list="{{ rel.cats }}" as="c" hint-placeholder-count="5">
+              <button sc-camel-on-click="{{ c.pick }}" style="border:0;background:{{ c.bg }};color:{{ c.fg }};box-shadow:{{ c.sh }};font-weight:{{ c.fw }};border-radius:10px;padding:7px 12px;font-size:13px">{{ c.name }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:#fdf6dc;border-radius:20px;padding:18px 22px;display:flex;gap:18px;align-items:center;flex-wrap:wrap">
+          <span style="width:46px;height:46px;border-radius:14px;background:#f5c518;color:#0b2b55;display:grid;place-items:center;font-size:22px;flex:none"><i class="ph-duotone ph-umbrella"></i></span>
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:120px">
+            <span style="font-size:13px;font-weight:600;color:#7a5d00">De férias hoje</span>
+            <span style="display:flex;gap:6px;align-items:baseline"><b style="font-size:30px;font-weight:600;letter-spacing:-0.03em;line-height:1">{{ rel.ferN }}</b><span style="font-size:13px;color:#7a5d00">{{ rel.ferUnit }}</span></span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;flex:1;min-width:0">
+            <sc-if value="{{ rel.ferNone }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;color:#7a5d00">Ninguém está de férias hoje.</span></sc-if>
+            <sc-for list="{{ rel.ferList }}" as="p" hint-placeholder-count="1"><span style="background:#fff;border-radius:999px;padding:6px 12px;font-size:13px;display:flex;gap:6px;align-items:center"><span style="width:7px;height:7px;border-radius:50%;background:{{ p.color }}"></span><b style="font-weight:600">{{ p.name }}</b><span style="color:#7a867f">{{ p.kind }} · até {{ p.until }}</span></span></sc-for>
+          </div>
+        </div>
+        <div data-mk="two" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
+          <sc-for list="{{ rel.kpis }}" as="k" hint-placeholder-count="4">
+            <div style="background:#f6f8f7;border-radius:20px;padding:18px 20px;display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#5f6b65">{{ k.label }}</span><i class="{{ k.icon }}" style="color:{{ k.color }};font-size:20px"></i></div>
+              <span style="font-size:40px;font-weight:600;letter-spacing:-0.04em;line-height:1">{{ k.value }}</span>
+              <span style="font-size:12px;color:#7a867f">{{ k.sub }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px">
+          <sc-for list="{{ rel.donuts }}" as="c" hint-placeholder-count="3">
+            <div style="background:#f6f8f7;border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:16px">
+              <span style="font-size:17px;font-weight:600;letter-spacing:-0.01em">{{ c.title }}</span>
+              <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+                <div style="width:120px;height:120px;border-radius:50%;background:{{ c.grad }};display:grid;place-items:center;flex:none">
+                  <div style="width:66px;height:66px;border-radius:50%;background:#f6f8f7;display:flex;flex-direction:column;align-items:center;justify-content:center"><b style="font-size:20px;font-weight:600;line-height:1">{{ c.total }}</b><span style="font-size:10px;color:#7a867f">eventos</span></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:140px">
+                  <sc-if value="{{ c.empty }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#7a867f">Sem dados.</span></sc-if>
+                  <sc-for list="{{ c.rows }}" as="r" hint-placeholder-count="3">
+                    <div data-mk="keep" style="display:grid;grid-template-columns:12px minmax(0,1fr) 24px 38px;gap:8px;align-items:center;font-size:13px">
+                      <span style="width:10px;height:10px;border-radius:3px;background:{{ r.color }}"></span>
+                      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.label }}</span>
+                      <b style="font-weight:600;text-align:right">{{ r.value }}</b>
+                      <span style="color:#7a867f;text-align:right;font-size:12px">{{ r.pct }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <span style="font-size:17px;font-weight:600">Próximos</span>
+            <sc-if value="{{ rel.nextNone }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;color:#7a867f">Nenhum evento a seguir.</span></sc-if>
+            <sc-for list="{{ rel.next }}" as="e" hint-placeholder-count="3">
+              <button sc-camel-on-click="{{ e.view }}" data-mk="keep" style="border:0;text-align:left;background:#fff;box-shadow:inset 0 0 0 1px #e4e8e6;border-radius:14px;padding:10px 14px 10px 0;display:grid;grid-template-columns:4px 52px minmax(0,1fr);gap:12px;align-items:center;overflow:hidden" style-hover="background:#f8fafd">
+                <span style="width:4px;align-self:stretch;background:{{ e.color }}"></span>
+                <span style="display:flex;flex-direction:column;align-items:center"><b style="font-size:20px;font-weight:600;line-height:1">{{ e.d }}</b><span style="font-size:10px;letter-spacing:0.08em;color:#7a867f">{{ e.mon }}</span></span>
+                <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ e.title }}</span><span style="font-size:12px;color:#7a867f">{{ e.meta }}</span></span>
+              </button>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <span style="font-size:17px;font-weight:600">Cancelados</span>
+            <sc-if value="{{ rel.cancNone }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;color:#7a867f">Nenhum evento cancelado.</span></sc-if>
+            <sc-for list="{{ rel.canc }}" as="e" hint-placeholder-count="1">
+              <button sc-camel-on-click="{{ e.view }}" data-mk="keep" style="border:0;text-align:left;background:#fff;box-shadow:inset 0 0 0 1px #e4e8e6;border-radius:14px;padding:12px 14px 12px 0;display:grid;grid-template-columns:4px 28px minmax(0,1fr) auto;gap:10px;align-items:center;overflow:hidden" style-hover="background:#fdf5f5">
+                <span style="width:4px;align-self:stretch;background:#b42318"></span>
+                <i class="ph-duotone ph-x-circle" style="color:#b42318;font-size:18px"></i>
+                <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ e.title }}</span><span style="font-size:12px;color:#7a867f">{{ e.meta }}</span></span>
+                <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:#fbe1e1;color:#b42318">Cancelado</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ v.usuarios }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <h1 style="margin:0;font-weight:600;font-size:44px;letter-spacing:-0.04em;line-height:1">Usuários</h1>
+          <span style="font-size:15px;color:#5f6b65">{{ usr.summary }}</span>
+        </div>
+        <sc-if value="{{ usr.isAdmin }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:4px;background:#f2f5f4;border-radius:14px;padding:4px;align-self:flex-start">
+            <sc-for list="{{ usr.tabsTop }}" as="t" hint-placeholder-count="2"><button sc-camel-on-click="{{ t.pick }}" style="border:0;border-radius:10px;padding:9px 16px;font-size:14px;font-weight:{{ t.fw }};background:{{ t.bg }};color:{{ t.fg }};display:flex;gap:8px;align-items:center"><i class="{{ t.icon }}"></i>{{ t.name }}</button></sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ usr.isUsers }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:24px">
+        <div style="display:flex;gap:8px;align-items:center">
+              <div style="position:relative;flex:1;min-width:0">
+                <i class="ph-duotone ph-magnifying-glass" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7a867f;font-size:16px"></i>
+                <input value="{{ usrF.q }}" sc-camel-on-input="{{ usrF.setQ }}" placeholder="Buscar por nome ou usuário" style="width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border:1px solid #e4e8e6;border-radius:14px;font-size:14px;background:#f6f8f7">
+              </div>
+              <button sc-camel-on-click="{{ usr.excel }}" title="Exportar para Excel" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:11px 14px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-file-xls" style="color:#1f9d4c"></i>Excel</button><button sc-camel-on-click="{{ usr.pdf }}" title="Gerar PDF" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:11px 14px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-file-pdf" style="color:#b42318"></i>PDF</button>
+              <div style="position:relative">
+                <button sc-camel-on-click="{{ usrF.toggle }}" style="border:1px solid {{ usrF.border }};background:{{ usrF.bg }};border-radius:14px;padding:11px 16px;font-size:14px;font-weight:600;display:flex;gap:8px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-sliders-horizontal"></i>Filtros<sc-if value="{{ usrF.hasActive }}" hint-placeholder-val="{{ false }}"><span style="min-width:20px;height:20px;border-radius:999px;background:#1f9d4c;color:#fff;font-size:11px;display:grid;place-items:center;padding:0 6px;box-sizing:border-box">{{ usrF.activeCount }}</span></sc-if></button>
+                <sc-if value="{{ usrF.open }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute;right:0;top:54px;z-index:30;width:400px;max-width:90vw;background:#fff;border:1px solid #e4e8e6;border-radius:20px;box-shadow:0 20px 50px #0b2b5522;padding:18px;display:flex;flex-direction:column;gap:14px">
+                    <div style="display:grid;grid-template-columns:1fr;gap:12px"><label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:#3d4943">Nível de acesso<sc-raw-select value="{{ usrF.nivel }}" sc-camel-on-change="{{ usrF.setNivel }}" style="padding:9px 10px;border:1px solid #e4e8e6;border-radius:10px;font-size:14px;background:#fff;font-weight:400;color:#122019"><sc-for list="{{ usrF.nivelOpts }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.n }}</option></sc-for></sc-raw-select></label></div><div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;font-weight:600;color:#3d4943">Unidades</span><div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ usrF.units }}" as="u" hint-placeholder-count="7"><button sc-camel-on-click="{{ u.pick }}" style="border:1px solid {{ u.border }};background:{{ u.bg }};color:{{ u.fg }};font-weight:{{ u.fw }};border-radius:999px;padding:5px 11px;font-size:12px;display:flex;gap:6px;align-items:center"><span style="width:7px;height:7px;border-radius:50%;background:{{ u.color }}"></span>{{ u.name }}</button></sc-for></div></div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid #f0f3f1">
+                      <button sc-camel-on-click="{{ usrF.clear }}" style="border:0;background:transparent;color:#5f6b65;font-size:13px;font-weight:500">Limpar tudo</button>
+                      <button sc-camel-on-click="{{ usrF.toggle }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600">Aplicar</button>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;min-height:24px">
+              <span style="font-size:13px;color:#5f6b65">{{ usrF.summary }}</span>
+              <sc-for list="{{ usrF.active }}" as="c" hint-placeholder-count="0"><span style="background:#e7eef8;color:#0b3d7a;border-radius:999px;padding:3px 5px 3px 11px;font-size:12px;font-weight:500;display:flex;gap:6px;align-items:center">{{ c.label }}<button sc-camel-on-click="{{ c.remove }}" style="width:18px;height:18px;border:0;border-radius:50%;background:#0b3d7a1a;color:#0b3d7a;display:grid;place-items:center;padding:0"><i class="ph-bold ph-x" style="font-size:10px"></i></button></span></sc-for>
+            </div>
+        <div style="display:flex;flex-direction:column;border:1px solid #e4e8e6;border-radius:24px;padding:6px 20px">
+          <div style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1.3fr) 170px;gap:16px;padding:12px 0;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#7a867f;border-bottom:1px solid #e4e8e6"><span>Nome</span><span>Usuário</span><span>Acesso às unidades</span><span style="text-align:right">Nível</span></div>
+          <sc-for list="{{ usr.list }}" as="u" hint-placeholder-count="8">
+            <div style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1.3fr) 170px;gap:16px;align-items:center;padding:12px 0;border-bottom:1px solid #f0f3f1">
+              <button sc-camel-on-click="{{ u.open }}" title="{{ usr.openTitle }}" style="border:0;background:transparent;padding:0;text-align:left;cursor:{{ usr.cursor }};display:flex;gap:10px;align-items:center;min-width:0"><span style="position:relative;overflow:hidden;width:34px;height:34px;flex:none;border-radius:50%;background:{{ u.avBg }};color:#0b3d7a;display:grid;place-items:center;font-size:12px;font-weight:600">{{ u.initials }}<span style="position:absolute;inset:0;background-size:cover;background-position:center;background-image:{{ u.photoBg }}"></span></span><span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:14px;font-weight:500;color:{{ usr.nameColor }}">{{ u.nome }}</span><span style="font-size:12px;color:#c99a00">{{ u.aprova }}</span></span></button>
+              <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:13px;color:#5f6b65">{{ u.usuario }}</span><span style="font-size:11px;color:#9aa5a0">{{ u.senha }}</span></span>
+              <span style="display:flex;gap:4px;flex-wrap:wrap"><sc-for list="{{ u.acesso }}" as="a" hint-placeholder-count="1"><span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:999px;background:#f2f5f4;display:flex;gap:4px;align-items:center"><span style="width:6px;height:6px;border-radius:50%;background:{{ a.color }}"></span>{{ a.name }}</span></sc-for></span>
+              <span style="justify-self:end;display:flex;gap:6px;align-items:center">
+                <sc-if value="{{ usr.isAdmin }}" hint-placeholder-val="{{ false }}">
+                  <sc-if value="{{ u.canReset }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ u.reset }}" title="Redefinir senha" style="width:30px;height:30px;border:1px solid #e4e8e6;border-radius:8px;background:#fff;color:#5f6b65;display:grid;place-items:center" style-hover="background:#f2f5f4"><i class="ph-duotone ph-key"></i></button></sc-if>
+                  <sc-raw-select value="{{ u.nivelId }}" sc-camel-on-change="{{ u.setNivel }}" title="Nível de acesso" style="font-size:12px;font-weight:500;padding:4px 6px;border-radius:999px;border:1px solid #e4e8e6;background:{{ u.nBg }};color:{{ u.nFg }}"><option value="editor">Editor</option><option value="admin">Administrador</option></sc-raw-select>
+                </sc-if>
+                <sc-if value="{{ usr.notAdmin }}" hint-placeholder-val="{{ true }}"><span style="font-size:12px;font-weight:500;padding:3px 10px;border-radius:999px;background:{{ u.nBg }};color:{{ u.nFg }}">{{ u.nivel }}</span></sc-if>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+        </div>
+        </sc-if>
+        <sc-if value="{{ usr.isDocs }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <div style="position:relative;flex:1;min-width:220px">
+                <i class="ph-duotone ph-magnifying-glass" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7a867f;font-size:16px"></i>
+                <input value="{{ usr.docs.q }}" sc-camel-on-input="{{ usr.docs.setQ }}" placeholder="Buscar documento ou link em todas as pastas" style="width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border:1px solid #e4e8e6;border-radius:14px;font-size:14px;background:#f6f8f7">
+              </div>
+              <button sc-camel-on-click="{{ usr.docs.newFolder }}" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:11px 14px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-folder-plus" style="color:#c99a00"></i>Nova pasta</button>
+              <button sc-camel-on-click="{{ usr.docs.newLink }}" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:11px 14px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-link" style="color:#0b4f9c"></i>Novo link</button>
+              <label style="border:0;background:#1f9d4c;color:#fff;border-radius:14px;padding:11px 16px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap;cursor:pointer"><i class="ph-bold ph-upload-simple"></i>{{ usr.docs.uploadLabel }}<input type="file" multiple="" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.csv,.txt" sc-camel-on-change="{{ usr.docs.pick }}" style="display:none"></label>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+              <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:14px">
+                <sc-for list="{{ usr.docs.crumbs }}" as="c" hint-placeholder-count="1"><span style="display:flex;gap:6px;align-items:center"><button sc-camel-on-click="{{ c.go }}" style="border:0;background:transparent;padding:0;font-size:14px;font-weight:600;color:#0b4f9c">{{ c.nome }}</button><span style="color:#9aa5a0">/</span></span></sc-for>
+              </div>
+              <span style="font-size:13px;color:#5f6b65;display:flex;gap:6px;align-items:center"><i class="ph-duotone ph-lock" style="color:#c99a00"></i>Só administradores · {{ usr.docs.summary }}</span>
+            </div>
+            <sc-if value="{{ usr.docs.loading }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#7a867f">Carregando…</span></sc-if>
+            <sc-if value="{{ usr.docs.empty }}" hint-placeholder-val="{{ false }}"><div style="border:1px dashed #d5dcd8;border-radius:20px;padding:32px;text-align:center;color:#7a867f;font-size:14px">{{ usr.docs.emptyMsg }}</div></sc-if>
+            <sc-if value="{{ usr.docs.hasFolders }}" hint-placeholder-val="{{ false }}">
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px">
+                <sc-for list="{{ usr.docs.folders }}" as="f" hint-placeholder-count="2">
+                  <div style="border:1px solid #e4e8e6;border-radius:16px;padding:12px 14px;display:flex;gap:10px;align-items:center;background:#fff">
+                    <button sc-camel-on-click="{{ f.open }}" style="border:0;background:transparent;padding:0;display:flex;gap:12px;align-items:center;text-align:left;flex:1;min-width:0"><i class="ph-duotone ph-folder" style="font-size:34px;color:#f5c518;flex:none"></i><span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ f.nome }}</span><span style="font-size:12px;color:#7a867f">{{ f.n }}</span></span></button>
+                    <span style="display:flex;gap:4px"><button sc-camel-on-click="{{ f.rename }}" title="Renomear" style="width:30px;height:30px;border:1px solid #e4e8e6;border-radius:8px;background:#fff;display:grid;place-items:center"><i class="ph-duotone ph-pencil-simple"></i></button><button sc-camel-on-click="{{ f.del }}" title="Excluir pasta" style="width:30px;height:30px;border:1px solid #e4e8e6;border-radius:8px;background:#fff;display:grid;place-items:center;border-color:#f3c7c7;color:#b42318"><i class="ph-duotone ph-trash"></i></button></span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ usr.docs.hasFiles }}" hint-placeholder-val="{{ false }}">
+              <div style="border:1px solid #e4e8e6;border-radius:20px;overflow:hidden">
+                <sc-for list="{{ usr.docs.files }}" as="a" hint-placeholder-count="3">
+                  <div style="display:flex;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid #f0f3f1">
+                    <button sc-camel-on-click="{{ a.open }}" title="Abrir" style="border:0;background:transparent;padding:0;display:flex;gap:12px;align-items:center;text-align:left;flex:1;min-width:0"><i class="{{ a.icon }}" style="font-size:28px;color:{{ a.color }};flex:none"></i><span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ a.nome }}</span><span style="font-size:12px;color:#7a867f;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ a.info }} · {{ a.pasta }}</span></span></button>
+                    <span style="display:flex;gap:4px"><button sc-camel-on-click="{{ a.open }}" title="Abrir" style="width:30px;height:30px;border:1px solid #e4e8e6;border-radius:8px;background:#fff;display:grid;place-items:center"><i class="ph-duotone ph-arrow-square-out"></i></button><button sc-camel-on-click="{{ a.edit }}" title="Renomear ou mover" style="width:30px;height:30px;border:1px solid #e4e8e6;border-radius:8px;background:#fff;display:grid;place-items:center"><i class="ph-duotone ph-pencil-simple"></i></button><button sc-camel-on-click="{{ a.del }}" title="Excluir" style="width:30px;height:30px;border:1px solid #e4e8e6;border-radius:8px;background:#fff;display:grid;place-items:center;border-color:#f3c7c7;color:#b42318"><i class="ph-duotone ph-trash"></i></button></span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+        <sc-if value="{{ usr.isAssplan }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <div style="position:relative;flex:1;min-width:220px">
+                <i class="ph-duotone ph-magnifying-glass" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7a867f;font-size:16px"></i>
+                <input value="{{ usr.assplan.q }}" sc-camel-on-input="{{ usr.assplan.setQ }}" placeholder="Buscar por processo, setor, número ou responsável" style="width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border:1px solid #e4e8e6;border-radius:14px;font-size:14px;background:#f6f8f7">
+              </div>
+              <button sc-camel-on-click="{{ usr.assplan.excel }}" title="Exportar para Excel" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:11px 14px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-file-xls" style="color:#1f9d4c"></i>Excel</button><button sc-camel-on-click="{{ usr.assplan.pdf }}" title="Gerar PDF" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:11px 14px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-file-pdf" style="color:#b42318"></i>PDF</button>
+              <button sc-camel-on-click="{{ usr.assplan.add }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:14px;padding:11px 16px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap" style-hover="background:#178040"><i class="ph-bold ph-plus"></i>Novo item</button>
+            </div>
+            <span style="font-size:13px;color:#5f6b65;display:flex;gap:6px;align-items:center"><i class="ph-duotone ph-lock" style="color:#c99a00"></i>Visível só para administradores · {{ usr.assplan.summary }}</span>
+            <sc-if value="{{ usr.assplan.loading }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#7a867f">Carregando…</span></sc-if>
+            <sc-if value="{{ usr.assplan.empty }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#7a867f">Nenhum item encontrado.</span></sc-if>
+            <sc-for list="{{ usr.assplan.groups }}" as="g" hint-placeholder-count="1">
+              <div style="border:1px solid #e4e8e6;border-radius:20px;overflow:hidden">
+                <div style="background:#0b3d7a;color:#fff;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-size:14px;font-weight:600;display:flex;gap:8px;align-items:center"><i class="ph-duotone ph-folder-open"></i>Processo {{ g.processo }}</span><span style="font-size:12px;color:#c9d8ec">{{ g.n }} itens</span></div>
+                <div style="display:grid;grid-template-columns:110px 120px 170px minmax(0,1fr) 80px;gap:12px;padding:10px 18px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#7a867f;border-bottom:1px solid #e4e8e6"><span>Setor</span><span>Equipamento</span><span>Nº patrimônio</span><span>Responsável</span><span></span></div>
+                <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="3">
+                  <div style="display:grid;grid-template-columns:110px 120px 170px minmax(0,1fr) 80px;gap:12px;padding:10px 18px;align-items:center;border-bottom:1px solid #f0f3f1;font-size:14px">
+                    <span style="font-weight:600">{{ it.setor }}</span><span>{{ it.equipamento }}</span><span style="font-variant-numeric:tabular-nums">{{ it.numero }}</span>
+                    <span style="display:flex;flex-direction:column;min-width:0"><span>{{ it.resp }}</span><sc-if value="{{ it.hasObs }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#7a867f">{{ it.obs }}</span></sc-if></span>
+                    <span style="display:flex;gap:4px;justify-content:flex-end"><button sc-camel-on-click="{{ it.edit }}" title="Editar" style="width:30px;height:30px;border:1px solid #e4e8e6;border-radius:8px;background:#fff;display:grid;place-items:center"><i class="ph-duotone ph-pencil-simple"></i></button><button sc-camel-on-click="{{ it.del }}" title="Excluir" style="width:30px;height:30px;border:1px solid #f3c7c7;border-radius:8px;background:#fff;color:#b42318;display:grid;place-items:center"><i class="ph-duotone ph-trash"></i></button></span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ v.ferias }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <h1 style="margin:0;font-weight:600;font-size:44px;letter-spacing:-0.04em;line-height:1">Férias</h1>
+            <span style="font-size:15px;color:#5f6b65">{{ fer.summary }}</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button sc-camel-on-click="{{ fer.excel }}" title="Exportar para Excel" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:11px 14px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-file-xls" style="color:#1f9d4c"></i>Excel</button><button sc-camel-on-click="{{ fer.pdf }}" title="Gerar PDF" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:11px 14px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-file-pdf" style="color:#b42318"></i>PDF</button><button sc-camel-on-click="{{ openFerias }}" style="border:0;border-radius:999px;background:#f5c518;color:#0b2b55;padding:10px 18px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center" style-hover="background:#e6b600"><i class="ph-bold ph-plus"></i>Solicitar férias</button></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px">
+          <sc-for list="{{ fer.list }}" as="p" hint-placeholder-count="4">
+            <div style="background:{{ p.bg }};color:{{ p.fg }};border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span style="font-size:12px;font-weight:500;padding:3px 10px;border-radius:999px;background:{{ p.badgeBg }};color:{{ p.badgeFg }}">{{ p.status }}</span>
+                <span style="font-size:12px;color:{{ p.sub }}">{{ p.kind }}</span>
+              </div>
+              <div style="display:flex;gap:12px;align-items:center">
+                <span style="width:44px;height:44px;border-radius:50%;background:{{ p.avBg }};color:{{ p.avFg }};display:grid;place-items:center;font-weight:600;font-size:14px">{{ p.initials }}</span>
+                <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:16px;font-weight:600">{{ p.name }}</span><span style="font-size:12px;color:{{ p.sub }}">{{ p.role }}</span></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+                <span style="font-size:22px;font-weight:600;letter-spacing:-0.03em">{{ p.period }}</span>
+                <span style="font-size:13px;color:{{ p.sub }}">{{ p.rel }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ v.perfil }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:#1f9d4c;font-weight:500">Configurações da conta</span>
+          <h1 style="margin:0;font-weight:600;font-size:44px;letter-spacing:-0.04em;line-height:1">Meu perfil</h1>
+        </div>
+        <div style="background:#0b3d7a;color:#fff;border-radius:24px;padding:24px;display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+            <label title="Trocar foto" style="position:relative;width:84px;height:84px;border-radius:50%;background:#f5c518;color:#0b3d7a;display:grid;place-items:center;font-size:26px;font-weight:600;cursor:pointer;overflow:hidden;flex:none" style-hover="filter:brightness(0.95)">{{ my.initials }}<span style="position:absolute;inset:0;background-size:cover;background-position:center;background-image:{{ photoBg }}"></span><span style="position:absolute;right:0;bottom:0;left:0;height:28px;background:#0b2b55b3;color:#fff;display:grid;place-items:center;font-size:14px"><i class="ph-duotone ph-camera"></i></span><input type="file" accept="image/*" sc-camel-on-change="{{ pickPhoto }}" style="display:none"></label>
+            <sc-if value="{{ hasPhoto }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ removePhoto }}" style="border:0;background:transparent;color:#c9d8ec;font-size:12px;padding:0" style-hover="color:#fff">Remover foto</button></sc-if>
+            <sc-if value="{{ noPhoto }}" hint-placeholder-val="{{ true }}"><span style="font-size:12px;color:#c9d8ec">Adicionar foto</span></sc-if>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:200px">
+            <span style="font-size:24px;font-weight:600;letter-spacing:-0.02em">{{ my.name }}</span>
+            <span style="font-size:14px;color:#c9d8ec">{{ prof.cargo }} · {{ my.unit }} · {{ my.role }}</span>
+            <a href="#" sc-camel-on-click="{{ goOrg }}" style="color:#f5c518;font-size:13px;font-weight:500;margin-top:4px">Ver no organograma →</a>
+          </div>
+          <div style="background:#ffffff14;border-radius:16px;padding:14px 16px;min-width:220px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;font-size:13px"><span>Perfil completo</span><span style="font-weight:600">{{ prof.pct }}%</span></div>
+            <div style="height:6px;border-radius:99px;background:#ffffff26;overflow:hidden"><div style="height:100%;width:{{ prof.pctW }};background:#1f9d4c;border-radius:99px"></div></div>
+            <span style="font-size:12px;color:#c9d8ec">{{ prof.hint }}</span>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px;align-items:start">
+          <div style="border:1px solid #e4e8e6;border-radius:24px;overflow:hidden;display:flex;flex-direction:column">
+            <div style="padding:24px;display:flex;flex-direction:column;gap:18px">
+              <div style="display:flex;gap:14px;align-items:center">
+                <span style="width:42px;height:42px;border-radius:12px;background:#1f9d4c;color:#fff;display:grid;place-items:center;font-size:20px"><i class="ph-duotone ph-user"></i></span>
+                <div style="display:flex;flex-direction:column"><span style="font-size:17px;font-weight:600">Informações pessoais</span><span style="font-size:13px;color:#5f6b65">Dados de identificação e contato.</span></div>
+              </div>
+              <span style="background:#f6f8f7;border-radius:12px;padding:10px 14px;font-size:13px;color:#3d4943;display:flex;gap:8px;align-items:center"><i class="ph-duotone ph-lock" style="color:#1f9d4c"></i>Somente você pode visualizar e editar estes dados.</span>
+              <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px">
+                <label style="grid-column:1/-1;display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Nome completo<span style="position:relative;display:flex"><i class="ph-duotone ph-user" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7a867f;font-size:16px"></i><input readonly="" value="{{ my.name }}" placeholder="" style="width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;color:#122019;background:#f6f8f7"></span></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Cargo<span style="position:relative;display:flex"><i class="ph-duotone ph-briefcase" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7a867f;font-size:16px"></i><input value="{{ prof.cargo }}" sc-camel-on-input="{{ setProf.cargo }}" placeholder="Ex.: Analista de Planejamento" style="width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;color:#122019;background:#fff"></span></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Unidade de lotação<span style="position:relative;display:flex"><i class="ph-duotone ph-buildings" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7a867f;font-size:16px"></i><input readonly="" value="{{ my.unit }}" placeholder="" style="width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;color:#122019;background:#f6f8f7"></span></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Telefone<span style="position:relative;display:flex"><i class="ph-duotone ph-phone" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7a867f;font-size:16px"></i><input value="{{ prof.tel }}" sc-camel-on-input="{{ setProf.tel }}" placeholder="62 9 0000-0000" style="width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;color:#122019;background:#fff"></span></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">E-mail<span style="position:relative;display:flex"><i class="ph-duotone ph-envelope-simple" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7a867f;font-size:16px"></i><input readonly="" value="{{ my.email }}" placeholder="" style="width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;color:#122019;background:#f6f8f7"></span></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Aniversário (dia/mês)<span style="position:relative;display:flex"><i class="ph-duotone ph-calendar-blank" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7a867f;font-size:16px"></i><input value="{{ prof.bday }}" sc-camel-on-input="{{ setProf.bday }}" placeholder="dd/mm" style="width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;color:#122019;background:#fff"></span></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Nome do computador<span style="position:relative;display:flex"><i class="ph-duotone ph-desktop" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7a867f;font-size:16px"></i><input value="{{ prof.pc }}" sc-camel-on-input="{{ setProf.pc }}" placeholder="Ex.: PC-SCPMA-042" style="width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;color:#122019;background:#fff"></span></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Nº do armário<span style="position:relative;display:flex"><i class="ph-duotone ph-identification-card" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7a867f;font-size:16px"></i><input value="{{ prof.arm }}" sc-camel-on-input="{{ setProf.arm }}" placeholder="Ex.: 042" style="width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;color:#122019;background:#fff"></span></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">CPF<span style="position:relative;display:flex"><i class="ph-duotone ph-identification-card" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7a867f;font-size:16px"></i><input value="{{ prof.cpf }}" sc-camel-on-input="{{ setProf.cpf }}" placeholder="000.000.000-00" style="width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;color:#122019;background:#fff"></span></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Matrícula<span style="position:relative;display:flex"><i class="ph-duotone ph-identification-card" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7a867f;font-size:16px"></i><input value="{{ prof.mat }}" sc-camel-on-input="{{ setProf.mat }}" placeholder="Nº de matrícula" style="width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;color:#122019;background:#fff"></span></label>
+              </div>
+            </div>
+            <div style="background:#f6f8f7;border-top:1px solid #e4e8e6;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+              <span style="font-size:12px;color:#7a867f">{{ prof.saved }}</span>
+              <button sc-camel-on-click="{{ saveProf }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:12px;padding:11px 18px;font-size:14px;font-weight:600;display:flex;gap:8px;align-items:center" style-hover="background:#178040"><i class="ph-bold ph-check"></i>Salvar alterações</button>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="border:1px solid #e4e8e6;border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:10px">
+              <span style="font-size:17px;font-weight:600;display:flex;gap:8px;align-items:center"><i class="ph-duotone ph-key" style="color:#0b4f9c"></i>Alterar senha</span>
+              <span style="font-size:12px;color:#5f6b65">Pelo menos 8 caracteres, com letras e números.</span>
+              <input type="password" value="{{ pwc.np1 }}" sc-camel-on-input="{{ pwc.setNp1 }}" placeholder="Nova senha" autocomplete="new-password" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;background:#fff">
+              <input type="password" value="{{ pwc.np2 }}" sc-camel-on-input="{{ pwc.setNp2 }}" placeholder="Repita a nova senha" autocomplete="new-password" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;background:#fff">
+              <button sc-camel-on-click="{{ pwc.save }}" style="align-self:flex-start;border:0;background:#0b3d7a;color:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:600">{{ pwc.btn }}</button>
+            </div>
+            <sc-if value="{{ myPat.show }}" hint-placeholder-val="{{ false }}">
+            <div style="border:1px solid #f5c518;background:#fffbea;border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:10px">
+              <span style="font-size:17px;font-weight:600;display:flex;gap:8px;align-items:center"><i class="ph-duotone ph-laptop" style="color:#c99a00"></i>Patrimônio</span>
+              <span style="font-size:12px;color:#7a5d00">Visível só para administradores. Salvo com "Salvar alterações".</span>
+              <label style="display:flex;gap:8px;align-items:center;font-size:13px;color:#3d4943"><input type="checkbox" checked="{{ myPat.tem }}" sc-camel-on-change="{{ myPat.setTem }}" style="width:16px;height:16px;accent-color:#1f9d4c">Possuo notebook/tablet patrimoniado</label>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Nº do patrimônio<input value="{{ myPat.num }}" sc-camel-on-input="{{ myPat.setNum }}" placeholder="Ex.: 123456" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label>
+            </div>
+            </sc-if>
+            <div style="background:#f6f8f7;border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:16px">
+              <span style="font-size:17px;font-weight:600;display:flex;gap:8px;align-items:center"><i class="ph-duotone ph-lock" style="color:#1f9d4c"></i>Privacidade</span>
+              <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:12px;color:#5f6b65;display:flex;gap:6px;align-items:center"><i class="ph-duotone ph-users"></i>Visível no organograma</span><span style="font-size:14px;font-weight:600">Nome, cargo e unidade</span></div>
+              <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:12px;color:#5f6b65;display:flex;gap:6px;align-items:center"><i class="ph-duotone ph-lock"></i>Visível somente para você</span><span style="font-size:14px;font-weight:600">Dados pessoais e contato</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+  </main>
+
+  <sc-if value="{{ modal }}" hint-placeholder-val="{{ false }}">
+    <div sc-camel-on-click="{{ closeNew }}" style="position:fixed;inset:0;background:#0b2b5566;display:flex;justify-content:flex-end;z-index:50">
+      <div class="hub-fab" style="display:flex;flex-direction:column;gap:10px;padding:20px 12px">
+        <button sc-camel-on-click="{{ create }}" title="Salvar" style="width:46px;height:46px;border:0;border-radius:50%;background:#1f9d4c;color:#fff;font-size:20px;box-shadow:0 6px 18px #0b2b5533"><i class="ph-bold ph-check"></i></button>
+        <button sc-camel-on-click="{{ closeNew }}" title="Fechar" style="width:46px;height:46px;border:0;border-radius:50%;background:#0b3d7a;color:#fff;font-size:20px;box-shadow:0 6px 18px #0b2b5533"><i class="ph-bold ph-x"></i></button>
+        <button sc-camel-on-click="{{ createAndDup }}" title="Salvar e duplicar" style="width:46px;height:46px;border:0;border-radius:50%;background:#f5c518;color:#0b2b55;font-size:20px;box-shadow:0 6px 18px #0b2b5533"><i class="ph-bold ph-copy"></i></button>
+      </div>
+      <div sc-camel-on-click="{{ stop }}" style="width:min(560px,100%);height:100%;background:#fff;display:flex;flex-direction:column;box-shadow:-20px 0 60px #0b2b5533">
+        <div style="display:flex;gap:14px;align-items:center;padding:20px 26px;border-bottom:1px solid #e4e8e6">
+          <span style="width:44px;height:44px;border-radius:14px;background:#1f9d4c;color:#fff;display:grid;place-items:center;font-size:20px"><i class="ph-duotone ph-calendar-plus"></i></span>
+          <div style="display:flex;flex-direction:column;flex:1"><span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#1f9d4c;font-weight:600">{{ modalKicker }}</span><span style="font-size:22px;font-weight:600;letter-spacing:-0.02em">{{ modalTitle }}</span></div>
+        </div>
+        <div style="flex:1;overflow:auto;padding:22px 26px;display:flex;flex-direction:column;gap:26px">
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;gap:12px;align-items:center"><span style="width:30px;height:30px;border-radius:10px;background:#dcf2e3;color:#146c35;display:grid;place-items:center;font-size:12px;font-weight:600">01</span><span style="font-size:16px;font-weight:600">Informações do evento</span></div>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">Título<input value="{{ f.title }}" sc-camel-on-input="{{ setF.title }}" placeholder="Ex.: Curso de Planejamento" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;background:#fff;border-color:{{ titleBorder }}"></label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500"><span style="display:flex;justify-content:space-between">Descrição<span style="color:#9aa5a0;font-weight:400">{{ descCount }}/400</span></span><textarea value="{{ f.desc }}" sc-camel-on-input="{{ setF.desc }}" maxlength="400" rows="4" placeholder="Detalhes do compromisso…" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;background:#fff;resize:vertical"></textarea></label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">Unidade responsável<sc-raw-select value="{{ f.unit }}" sc-camel-on-change="{{ setF.unit }}" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;background:#fff"><sc-for list="{{ unitOpts }}" as="o" hint-placeholder-count="7"><option value="{{ o.id }}">{{ o.name }}</option></sc-for></sc-raw-select></label>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">Categoria<sc-raw-select value="{{ f.cat }}" sc-camel-on-change="{{ setF.cat }}" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;background:#fff"><sc-for list="{{ catOpts }}" as="o" hint-placeholder-count="8"><option value="{{ o.id }}">{{ o.name }}</option></sc-for></sc-raw-select></label>
+            </div>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">Participantes<sc-raw-select value="{{ f.part }}" sc-camel-on-change="{{ setF.part }}" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;background:#fff"><option value="unidade">Minha unidade (grupo)</option><option value="todas">Todas as unidades</option><option value="lista">Escolher pessoas</option></sc-raw-select></label>
+            <sc-if value="{{ partLista }}" hint-placeholder-val="{{ false }}">
+              <div style="border:1px solid #e4e8e6;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13px;font-weight:600">{{ pick.count }}</span><span style="display:flex;gap:10px"><button sc-camel-on-click="{{ pick.all }}" style="border:0;background:transparent;color:#0b4f9c;font-size:12px;font-weight:600;padding:0">Marcar todos da busca</button><button sc-camel-on-click="{{ pick.clear }}" style="border:0;background:transparent;color:#b42318;font-size:12px;font-weight:600;padding:0">Limpar</button></span></div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ pick.chips }}" as="c" hint-placeholder-count="0"><span style="font-size:12px;background:#e7eef8;color:#0b3d7a;border-radius:999px;padding:4px 6px 4px 10px;display:flex;gap:4px;align-items:center">{{ c.nome }}<button sc-camel-on-click="{{ c.remove }}" style="border:0;background:transparent;padding:0 2px;color:#0b3d7a"><i class="ph-bold ph-x"></i></button></span></sc-for></div>
+                <input value="{{ pick.q }}" sc-camel-on-input="{{ pick.setQ }}" placeholder="Buscar por nome ou unidade" style="padding:9px 12px;border:1px solid #e4e8e6;border-radius:10px;font-size:13px;background:#f6f8f7">
+                <div style="max-height:220px;overflow:auto;display:flex;flex-direction:column;gap:2px">
+                  <sc-for list="{{ pick.list }}" as="p" hint-placeholder-count="5"><button sc-camel-on-click="{{ p.toggle }}" style="border:0;background:{{ p.bg }};border-radius:10px;padding:7px 8px;display:flex;gap:10px;align-items:center;text-align:left" style-hover="background:#f2f5f4"><i class="{{ p.icon }}" style="font-size:18px;color:{{ p.ic }}"></i><span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:13px;font-weight:500">{{ p.nome }}</span><span style="font-size:11px;color:#7a867f">{{ p.info }}</span></span></button></sc-for>
+                  <sc-if value="{{ pick.none }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#7a867f;padding:6px">Ninguém encontrado.</span></sc-if>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;gap:12px;align-items:center"><span style="width:30px;height:30px;border-radius:10px;background:#e7eef8;color:#0b4f9c;display:grid;place-items:center;font-size:12px;font-weight:600">02</span><span style="font-size:16px;font-weight:600">Data e horário</span></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">Data início<input type="date" value="{{ f.d1 }}" sc-camel-on-input="{{ setF.d1 }}" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;background:#fff"></label>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">Data final<input type="date" value="{{ f.d2 }}" sc-camel-on-input="{{ setF.d2 }}" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;background:#fff"></label>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">Início<input type="time" value="{{ f.t1 }}" sc-camel-on-input="{{ setF.t1 }}" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;background:#fff"></label>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">Fim<input type="time" value="{{ f.t2 }}" sc-camel-on-input="{{ setF.t2 }}" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;background:#fff"></label>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">Repetição<sc-raw-select value="{{ f.rep }}" sc-camel-on-change="{{ setF.rep }}" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;background:#fff"><option value="nenhuma">Não repete</option><option value="diaria">Diariamente</option><option value="semanal">Semanalmente</option><option value="mensal">Mensalmente</option></sc-raw-select></label>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;gap:12px;align-items:center"><span style="width:30px;height:30px;border-radius:10px;background:#fdf1c4;color:#7a5d00;display:grid;place-items:center;font-size:12px;font-weight:600">03</span><span style="font-size:16px;font-weight:600">Detalhes</span></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">Responsável<input value="{{ f.resp }}" sc-camel-on-input="{{ setF.resp }}" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;background:#fff"></label>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">Local<input value="{{ f.loc }}" sc-camel-on-input="{{ setF.loc }}" placeholder="Sala, link ou endereço" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;background:#fff"></label>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">Prioridade<sc-raw-select value="{{ f.prio }}" sc-camel-on-change="{{ setF.prio }}" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;background:#fff"><option value="alta">Alta</option><option value="media">Média</option><option value="baixa">Baixa</option></sc-raw-select></label>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">Status
+                <div style="display:flex;gap:10px;align-items:center;min-height:44px">
+                  <button sc-camel-on-click="{{ toggleDone }}" style="border:1px solid {{ doneBorder }};background:{{ doneBg }};color:{{ doneFg }};border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600;display:flex;gap:6px;align-items:center"><i class="ph-bold ph-check-circle"></i>Concluído</button>
+                  <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400"><input type="checkbox" checked="{{ f.cancel }}" sc-camel-on-change="{{ toggleCancel }}" style="width:16px;height:16px;accent-color:#b42318">Cancelado</label>
+                </div>
+              </div>
+              <label style="display:flex;gap:8px;align-items:center;font-size:13px;font-weight:500;grid-column:1 / -1"><input type="checkbox" checked="{{ f.exige }}" sc-camel-on-change="{{ toggleExige }}" style="width:16px;height:16px;accent-color:#1f9d4c">Exige aprovação do superior de cada servidor (como nas férias)</label>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">Anexos
+              <label style="align-self:flex-start;border:0;background:#1f9d4c;color:#fff;border-radius:12px;padding:11px 18px;font-size:14px;font-weight:600;display:flex;gap:8px;align-items:center;cursor:pointer"><i class="ph-bold ph-paperclip"></i>Adicionar anexos<input type="file" multiple="" sc-camel-on-change="{{ addFiles }}" style="display:none"></label>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <sc-for list="{{ files }}" as="fl" hint-placeholder-count="0"><span style="font-size:12px;font-weight:400;background:#f2f5f4;border-radius:999px;padding:4px 10px;display:flex;gap:6px;align-items:center"><i class="ph-duotone ph-file"></i>{{ fl.name }}<button sc-camel-on-click="{{ fl.remove }}" style="border:0;background:transparent;padding:0;color:#7a867f"><i class="ph-bold ph-x"></i></button></span></sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:16px 26px;border-top:1px solid #e4e8e6">
+          <span style="font-size:12px;color:{{ errColor }}">{{ errText }}</span>
+          <div style="display:flex;gap:8px">
+            <button sc-camel-on-click="{{ closeNew }}" style="border:1px solid #e4e8e6;background:#fff;border-radius:12px;padding:11px 18px;font-size:14px;font-weight:500">Cancelar</button>
+            <button sc-camel-on-click="{{ create }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:12px;padding:11px 18px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center" style-hover="background:#178040"><i class="ph-bold ph-check"></i>{{ saveBtn }}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ hasPerson }}" hint-placeholder-val="{{ false }}">
+    <div sc-camel-on-click="{{ closePerson }}" style="position:fixed;inset:0;background:#0b2b5566;backdrop-filter:blur(3px);display:grid;place-items:center;z-index:60;padding:20px">
+      <div sc-camel-on-click="{{ stop }}" style="width:min(400px,100%);max-height:calc(100vh - 40px);background:#fff;border-radius:24px;overflow:auto;box-shadow:0 30px 80px #0b2b5544">
+        <div style="height:84px;background:{{ pm.color }};position:relative">
+          <button sc-camel-on-click="{{ closePerson }}" style="position:absolute;top:12px;right:12px;width:34px;height:34px;border:0;border-radius:50%;background:#ffffff33;color:#fff"><i class="ph-bold ph-x"></i></button>
+        </div>
+        <div style="padding:0 24px 24px;display:flex;flex-direction:column;gap:14px">
+          <span style="margin-top:-40px;border:4px solid #fff;border-radius:50%;align-self:flex-start;display:flex"><span style="position:relative;flex:none;width:76px;height:76px;border-radius:50%;background:#e7eef8;color:#0b3d7a;display:grid;place-items:center;font-size:22px;font-weight:600;overflow:hidden">{{ pm.initials }}<span style="position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;background-image:{{ pm.bgImg }}"></span></span></span>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <span style="font-size:22px;font-weight:600;letter-spacing:-0.02em">{{ pm.name }}</span>
+            <span style="font-size:14px;font-weight:500;color:{{ pm.color }}">{{ pm.role }}</span>
+            <span style="font-size:12px;color:#7a867f;display:flex;gap:6px;align-items:center;margin-top:4px"><span style="width:7px;height:7px;border-radius:50%;background:{{ pm.color }}"></span>{{ pm.unit }} · {{ pm.unitFull }}</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;font-size:14px;background:#f6f8f7;border-radius:16px;padding:14px">
+            <a href="{{ pm.mailto }}" style="display:flex;gap:10px;align-items:center;word-break:break-all"><i class="ph-duotone ph-envelope-simple" style="color:#1f9d4c;font-size:18px;flex:none"></i>{{ pm.email }}</a>
+            <sc-if value="{{ pm.hasTel }}" hint-placeholder-val="{{ false }}"><span style="display:flex;gap:10px;align-items:center"><i class="ph-duotone ph-phone" style="color:#1f9d4c;font-size:18px"></i>{{ pm.tel }}</span></sc-if>
+            <sc-if value="{{ pm.hasBday }}" hint-placeholder-val="{{ false }}"><span style="display:flex;gap:10px;align-items:center"><i class="ph-duotone ph-cake" style="color:#c99a00;font-size:18px"></i>Aniversário: {{ pm.bdayL }}</span></sc-if>
+          </div>
+          <sc-if value="{{ pm.hasFer }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#7a5d00;font-weight:600">Férias e licenças</span>
+              <sc-for list="{{ pm.fer }}" as="x" hint-placeholder-count="1"><span style="font-size:13px;background:#fdf1c4;border-radius:10px;padding:8px 10px;display:flex;justify-content:space-between;gap:8px"><span>{{ x.title }}</span><b style="font-weight:600;white-space:nowrap">{{ x.range }}</b></span></sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ pm.isAdm }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:6px;border:1px solid #f5c518;background:#fffbea;border-radius:14px;padding:12px">
+              <span style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#7a5d00;font-weight:600;display:flex;gap:6px;align-items:center"><i class="ph-duotone ph-lock"></i>Dados internos · só administradores</span>
+              <sc-if value="{{ pm.admLoading }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#7a867f">Carregando…</span></sc-if>
+              <sc-if value="{{ pm.admNone }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#7a867f">Esta pessoa não tem usuário no Hub.</span></sc-if>
+              <sc-for list="{{ pm.admRows }}" as="r" hint-placeholder-count="0"><span style="display:flex;justify-content:space-between;gap:10px;font-size:13px"><span style="color:#5f6b65">{{ r.l }}</span><span style="font-weight:500;text-align:right">{{ r.v }}</span></span></sc-for>
+            </div>
+          </sc-if>
+          <span style="font-size:11px;color:#9aa5a0;display:flex;gap:5px;align-items:center"><i class="ph-duotone ph-lock"></i>Perfil · somente leitura</span>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ hasView }}" hint-placeholder-val="{{ false }}">
+    <div sc-camel-on-click="{{ closeView }}" style="position:fixed;inset:0;background:#0b2b5566;display:grid;place-items:center;z-index:60;padding:20px">
+      <div sc-camel-on-click="{{ stop }}" style="width:min(460px,100%);background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 30px 80px #0b2b5544">
+        <div style="background:{{ vm.color }};color:#fff;padding:20px 22px;display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;opacity:.85;display:flex;gap:6px;align-items:center"><i class="{{ vm.icon }}"></i>{{ vm.unit }} · {{ vm.cat }}</span>
+          <span style="font-size:22px;font-weight:600;letter-spacing:-0.02em;line-height:1.2">{{ vm.title }}</span>
+        </div>
+        <div style="padding:20px 22px;display:flex;flex-direction:column;gap:12px;font-size:14px">
+          <span style="display:flex;gap:10px;align-items:center"><i class="ph-duotone ph-calendar-blank" style="color:#1f9d4c;font-size:18px"></i>{{ vm.range }}</span>
+          <span style="display:flex;gap:10px;align-items:center"><i class="ph-duotone ph-clock" style="color:#1f9d4c;font-size:18px"></i>{{ vm.time }}</span>
+          <sc-if value="{{ vm.hasDesc }}" hint-placeholder-val="{{ false }}"><span style="display:flex;gap:10px;align-items:flex-start;white-space:pre-wrap;color:#3d4943"><i class="ph-duotone ph-text-align-left" style="color:#1f9d4c;font-size:18px;flex:none"></i>{{ vm.desc }}</span></sc-if>
+          <sc-if value="{{ vm.hasLoc }}" hint-placeholder-val="{{ false }}"><span style="display:flex;gap:10px;align-items:center"><i class="ph-duotone ph-map-pin" style="color:#1f9d4c;font-size:18px"></i>{{ vm.loc }}</span></sc-if>
+          <sc-if value="{{ vm.hasResp }}" hint-placeholder-val="{{ false }}"><span style="display:flex;gap:10px;align-items:center"><i class="ph-duotone ph-user" style="color:#1f9d4c;font-size:18px"></i>{{ vm.resp }}</span></sc-if>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <span style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:{{ vm.stBg }};color:{{ vm.stFg }}">{{ vm.st }}</span>
+            <sc-if value="{{ vm.hasFst }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:{{ vm.fstBg }};color:{{ vm.fstFg }}">Férias {{ vm.fst }}</span></sc-if>
+          </div>
+          <sc-if value="{{ vm.hasParts }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#7a867f;font-weight:600">{{ vm.partsTitle }}</span>
+              <div style="max-height:180px;overflow:auto;display:flex;flex-direction:column;gap:4px">
+                <sc-for list="{{ vm.parts }}" as="p" hint-placeholder-count="3"><span style="display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;padding:6px 10px;background:#f6f8f7;border-radius:10px"><span>{{ p.nome }}</span><span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end"><span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;background:{{ p.bg }};color:{{ p.fg }};white-space:nowrap">{{ p.label }}</span><sc-if value="{{ p.hasAp }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;background:{{ p.apBg }};color:{{ p.apFg }};white-space:nowrap">{{ p.apLabel }}</span></sc-if><sc-if value="{{ p.canDecide }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ p.ok }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:8px;padding:3px 8px;font-size:11px;font-weight:600">Aprovar</button><button sc-camel-on-click="{{ p.no }}" style="border:1px solid #b42318;background:#fff;color:#b42318;border-radius:8px;padding:3px 8px;font-size:11px;font-weight:600">Recusar</button></sc-if></span></span></sc-for>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ vm.hasRsvp }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#f6f8f7;border-radius:14px;padding:10px 12px">
+              <span style="font-size:13px;color:#3d4943;flex:1;min-width:140px">{{ vm.rsvpCount }}<br><b style="font-size:12px;color:#7a5d00">{{ vm.myAprov }}</b></span>
+              <button sc-camel-on-click="{{ vm.rsvpYes }}" style="border:1px solid #1f9d4c;background:{{ vm.yesBg }};color:{{ vm.yesFg }};border-radius:10px;padding:7px 12px;font-size:13px;font-weight:600;display:flex;gap:6px;align-items:center"><i class="ph-bold ph-check"></i>Vou participar</button>
+              <button sc-camel-on-click="{{ vm.rsvpNo }}" style="border:1px solid #b42318;background:{{ vm.noBg }};color:{{ vm.noFg }};border-radius:10px;padding:7px 12px;font-size:13px;font-weight:600;display:flex;gap:6px;align-items:center"><i class="ph-bold ph-x"></i>Não vou</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ vm.canApprove }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#fdf1c4;border-radius:14px;padding:10px 12px">
+              <span style="font-size:13px;color:#7a5d00;flex:1;min-width:140px">Solicitação aguardando sua aprovação.</span>
+              <button sc-camel-on-click="{{ vm.approve }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:10px;padding:7px 12px;font-size:13px;font-weight:600;display:flex;gap:6px;align-items:center"><i class="ph-bold ph-check"></i>Aprovar</button>
+              <button sc-camel-on-click="{{ vm.refuse }}" style="border:1px solid #b42318;background:#fff;color:#b42318;border-radius:10px;padding:7px 12px;font-size:13px;font-weight:600;display:flex;gap:6px;align-items:center"><i class="ph-bold ph-x"></i>Recusar</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ vm.noEdit }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#9aa5a0;display:flex;gap:5px;align-items:center;justify-content:flex-end"><i class="ph-duotone ph-lock"></i>Somente leitura para o seu perfil</span></sc-if>
+          <sc-if value="{{ vm.canEdit }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px">
+            <button sc-camel-on-click="{{ vm.del }}" style="border:1px solid #f3c7c7;background:#fff;color:#b42318;border-radius:12px;padding:9px 14px;font-size:13px;font-weight:500;display:flex;gap:6px;align-items:center"><i class="ph-duotone ph-trash"></i>Excluir</button>
+            <button sc-camel-on-click="{{ vm.dup }}" style="border:1px solid #e4e8e6;background:#fff;color:#122019;border-radius:12px;padding:9px 14px;font-size:13px;font-weight:500;display:flex;gap:6px;align-items:center"><i class="ph-duotone ph-copy"></i>Duplicar</button>
+            <button sc-camel-on-click="{{ vm.edit }}" style="border:0;background:#0b3d7a;color:#fff;border-radius:12px;padding:9px 14px;font-size:13px;font-weight:600;display:flex;gap:6px;align-items:center"><i class="ph-duotone ph-pencil-simple"></i>Editar</button>
+          </div>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ hasUe }}" hint-placeholder-val="{{ false }}">
+    <div sc-camel-on-click="{{ ue.close }}" style="position:fixed;inset:0;background:#0b2b5566;display:grid;place-items:center;z-index:70;padding:20px">
+      <div sc-camel-on-click="{{ stop }}" style="width:min(620px,100%);max-height:calc(100vh - 40px);overflow:auto;background:#fff;border-radius:24px;box-shadow:0 30px 80px #0b2b5544;display:flex;flex-direction:column">
+        <div style="background:#0b3d7a;color:#fff;padding:20px 22px;display:flex;gap:14px;align-items:center">
+          <span style="position:relative;overflow:hidden;width:56px;height:56px;flex:none;border-radius:50%;background:#f5c518;color:#0b3d7a;display:grid;place-items:center;font-weight:600">{{ ue.initials }}<span style="position:absolute;inset:0;background-size:cover;background-position:center;background-image:{{ ue.fotoBg }}"></span></span>
+          <div style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#c9d8ec">Dados do servidor · somente administradores</span><span style="font-size:22px;font-weight:600;letter-spacing:-0.02em">{{ ue.nome }}</span><span style="font-size:13px;color:#c9d8ec">{{ ue.usuario }} · {{ ue.acesso }}</span></div>
+          <button sc-camel-on-click="{{ ue.close }}" style="width:34px;height:34px;border:0;border-radius:50%;background:#ffffff26;color:#fff"><i class="ph-bold ph-x"></i></button>
+        </div>
+        <div style="padding:20px 22px;display:flex;flex-direction:column;gap:16px">
+          <sc-if value="{{ ue.loading }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#7a867f">Carregando…</span></sc-if>
+          <sc-if value="{{ ue.noAccount }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;background:#fdf1c4;color:#7a5d00;border-radius:12px;padding:10px 12px">Esta pessoa ainda não fez o primeiro acesso ao Hub. Os dados pessoais só podem ser preenchidos depois disso; o patrimônio já pode ser registrado.</span></sc-if>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Nome completo<input value="{{ ue.f.nome }}" sc-camel-on-input="{{ ue.set.nome }}" placeholder="Nome e sobrenome" style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;color:#122019;background:#fff"></label>
+          <sc-if value="{{ ue.canPhoto }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <label style="border:1px solid #e4e8e6;background:#fff;border-radius:12px;padding:9px 14px;font-size:13px;font-weight:600;display:flex;gap:8px;align-items:center;cursor:pointer"><i class="ph-duotone ph-camera"></i>{{ ue.fotoTxt }}<input type="file" accept="image/*" sc-camel-on-change="{{ ue.pickFoto }}" style="display:none"></label>
+              <sc-if value="{{ ue.hasFoto }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ ue.removeFoto }}" style="border:0;background:transparent;color:#b42318;font-size:13px;font-weight:500;padding:0">Remover foto</button></sc-if>
+              <span style="font-size:12px;color:#7a867f">A foto aparece no organograma e na lista de usuários.</span>
+            </div>
+          </sc-if>
+          <sc-if value="{{ ue.showFields }}" hint-placeholder-val="{{ true }}"><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px"><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943;grid-column:1/-1">Cargo<input value="{{ ue.f.cargo }}" sc-camel-on-input="{{ ue.set.cargo }}" placeholder="" style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;color:#122019;background:#fff"></label><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Telefone<input value="{{ ue.f.tel }}" sc-camel-on-input="{{ ue.set.tel }}" placeholder="62 9 0000-0000" style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;color:#122019;background:#fff"></label><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">E-mail<input value="{{ ue.f.email }}" sc-camel-on-input="{{ ue.set.email }}" placeholder="" style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;color:#122019;background:#fff"></label><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Aniversário (dia/mês)<input value="{{ ue.f.bday }}" sc-camel-on-input="{{ ue.set.bday }}" placeholder="dd/mm" style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;color:#122019;background:#fff"></label><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">CPF<input value="{{ ue.f.cpf }}" sc-camel-on-input="{{ ue.set.cpf }}" placeholder="000.000.000-00" style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;color:#122019;background:#fff"></label><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Matrícula<input value="{{ ue.f.mat }}" sc-camel-on-input="{{ ue.set.mat }}" placeholder="" style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;color:#122019;background:#fff"></label><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Nome do computador<input value="{{ ue.f.pc }}" sc-camel-on-input="{{ ue.set.pc }}" placeholder="" style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;color:#122019;background:#fff"></label><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Nº do armário<input value="{{ ue.f.arm }}" sc-camel-on-input="{{ ue.set.arm }}" placeholder="" style="width:100%;box-sizing:border-box;padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;color:#122019;background:#fff"></label></div></sc-if>
+          <div style="border:1px solid #f5c518;background:#fffbea;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+            <span style="font-size:14px;font-weight:600;display:flex;gap:8px;align-items:center"><i class="ph-duotone ph-laptop" style="color:#c99a00"></i>Patrimônio <span style="font-size:11px;font-weight:500;color:#7a5d00;background:#fdf1c4;border-radius:999px;padding:2px 8px">visível só para administradores</span></span>
+            <label style="display:flex;gap:8px;align-items:center;font-size:13px;color:#3d4943"><input type="checkbox" checked="{{ ue.pat.tem }}" sc-camel-on-change="{{ ue.setPatTem }}" style="width:16px;height:16px;accent-color:#1f9d4c">Possui notebook/tablet patrimoniado</label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Nº do patrimônio<input value="{{ ue.pat.num }}" sc-camel-on-input="{{ ue.setPatNum }}" placeholder="Ex.: 123456" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;padding:14px 22px;border-top:1px solid #e4e8e6">
+          <button sc-camel-on-click="{{ ue.close }}" style="border:1px solid #e4e8e6;background:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:500">Cancelar</button>
+          <button sc-camel-on-click="{{ ue.save }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center" style-hover="background:#178040"><i class="ph-bold ph-check"></i>{{ ue.saveBtn }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ usr.assplan.editing }}" hint-placeholder-val="{{ false }}">
+    <div sc-camel-on-click="{{ usr.assplan.cancel }}" style="position:fixed;inset:0;background:#0b2b5566;display:grid;place-items:center;z-index:75;padding:20px">
+      <div sc-camel-on-click="{{ stop }}" style="width:min(520px,100%);background:#fff;border-radius:24px;box-shadow:0 30px 80px #0b2b5544;overflow:hidden">
+        <div style="background:#0b3d7a;color:#fff;padding:18px 22px;font-size:18px;font-weight:600;display:flex;gap:10px;align-items:center"><i class="ph-duotone ph-laptop"></i>{{ usr.assplan.editTitle }}</div>
+        <div style="padding:20px 22px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943;grid-column:1/-1">Processo<input value="{{ usr.assplan.e.processo }}" sc-camel-on-input="{{ usr.assplan.set.processo }}" placeholder="Ex.: 202500004062849" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Setor<input value="{{ usr.assplan.e.setor }}" sc-camel-on-input="{{ usr.assplan.set.setor }}" placeholder="Ex.: ASSPLAN" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Equipamento<input value="{{ usr.assplan.e.equipamento }}" sc-camel-on-input="{{ usr.assplan.set.equipamento }}" placeholder="Ex.: POSITIVO" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Nº do patrimônio<input value="{{ usr.assplan.e.numero }}" sc-camel-on-input="{{ usr.assplan.set.numero }}" placeholder="Ex.: 3722767" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Responsável<input value="{{ usr.assplan.e.responsavel }}" sc-camel-on-input="{{ usr.assplan.set.responsavel }}" placeholder="Ex.: Giovanna" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943;grid-column:1/-1">Observação<input value="{{ usr.assplan.e.observacao }}" sc-camel-on-input="{{ usr.assplan.set.observacao }}" placeholder="Opcional" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;padding:14px 22px;border-top:1px solid #e4e8e6">
+          <button sc-camel-on-click="{{ usr.assplan.cancel }}" style="border:1px solid #e4e8e6;background:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:500">Cancelar</button>
+          <button sc-camel-on-click="{{ usr.assplan.save }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:600">Salvar</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ col.editing }}" hint-placeholder-val="{{ false }}">
+    <div sc-camel-on-click="{{ col.cancel }}" style="position:fixed;inset:0;background:#0b2b5566;display:grid;place-items:center;z-index:75;padding:20px">
+      <div sc-camel-on-click="{{ stop }}" style="width:min(620px,100%);max-height:calc(100vh - 40px);overflow:auto;background:#fff;border-radius:24px;box-shadow:0 30px 80px #0b2b5544">
+        <div style="background:#0b3d7a;color:#fff;padding:18px 22px;font-size:18px;font-weight:600;display:flex;gap:10px;align-items:center"><i class="ph-duotone ph-users-four"></i>{{ col.editTitle }}</div>
+        <div style="padding:20px 22px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943;grid-column:1/-1">Nome do colegiado<input value="{{ col.e.nome }}" sc-camel-on-input="{{ col.set.nome }}" placeholder="Ex.: Conselho Estadual da Mulher" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Sigla<input value="{{ col.e.sigla }}" sc-camel-on-input="{{ col.set.sigla }}" placeholder="Ex.: CONEM" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Ordem na lista<input value="{{ col.e.ordem }}" sc-camel-on-input="{{ col.set.ordem }}" placeholder="1" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Titular(es) — um por linha<textarea value="{{ col.e.titulares }}" sc-camel-on-input="{{ col.set.titulares }}" rows="3" placeholder="Nome completo" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff;resize:vertical"></textarea></label><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Suplente(s) — um por linha<textarea value="{{ col.e.suplentes }}" sc-camel-on-input="{{ col.set.suplentes }}" rows="3" placeholder="Nome completo" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff;resize:vertical"></textarea></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943;grid-column:1/-1">Link do processo SEI<input value="{{ col.e.processo_sei }}" sc-camel-on-input="{{ col.set.processo_sei }}" placeholder="https://sei.go.gov.br/…" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943;grid-column:1/-1">Observações<input value="{{ col.e.observacoes }}" sc-camel-on-input="{{ col.set.observacoes }}" placeholder="Opcional" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;padding:14px 22px;border-top:1px solid #e4e8e6">
+          <button sc-camel-on-click="{{ col.cancel }}" style="border:1px solid #e4e8e6;background:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:500">Cancelar</button>
+          <button sc-camel-on-click="{{ col.save }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:600">Salvar</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ usr.docs.folderEditing }}" hint-placeholder-val="{{ false }}">
+    <div sc-camel-on-click="{{ usr.docs.cancelFolder }}" style="position:fixed;inset:0;background:#0b2b5566;display:grid;place-items:center;z-index:75;padding:20px">
+      <div sc-camel-on-click="{{ stop }}" style="width:min(460px,100%);background:#fff;border-radius:24px;box-shadow:0 30px 80px #0b2b5544;overflow:hidden">
+        <div style="background:#0b3d7a;color:#fff;padding:18px 22px;font-size:18px;font-weight:600;display:flex;gap:10px;align-items:center"><i class="ph-duotone ph-folder-plus"></i>{{ usr.docs.folderTitle }}</div>
+        <div style="padding:20px 22px;display:flex;flex-direction:column;gap:14px"><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Nome da pasta<input value="{{ usr.docs.fe.nome }}" sc-camel-on-input="{{ usr.docs.setFolderNome }}" placeholder="Ex.: Processos 2026" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label></div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;padding:14px 22px;border-top:1px solid #e4e8e6">
+          <button sc-camel-on-click="{{ usr.docs.cancelFolder }}" style="border:1px solid #e4e8e6;background:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:500">Cancelar</button>
+          <button sc-camel-on-click="{{ usr.docs.saveFolder }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:600">Salvar</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ usr.docs.fileEditing }}" hint-placeholder-val="{{ false }}">
+    <div sc-camel-on-click="{{ usr.docs.cancelFile }}" style="position:fixed;inset:0;background:#0b2b5566;display:grid;place-items:center;z-index:75;padding:20px">
+      <div sc-camel-on-click="{{ stop }}" style="width:min(460px,100%);background:#fff;border-radius:24px;box-shadow:0 30px 80px #0b2b5544;overflow:hidden">
+        <div style="background:#0b3d7a;color:#fff;padding:18px 22px;font-size:18px;font-weight:600;display:flex;gap:10px;align-items:center"><i class="ph-duotone ph-file"></i>Editar item</div>
+        <div style="padding:20px 22px;display:flex;flex-direction:column;gap:14px"><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Nome do documento<input value="{{ usr.docs.fi.nome }}" sc-camel-on-input="{{ usr.docs.setFileNome }}" placeholder="Nome" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label><sc-if value="{{ usr.docs.fiIsLink }}" hint-placeholder-val="{{ false }}"><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Endereço (URL)<input type="text" value="{{ usr.docs.fi.url }}" sc-camel-on-input="{{ usr.docs.setFileUrl }}" placeholder="https://…" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label></sc-if><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Pasta<sc-raw-select value="{{ usr.docs.fi.pasta_id }}" sc-camel-on-change="{{ usr.docs.setFilePasta }}" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"><sc-for list="{{ usr.docs.folderOpts }}" as="o" hint-placeholder-count="2"><option value="{{ o.v }}">{{ o.n }}</option></sc-for></sc-raw-select></label></div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;padding:14px 22px;border-top:1px solid #e4e8e6">
+          <button sc-camel-on-click="{{ usr.docs.cancelFile }}" style="border:1px solid #e4e8e6;background:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:500">Cancelar</button>
+          <button sc-camel-on-click="{{ usr.docs.saveFile }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:600">Salvar</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ usr.docs.linkEditing }}" hint-placeholder-val="{{ false }}">
+    <div sc-camel-on-click="{{ usr.docs.cancelLink }}" style="position:fixed;inset:0;background:#0b2b5566;display:grid;place-items:center;z-index:75;padding:20px">
+      <div sc-camel-on-click="{{ stop }}" style="width:min(460px,100%);background:#fff;border-radius:24px;box-shadow:0 30px 80px #0b2b5544;overflow:hidden">
+        <div style="background:#0b3d7a;color:#fff;padding:18px 22px;font-size:18px;font-weight:600;display:flex;gap:10px;align-items:center"><i class="ph-duotone ph-link"></i>Novo link</div>
+        <div style="padding:20px 22px;display:flex;flex-direction:column;gap:14px"><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Endereço (URL)<input type="text" value="{{ usr.docs.le.url }}" sc-camel-on-input="{{ usr.docs.setLinkUrl }}" placeholder="https://…" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Título (opcional)<input type="text" value="{{ usr.docs.le.nome }}" sc-camel-on-input="{{ usr.docs.setLinkNome }}" placeholder="Ex.: Painel do projeto" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label></div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;padding:14px 22px;border-top:1px solid #e4e8e6">
+          <button sc-camel-on-click="{{ usr.docs.cancelLink }}" style="border:1px solid #e4e8e6;background:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:500">Cancelar</button>
+          <button sc-camel-on-click="{{ usr.docs.saveLink }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:600">Adicionar</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ reset.show }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:#0b2b5566;display:grid;place-items:center;z-index:80;padding:20px">
+      <div style="width:min(440px,100%);background:#fff;border-radius:24px;box-shadow:0 30px 80px #0b2b5544;padding:22px;display:flex;flex-direction:column;gap:12px">
+        <span style="font-size:18px;font-weight:600;display:flex;gap:8px;align-items:center"><i class="ph-duotone ph-key" style="color:#0b4f9c"></i>Senha redefinida</span>
+        <span style="font-size:14px;color:#3d4943">Senha provisória de <b>{{ reset.nome }}</b> (usuário <b>{{ reset.usuario }}</b>):</span>
+        <span style="font-size:22px;font-weight:600;letter-spacing:0.04em;background:#f6f8f7;border:1px dashed #c4ccc8;border-radius:12px;padding:12px;text-align:center;font-family:monospace">{{ reset.senha }}</span>
+        <span style="font-size:12px;color:#7a5d00;background:#fdf1c4;border-radius:10px;padding:8px 10px">Anote agora: ela não será mostrada de novo. Envie à pessoa por um canal privado e peça para trocar em "Meu perfil → Alterar senha". Os dados do perfil foram mantidos.</span>
+        <div style="display:flex;justify-content:flex-end;gap:8px"><button sc-camel-on-click="{{ reset.copy }}" style="border:1px solid #e4e8e6;background:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:600">Copiar</button><button sc-camel-on-click="{{ reset.close }}" style="border:0;background:#0b3d7a;color:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:600">Fechar</button></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ toast.show }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:120;max-width:min(560px,calc(100vw - 32px));background:{{ toast.bg }};color:#fff;border-radius:14px;padding:12px 16px;font-size:14px;display:flex;gap:10px;align-items:center;box-shadow:0 14px 40px #0b2b5544"><i class="{{ toast.icon }}" style="font-size:18px;flex:none"></i>{{ toast.msg }}</div>
+  </sc-if>
+</div>
+</x-dc>
