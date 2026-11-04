@@ -77,7 +77,7 @@
   <main class="hub-main" style="padding:24px 48px 80px;display:flex;flex-direction:column;gap:36px;box-sizing:border-box;width:100%;min-width:0">
     <header style="display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap">
       <button class="hub-menu-btn" sc-camel-on-click="{{ railToggle }}" title="Menu" style="display:none;width:42px;height:42px;border:1px solid #e4e8e6;border-radius:12px;background:#fff;color:#0b3d7a;font-size:20px;place-items:center">☰</button>
-      <div style="position:relative;flex:1;max-width:360px;min-width:200px">
+      <div class="hub-search" style="position:relative;flex:1;max-width:360px;min-width:200px">
         <i class="ph-duotone ph-magnifying-glass" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7a867f"></i>
         <input placeholder="Buscar pessoas, eventos, unidades…" value="{{ q }}" sc-camel-on-input="{{ onSearch }}" style="width:100%;box-sizing:border-box;padding:10px 14px 10px 38px;border-radius:999px;border:1px solid #e4e8e6;background:#f6f8f7;font-size:14px">
       </div>
@@ -167,11 +167,15 @@
             <h2 style="margin:0;font-weight:600;font-size:20px;letter-spacing:-0.02em">Sistemas</h2>
             <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
               <sc-for list="{{ links }}" as="l" hint-placeholder-count="4">
-                <a href="{{ l.url }}" target="_blank" style="background:#f6f8f7;border-radius:20px;display:flex;gap:12px;align-items:center;color:#122019;padding:14px" style-hover="background:#edf1ef">
+                <sc-if value="{{ l.hasUrl }}" hint-placeholder-val="{{ true }}"><a href="{{ l.url }}" target="_blank" rel="noopener" style="background:#f6f8f7;border-radius:20px;display:flex;gap:12px;align-items:center;color:#122019;padding:14px" style-hover="background:#edf1ef">
                   <span style="width:40px;height:40px;flex:none;border-radius:50%;background:{{ l.bg }};color:{{ l.fg }};display:grid;place-items:center;font-size:18px"><i class="{{ l.icon }}"></i></span>
                   <span style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:15px;font-weight:600">{{ l.name }}</span><span style="font-size:12px;color:#5f6b65">{{ l.desc }}</span></span>
                   <i class="ph-bold ph-arrow-up-right" style="color:#9aa5a0"></i>
-                </a>
+                </a></sc-if>
+                <sc-if value="{{ l.noUrl }}" hint-placeholder-val="{{ false }}"><div title="Link ainda não disponível" style="background:#f6f8f7;border-radius:20px;display:flex;gap:12px;align-items:center;color:#122019;padding:14px;opacity:.6;cursor:default">
+                  <span style="width:40px;height:40px;flex:none;border-radius:50%;background:{{ l.bg }};color:{{ l.fg }};display:grid;place-items:center;font-size:18px"><i class="{{ l.icon }}"></i></span>
+                  <span style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:15px;font-weight:600">{{ l.name }}</span><span style="font-size:12px;color:#5f6b65">{{ l.desc }}</span></span>
+                </div></sc-if>
               </sc-for>
             </div>
           </section>
@@ -233,9 +237,9 @@
                   <div data-mk="keep" style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px">
                     <sc-for list="{{ dows }}" as="w" hint-placeholder-count="7"><span style="font-size:11px;font-weight:500;letter-spacing:0.08em;color:#7a867f;padding:0 10px 6px">{{ w }}</span></sc-for>
                     <sc-for list="{{ cal.cells }}" as="c" hint-placeholder-count="35">
-                      <button sc-camel-on-click="{{ c.pick }}" style="text-align:left;border:0;min-height:86px;border-radius:14px;padding:8px 10px;display:flex;flex-direction:column;gap:4px;background:{{ c.bg }};visibility:{{ c.vis }};outline:{{ c.outline }}" style-hover="background:#eef3f9">
+                      <button class="hub-cal-cell" sc-camel-on-click="{{ c.pick }}" style="text-align:left;border:0;min-height:86px;border-radius:14px;padding:8px 10px;display:flex;flex-direction:column;gap:4px;background:{{ c.bg }};visibility:{{ c.vis }};outline:{{ c.outline }}" style-hover="background:#eef3f9">
                         <span style="width:24px;height:24px;margin-left:-4px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:600;background:{{ c.numBg }};color:{{ c.numFg }}">{{ c.n }}</span>
-                        <sc-for list="{{ c.ev }}" as="e" hint-placeholder-count="0"><span style="display:flex;gap:5px;align-items:center;font-size:11px;min-width:0;width:100%"><i class="{{ e.icon }}" style="color:{{ e.color }};font-size:10px;flex:none"></i><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ e.title }}</span></span></sc-for>
+                        <sc-for list="{{ c.ev }}" as="e" hint-placeholder-count="0"><span class="hub-cal-ev" title="{{ e.title }}" style="display:flex;gap:5px;align-items:center;font-size:11px;min-width:0;width:100%"><i class="{{ e.icon }}" style="color:{{ e.color }};font-size:10px;flex:none"></i><span class="hub-cal-evt" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ e.title }}</span></span></sc-for>
                       </button>
                     </sc-for>
                   </div>

@@ -221,6 +221,12 @@
   .hub-main [style*="width: 400px"], .hub-main [style*="width: 440px"] { width: calc(100vw - 28px) !important; }
   .hub-main input, .hub-main select, .hub-main textarea { font-size: 16px !important; }
   .hub-fab { display: none !important; }
+  .hub-search { order: 3; flex-basis: 100% !important; max-width: none !important; min-width: 0 !important; }
+  .hub-cal-cell { min-height: 54px !important; padding: 6px 4px !important; flex-direction: row !important; flex-wrap: wrap; align-content: flex-start; gap: 3px !important; }
+  .hub-cal-cell > span:first-child { margin-left: 0 !important; margin-right: calc(100% - 24px); }
+  .hub-cal-ev { width: auto !important; }
+  .hub-cal-ev > i { display: block; width: 7px; height: 7px; border-radius: 50%; background: currentColor; font-size: 0 !important; }
+  .hub-cal-evt { display: none; }
   aside[style*="position: sticky"] { position: static !important; }
 }
 </style>

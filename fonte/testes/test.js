@@ -191,7 +191,7 @@ let lastEmail = 'giovanna.cintra@scpma.local';
   await page.locator('aside').first().hover(); await page.getByText('Organograma', { exact: true }).first().click(); await page.mouse.move(900,400); await page.waitForTimeout(400);
   console.log('aniversariantes de outubro:', await page.getByText(/06\/10|07\/10/).count());
   await page.getByText('Heuler Neves de Assis').first().click(); await page.waitForTimeout(300);
-  console.log('cartão Heuler tem telefone:', await page.getByText('62 9 8436-5115').count() > 0, '| e-mail:', await page.getByText('heuler.assis@goias.gov.br').count() > 0, '| aniversário:', await page.getByText(/11 de Janeiro/i).count() > 0);
+  console.log('cartão Heuler tem telefone:', await page.getByText('62 9 0000-0029').count() > 0, '| e-mail:', await page.getByText('servidor.teste@exemplo.gov.br').count() > 0, '| aniversário:', await page.getByText(/11 de Janeiro/i).count() > 0);
   await page.mouse.click(10, 450);
   await page.getByRole('button', { name: /Novo evento/ }).click(); await page.waitForTimeout(400);
   await page.fill('input[placeholder="Ex.: Curso de Planejamento"]', 'Reunião com pessoas escolhidas');
