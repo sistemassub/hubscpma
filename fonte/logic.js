@@ -638,8 +638,10 @@ class Component extends DCLogic {
   async saveColegiado() {
     const it = this.state.colEdit; if (!it) return;
     if (!(it.nome || '').trim()) return this.notify('Informe o nome do colegiado.', true);
+    const sei = toUrl(it.processo_sei);
+    if ((it.processo_sei || '').trim() && !sei) return this.notify('O link do processo SEI precisa ser um endereço da internet (http:// ou https://).', true);
     const c = this.cu(), lines = v => String(v || '').split('\n').map(x => x.trim()).filter(Boolean).join('\n');
-    const row = { nome: it.nome.trim(), sigla: (it.sigla || '').trim(), titulares: lines(it.titulares), suplentes: lines(it.suplentes), processo_sei: (it.processo_sei || '').trim(), observacoes: (it.observacoes || '').trim(),
+    const row = { nome: it.nome.trim(), sigla: (it.sigla || '').trim(), titulares: lines(it.titulares), suplentes: lines(it.suplentes), processo_sei: sei, observacoes: (it.observacoes || '').trim(),
       ordem: +it.ordem || ((this.state.colItens || []).length + 1), atualizado_em: new Date().toISOString(), atualizado_por: c ? c.usuario : null };
     try {
       const { error } = await (it.id ? this.sb().from('colegiados').update(row).eq('id', it.id) : this.sb().from('colegiados').insert(row));
@@ -937,8 +939,8 @@ class Component extends DCLogic {
       badgeBg: now ? '#fdf1c4' : '#e7eef8', badgeFg: now ? '#7a5d00' : '#0b4f9c' }; };
     const ferSorted = fers.filter(e => e.end >= TODAY).sort((a, b) => eS(a).localeCompare(eS(b)));
     const feriasRows = ferSorted.slice(0, 6).map(ferRow);
-    const links = [['SIPOFE','Portal da Rede de Planejamento (SharePoint)','ph-share-network','#1f9d4c','#fff','https://goiasgovbr.sharepoint.com/sites/SIPOFE'],['Projetos SCPMA','Acompanhamento dos projetos da SCPMA','ph-kanban','#0b4f9c','#fff','https://projetoscpma.netlify.app/'],['Portal do Aluno','Cursos e capacitações','ph-graduation-cap','#f5c518','#0b3d7a','#'],['SEI','Sistema Eletrônico de Informações','ph-files','#0b3d7a','#fff','https://sei.go.gov.br/']]
-      .map(([name, desc, ic, bg, fg, url]) => ({ name, desc, icon: 'ph-duotone ' + ic, bg, fg, url }));
+    const links = [['SIPOFE','Portal da Rede de Planejamento (SharePoint)','ph-share-network','#1f9d4c','#fff','https://goiasgovbr.sharepoint.com/sites/SIPOFE'],['Projetos SCPMA','Acompanhamento dos projetos da SCPMA','ph-kanban','#0b4f9c','#fff','https://projetoscpma.netlify.app/'],['Portal do Aluno','Cursos e capacitações','ph-graduation-cap','#f5c518','#0b3d7a',''],['SEI','Sistema Eletrônico de Informações','ph-files','#0b3d7a','#fff','https://sei.go.gov.br/']]
+      .map(([name, desc, ic, bg, fg, url]) => ({ name, desc: url ? desc : desc + ' · link em breve', icon: 'ph-duotone ' + ic, bg, fg, url, hasUrl: !!url, noUrl: !url }));
     const curMon = TODAY.slice(5, 7), curMonName = MONTHS[+curMon - 1];
     const aniv = people.filter(p => p.bday && p.bday.slice(3, 5) === curMon).sort((a, b) => a.bday.localeCompare(b.bday));
 
@@ -1116,7 +1118,7 @@ class Component extends DCLogic {
       list: colList.map(it => { const mine = it.tit.concat(it.sup).some(isMe), proc = (String(it.processo_sei).match(/id_procedimento=(\d+)/) || [])[1] || '';
         return { ...it, hasSigla: !!it.sigla, mark: it.sigla || it.nome.split(' ').filter(w => w.length > 3).slice(0, 2).map(w => w[0]).join('').toUpperCase(),
           tits: it.tit.map(n => chip(n, 'Titular')), sups: it.sup.map(n => chip(n, 'Suplente')), noTit: !it.tit.length, noSup: !it.sup.length,
-          hasSei: !!it.processo_sei, sei: it.processo_sei, seiLabel: proc ? 'Processo SEI · procedimento ' + proc : 'Abrir no SEI', noSei: !it.processo_sei,
+          hasSei: !!storableUrl(it.processo_sei), sei: storableUrl(it.processo_sei), seiLabel: proc ? 'Processo SEI · procedimento ' + proc : 'Abrir no SEI', noSei: !it.processo_sei,
           hasObs: !!it.observacoes, border: mine ? '#f5c518' : '#e4e8e6', mine, edit: () => this.setState({ colEdit: { ...it } }), del: () => this.delColegiado(it) }; }),
       excel: () => this.exportCsv('colegiados-scpma', colHead, colRowsX()), pdf: () => this.exportPdf('Colegiados — Hub SCPMA', 'Representações da SCPMA', colHead, colRowsX()),
       add: () => this.setState({ colEdit: { nome: '', sigla: '', titulares: '', suplentes: '', processo_sei: '', observacoes: '', ordem: colAll.length + 1 } }),
@@ -1293,7 +1295,7 @@ class Component extends DCLogic {
     const unread = s.notifs.filter(n => !n.lida).length;
     const NI = { lembrete: 'ph-alarm', convite: 'ph-envelope-open', alteracao: 'ph-pencil-simple', presenca: 'ph-check-circle', ferias: 'ph-umbrella' };
     const notifList = s.notifs.slice(0, 30).map(n => ({ title: n.titulo || '', msg: n.mensagem || '', hasMsg: !!n.mensagem, icon: 'ph-duotone ' + (NI[n.tipo] || 'ph-bell'),
-      when: n.criada_em ? new Date(n.criada_em).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '', bg: n.lida ? '#fff' : '#f2f7fd',
+      when: (n.criada_em ? new Date(n.criada_em).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '') + (n.remetente && n.remetente !== n.dest_usuario ? ' · enviada por ' + (((s.users || []).find(u => u.usuario === n.remetente) || {}).nome || n.remetente) : ''), bg: n.lida ? '#fff' : '#f2f7fd',
       open: () => { const ev = n.evento_id ? all.find(e => e.id === n.evento_id) : null; this.setState({ notifOpen: false }); if (ev) this.openView(ev); } }));
     const NIV = { admin: 'Administrador(a)', editor: 'Editor(a)', viewer: 'Visualizador(a)' };
     const ueS = s.uEdit;
