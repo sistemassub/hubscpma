@@ -939,7 +939,7 @@ class Component extends DCLogic {
       badgeBg: now ? '#fdf1c4' : '#e7eef8', badgeFg: now ? '#7a5d00' : '#0b4f9c' }; };
     const ferSorted = fers.filter(e => e.end >= TODAY).sort((a, b) => eS(a).localeCompare(eS(b)));
     const feriasRows = ferSorted.slice(0, 6).map(ferRow);
-    const links = [['SIPOFE','Portal da Rede de Planejamento (SharePoint)','ph-share-network','#1f9d4c','#fff','https://goiasgovbr.sharepoint.com/sites/SIPOFE'],['Projetos SCPMA','Acompanhamento dos projetos da SCPMA','ph-kanban','#0b4f9c','#fff','https://projetoscpma.netlify.app/'],['Portal do Aluno','Cursos e capacitações','ph-graduation-cap','#f5c518','#0b3d7a',''],['SEI','Sistema Eletrônico de Informações','ph-files','#0b3d7a','#fff','https://sei.go.gov.br/']]
+    const links = [['SIPOFE','Portal da Rede de Planejamento (SharePoint)','ph-share-network','#1f9d4c','#fff','https://goiasgovbr.sharepoint.com/sites/SIPOFE'],['Projetos SCPMA','Acompanhamento dos projetos da SCPMA','ph-kanban','#0b4f9c','#fff','https://projetoscpma.netlify.app/'],['Portal do Aluno','Cursos e capacitações','ph-graduation-cap','#f5c518','#0b3d7a','https://sgc.escoladegoverno.go.gov.br/'],['SEI','Sistema Eletrônico de Informações','ph-files','#0b3d7a','#fff','https://sei.go.gov.br/']]
       .map(([name, desc, ic, bg, fg, url]) => ({ name, desc: url ? desc : desc + ' · link em breve', icon: 'ph-duotone ' + ic, bg, fg, url, hasUrl: !!url, noUrl: !url }));
     const curMon = TODAY.slice(5, 7), curMonName = MONTHS[+curMon - 1];
     const aniv = people.filter(p => p.bday && p.bday.slice(3, 5) === curMon).sort((a, b) => a.bday.localeCompare(b.bday));
