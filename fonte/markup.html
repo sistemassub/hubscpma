@@ -856,7 +856,7 @@
         </sc-if>
         <sc-if value="{{ usr.isBH }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;flex-direction:column;gap:12px">
-            <span style="font-size:13px;color:#5f6b65">Lance as horas extras da sua equipe para a semaninha. Digite no formato <b>hh:mm</b> (ex.: 05:23) e tecle Enter; para descontar horas usadas, use o sinal de menos (ex.: -02:00). Cada pessoa vê o próprio saldo no perfil.</span>
+            <span style="font-size:13px;color:#5f6b65">Digite o saldo de horas de cada pessoa só com números — <b>523</b> vira <b>05:23</b> — e tecle Enter ou clique em Salvar. O valor novo substitui o anterior. Cada pessoa vê o próprio saldo no perfil.</span>
             <sc-for list="{{ usr.bh.areas }}" as="a" hint-placeholder-count="1">
               <div style="border:1px solid #e4e8e6;border-radius:20px;overflow:hidden">
                 <button sc-camel-on-click="{{ a.toggle }}" style="width:100%;border:0;background:#f6f8f7;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:left">
@@ -867,11 +867,10 @@
                   <div style="padding:14px 18px;display:flex;flex-direction:column;gap:8px">
                     <label style="display:flex;gap:8px;align-items:center;font-size:13px;color:#3d4943;flex-wrap:wrap">Atualizado até <input type="date" value="{{ a.ate }}" sc-camel-on-change="{{ a.setAte }}" style="padding:7px 10px;border:1px solid #e4e8e6;border-radius:10px;font-size:13px"></label>
                     <sc-for list="{{ a.rows }}" as="r" hint-placeholder-count="3">
-                      <div class="hub-bh-row" style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1.6fr) 92px 170px;gap:10px;align-items:center;padding:8px 10px;background:#fff;border:1px solid #f0f3f1;border-radius:12px">
+                      <div class="hub-bh-row" style="display:grid;grid-template-columns:minmax(0,1fr) 92px 190px;gap:10px;align-items:center;padding:8px 10px;background:#fff;border:1px solid #f0f3f1;border-radius:12px">
                         <span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis">{{ r.nome }}</span><span style="font-size:11px;color:#7a867f">{{ r.unid }}</span></span>
-                        <span style="display:flex;gap:4px;flex-wrap:wrap;align-items:center"><sc-for list="{{ r.parts }}" as="p" hint-placeholder-count="0"><button sc-camel-on-click="{{ p.del }}" title="{{ p.title }}" style="border:1px solid #e4e8e6;background:#f6f8f7;border-radius:999px;padding:2px 8px;font-size:12px;color:#3d4943;display:flex;gap:4px;align-items:center">{{ p.txt }}<i class="ph-bold ph-x" style="font-size:9px;color:#b42318"></i></button></sc-for></span>
                         <span style="font-size:14px;font-weight:700;background:{{ r.tBg }};color:{{ r.tFg }};border-radius:10px;padding:4px 8px;text-align:center">{{ r.total }}</span>
-                        <span style="display:flex;gap:6px"><input value="{{ r.val }}" sc-camel-on-input="{{ r.setVal }}" sc-camel-on-key-down="{{ r.key }}" placeholder="hh:mm" inputmode="numeric" style="width:80px;min-width:0;padding:7px 9px;border:1px solid #e4e8e6;border-radius:10px;font-size:13px"><button sc-camel-on-click="{{ r.add }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:10px;padding:7px 10px;font-size:13px;font-weight:600;white-space:nowrap">Lançar</button></span>
+                        <span style="display:flex;gap:6px"><input value="{{ r.val }}" sc-camel-on-input="{{ r.setVal }}" sc-camel-on-key-down="{{ r.key }}" placeholder="00:00" inputmode="numeric" maxlength="6" style="width:90px;min-width:0;padding:7px 9px;border:1px solid #e4e8e6;border-radius:10px;font-size:14px;font-variant-numeric:tabular-nums"><button sc-camel-on-click="{{ r.save }}" style="border:0;background:{{ r.btnBg }};color:{{ r.btnFg }};border-radius:10px;padding:7px 12px;font-size:13px;font-weight:600;white-space:nowrap">Salvar</button></span>
                       </div>
                     </sc-for>
                   </div>

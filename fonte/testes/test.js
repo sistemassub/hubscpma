@@ -51,6 +51,7 @@ let lastEmail = 'giovanna.cintra@scpma.local';
     if (p === '/rest/v1/rpc/agenda_login_status') { const b = JSON.parse(req.postData() || '{}'); const x = users.find(y => y.nome_usuario === b.p_usuario); return json(x ? [{ existe: true, senha_criada: x.senha_criada }] : [{ existe: false, senha_criada: false }]); }
     if (p === '/rest/v1/rpc/agenda_admin_reset_senha') return json('Hub1a2b3c45');
     if (p === '/rest/v1/rpc/agenda_admin_contas') return json([{ nome_usuario: 'giovanna.cintra', id: '11111111-1111-1111-1111-111111111111' }, { nome_usuario: 'jeovah.silva', id: '22222222-2222-2222-2222-222222222222' }]);
+    if (p === '/rest/v1/rpc/agenda_bh_definir') { const b = JSON.parse(req.postData() || '{}'); writes.push(['RPC', p, '', b]); for (let i = bhLanc.length - 1; i >= 0; i--) if (bhLanc[i].nome_usuario === b.p_usuario) bhLanc.splice(i, 1); if (b.p_minutos > 0) bhLanc.push({ id: 900 + bhLanc.length, nome_usuario: b.p_usuario, minutos: b.p_minutos, criado_em: new Date().toISOString() }); return json(null); }
     if (p.startsWith('/rest/v1/rpc/')) { writes.push(['RPC', p, '', req.postData()]); return json([{ nome_usuario: 'jeovah.silva' }]); }
     const table = p.replace('/rest/v1/', '');
     if (m !== 'GET' && m !== 'HEAD') {
@@ -179,13 +180,16 @@ let lastEmail = 'giovanna.cintra@scpma.local';
   await page.getByRole('button', { name: /Banco de horas/ }).click(); await page.waitForTimeout(300);
   console.log('banco de horas blocos:', await page.getByText('SCPMA — Subsecretaria').count(), '| SMA oculto:', await page.getByText('SMA — Monitoramento e Avaliação').count() === 0);
   await page.getByText('SCPMA — Subsecretaria').click(); await page.waitForTimeout(300); await shot('10b-banco-horas');
-  const bhRow = page.locator('.hub-bh-row', { hasText: 'Paulo Scalco' });
-  await bhRow.locator('input').fill('3:5x'); await bhRow.getByRole('button', { name: 'Lançar' }).click(); await page.waitForTimeout(300);
-  console.log('formato inválido barrado:', writes.filter(w => w[1] === 'banco_horas_lancamentos').length === 0);
-  await bhRow.locator('input').fill('02:15'); await bhRow.locator('input').press('Enter'); await page.waitForTimeout(500);
-  console.log('lançou:', JSON.stringify(writes.filter(w => w[1] === 'banco_horas_lancamentos').map(w => w[3])), '| total Paulo:', await bhRow.innerText().then(t => /02:15h/.test(t)));
-  await bhRow.getByRole('button', { name: /02:15h/ }).click(); await page.waitForTimeout(500);
-  console.log('removeu:', writes.filter(w => w[0] === 'DELETE' && w[1] === 'banco_horas_lancamentos').length);
+  const bhRow = page.locator('.hub-bh-row', { hasText: 'Paulo Scalco' }), bhIn = bhRow.locator('input');
+  await bhIn.click(); await bhIn.pressSequentially('523'); await page.waitForTimeout(200);
+  console.log('máscara 523 ->', await bhIn.inputValue());
+  await bhIn.press('Enter'); await page.waitForTimeout(500);
+  const bhRpc = () => writes.filter(w => w[0] === 'RPC' && /agenda_bh_definir/.test(w[1])).map(w => w[3]);
+  console.log('salvou:', JSON.stringify(bhRpc()), '| total Paulo:', await bhRow.innerText().then(t => /05:23h/.test(t)));
+  await bhIn.fill(''); await bhIn.pressSequentially('1032'); await bhRow.getByRole('button', { name: 'Salvar' }).click(); await page.waitForTimeout(500);
+  console.log('sobrescreveu:', JSON.stringify(bhRpc().slice(-1)), '| total Paulo:', await bhRow.innerText().then(t => /10:32h/.test(t) && !/05:23h/.test(t)));
+  await bhIn.fill(''); await bhIn.pressSequentially('575'); await bhIn.press('Enter'); await page.waitForTimeout(300);
+  console.log('minutos > 59 barrados:', bhRpc().length === 2);
   await page.getByRole('button', { name: 'Usuários', exact: true }).first().click(); await page.waitForTimeout(300);
   await page.mouse.move(900, 400);
   await page.locator('aside').first().locator('button').filter({ hasText: 'Giovanna' }).first().click(); await page.waitForTimeout(500);

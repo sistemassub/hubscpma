@@ -54,6 +54,7 @@ const RSVP_CATS = ['eventos', 'cursos', 'workshop', 'oficinas'];
 const BH_AREAS = [['SCPMA', 'SCPMA — Subsecretaria', ['SCPMA']], ['SMA', 'SMA — Monitoramento e Avaliação', ['SMA', 'GEMONIT', 'GAPPP']], ['SUPLAN', 'SUPLAN — Planejamento', ['SUPLAN', 'GEPLAN', 'GPMLP']]];
 const bhArea = unid => (BH_AREAS.find(a => a[2].includes(String(unid || '').toUpperCase())) || BH_AREAS[0])[0];
 const bhFmt = m => { m = Math.round(+m || 0); const neg = m < 0; m = Math.abs(m); return (neg ? '-' : '') + String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0') + 'h'; };
+const bhMask = v => { const d = String(v || '').replace(/\D/g, '').replace(/^0+(?=\d{3})/, '').slice(0, 5); return d.length > 2 ? d.slice(0, -2) + ':' + d.slice(-2) : d; };
 const bhParse = v => { v = String(v || '').trim().replace(/h$/i, '').replace(/\s+/g, ''); const neg = v.startsWith('-'); v = v.replace(/^[-+]/, '');
   const m = v.match(/^(\d{1,3})(?::(\d{1,2}))?$/); if (!m || (m[2] && +m[2] > 59)) return null; const t = +m[1] * 60 + +(m[2] || 0); return t ? (neg ? -t : t) : null; };
 // Status de férias: banco (minúsculo) <-> tela
@@ -209,20 +210,16 @@ class Component extends DCLogic {
     } catch (x) { console.warn('[Hub] Erro ao carregar banco de horas:', errMsg(x)); }
   }
   bhEditor(area) { const c = this.cu(); return !!c && (this.state.bh.editores || []).some(r => r.area === area && String(r.nome_usuario).toLowerCase() === String(c.usuario).toLowerCase()); }
-  async addBH(usuario) {
-    const v = (this.state.bhIn || {})[usuario] || '', min = bhParse(v);
-    if (min == null) return this.notify('Informe as horas no formato hh:mm (ex.: 05:23). Para descontar horas usadas, use o sinal de menos (ex.: -02:00).', true);
+  async setBH(usuario) {
+    const v = String((this.state.bhIn || {})[usuario] ?? '').trim();
+    const min = v === '' || /^0+:?0*$/.test(v) ? 0 : bhParse(v);
+    if (min == null || min < 0) return this.notify('Digite as horas só com números (ex.: 523 = 05:23). Os minutos vão até 59.', true);
     try {
-      const { error } = await this.sb().from('banco_horas_lancamentos').insert({ nome_usuario: usuario, minutos: min });
+      const { error } = await this.sb().rpc('agenda_bh_definir', { p_usuario: usuario, p_minutos: min });
       if (error) throw error;
-      this.setState(st => ({ bhIn: { ...st.bhIn, [usuario]: '' } }));
-      await this.loadBH(); this.notify('Horas lançadas: ' + bhFmt(min) + '.');
-    } catch (x) { this.notify('Erro ao lançar horas: ' + errMsg(x), true); }
-  }
-  async delBH(r) {
-    if (!confirm('Remover o lançamento de ' + bhFmt(r.minutos) + '?')) return;
-    try { const { error } = await this.sb().from('banco_horas_lancamentos').delete().eq('id', r.id); if (error) throw error; await this.loadBH(); this.notify('Lançamento removido.'); }
-    catch (x) { this.notify('Erro ao remover: ' + errMsg(x), true); }
+      this.setState(st => { const b = { ...st.bhIn }; delete b[usuario]; return { bhIn: b }; });
+      await this.loadBH(); this.notify('Banco de horas atualizado: ' + bhFmt(min) + '.');
+    } catch (x) { this.notify('Erro ao salvar as horas: ' + errMsg(x), true); }
   }
   async setBHDate(area, data) {
     try { const c = this.cu(); const { error } = await this.sb().from('banco_horas_areas').update({ atualizado_ate: data || null, atualizado_por: c ? c.usuario : null, atualizado_em: new Date().toISOString() }).eq('area', area); if (error) throw error; await this.loadBH(); }
@@ -1283,10 +1280,10 @@ class Component extends DCLogic {
       const at = (s.bh.areas || {})[id] || {}, open = s.bhOpen === id;
       const rows = pessoas.map(u => { const ls = bhLanc.filter(r => String(r.nome_usuario).toLowerCase() === String(u.usuario).toLowerCase()), tot = ls.reduce((t, r) => t + r.minutos, 0);
         return { nome: u.nome, unid: u.unid, total: bhFmt(tot), tBg: tot ? '#e7eef8' : '#f2f5f4', tFg: tot ? '#0b3d7a' : '#7a867f',
-          parts: ls.map(r => ({ txt: bhFmt(r.minutos), del: () => this.delBH(r), title: 'Lançado em ' + new Date(r.criado_em).toLocaleDateString('pt-BR') + (r.criado_por ? ' por ' + r.criado_por : '') + ' · clique para remover' })),
-          hasParts: ls.length > 0, val: (s.bhIn || {})[u.usuario] || '',
-          setVal: e => { const v = e.target.value; this.setState(st => ({ bhIn: { ...st.bhIn, [u.usuario]: v } })); },
-          key: e => { if (e.key === 'Enter') this.addBH(u.usuario); }, add: () => this.addBH(u.usuario) }; });
+          val: (s.bhIn || {})[u.usuario] ?? (tot ? bhFmt(tot).replace(/h$/, '') : ''), changed: (s.bhIn || {})[u.usuario] != null,
+          setVal: e => { const v = bhMask(e.target.value); e.target.value = v; this.setState(st => ({ bhIn: { ...st.bhIn, [u.usuario]: v } })); },
+          key: e => { if (e.key === 'Enter') this.setBH(u.usuario); }, save: () => this.setBH(u.usuario),
+          btnBg: (s.bhIn || {})[u.usuario] != null ? '#1f9d4c' : '#e4e8e6', btnFg: (s.bhIn || {})[u.usuario] != null ? '#fff' : '#5f6b65' }; });
       const tot = rows.reduce((t, r, i) => t + bhLanc.filter(x => String(x.nome_usuario).toLowerCase() === String(pessoas[i].usuario).toLowerCase()).reduce((a, x) => a + x.minutos, 0), 0);
       return { id, nome, open, notOpen: !open, toggle: () => this.setState({ bhOpen: open ? '' : id }), rows, n: pessoas.length + ' pessoas · total ' + bhFmt(tot),
         ate: at.atualizado_ate || '', ateTxt: at.atualizado_ate ? 'Atualizado até ' + fmtDia(at.atualizado_ate) : 'Data de atualização não informada',
