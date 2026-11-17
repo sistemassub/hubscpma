@@ -805,8 +805,8 @@
           <h1 style="margin:0;font-weight:600;font-size:44px;letter-spacing:-0.04em;line-height:1">Usuários</h1>
           <span style="font-size:15px;color:#5f6b65">{{ usr.summary }}</span>
         </div>
-        <sc-if value="{{ usr.isAdmin }}" hint-placeholder-val="{{ false }}">
-          <div style="display:flex;gap:4px;background:#f2f5f4;border-radius:14px;padding:4px;align-self:flex-start">
+        <sc-if value="{{ usr.showTabs }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:4px;background:#f2f5f4;border-radius:14px;padding:4px;align-self:flex-start;flex-wrap:wrap">
             <sc-for list="{{ usr.tabsTop }}" as="t" hint-placeholder-count="2"><button sc-camel-on-click="{{ t.pick }}" style="border:0;border-radius:10px;padding:9px 16px;font-size:14px;font-weight:{{ t.fw }};background:{{ t.bg }};color:{{ t.fg }};display:flex;gap:8px;align-items:center"><i class="{{ t.icon }}"></i>{{ t.name }}</button></sc-for>
           </div>
         </sc-if>
@@ -853,6 +853,32 @@
           </sc-for>
         </div>
         </div>
+        </sc-if>
+        <sc-if value="{{ usr.isBH }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <span style="font-size:13px;color:#5f6b65">Lance as horas extras da sua equipe para a semaninha. Digite no formato <b>hh:mm</b> (ex.: 05:23) e tecle Enter; para descontar horas usadas, use o sinal de menos (ex.: -02:00). Cada pessoa vê o próprio saldo no perfil.</span>
+            <sc-for list="{{ usr.bh.areas }}" as="a" hint-placeholder-count="1">
+              <div style="border:1px solid #e4e8e6;border-radius:20px;overflow:hidden">
+                <button sc-camel-on-click="{{ a.toggle }}" style="width:100%;border:0;background:#f6f8f7;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:left">
+                  <span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:16px;font-weight:600;color:#122019">{{ a.nome }}</span><span style="font-size:12px;color:#5f6b65">{{ a.n }} · {{ a.ateTxt }}</span></span>
+                  <i class="{{ a.chev }}" style="color:#5f6b65"></i>
+                </button>
+                <sc-if value="{{ a.open }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding:14px 18px;display:flex;flex-direction:column;gap:8px">
+                    <label style="display:flex;gap:8px;align-items:center;font-size:13px;color:#3d4943;flex-wrap:wrap">Atualizado até <input type="date" value="{{ a.ate }}" sc-camel-on-change="{{ a.setAte }}" style="padding:7px 10px;border:1px solid #e4e8e6;border-radius:10px;font-size:13px"></label>
+                    <sc-for list="{{ a.rows }}" as="r" hint-placeholder-count="3">
+                      <div class="hub-bh-row" style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1.6fr) 92px 170px;gap:10px;align-items:center;padding:8px 10px;background:#fff;border:1px solid #f0f3f1;border-radius:12px">
+                        <span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis">{{ r.nome }}</span><span style="font-size:11px;color:#7a867f">{{ r.unid }}</span></span>
+                        <span style="display:flex;gap:4px;flex-wrap:wrap;align-items:center"><sc-for list="{{ r.parts }}" as="p" hint-placeholder-count="0"><button sc-camel-on-click="{{ p.del }}" title="{{ p.title }}" style="border:1px solid #e4e8e6;background:#f6f8f7;border-radius:999px;padding:2px 8px;font-size:12px;color:#3d4943;display:flex;gap:4px;align-items:center">{{ p.txt }}<i class="ph-bold ph-x" style="font-size:9px;color:#b42318"></i></button></sc-for></span>
+                        <span style="font-size:14px;font-weight:700;background:{{ r.tBg }};color:{{ r.tFg }};border-radius:10px;padding:4px 8px;text-align:center">{{ r.total }}</span>
+                        <span style="display:flex;gap:6px"><input value="{{ r.val }}" sc-camel-on-input="{{ r.setVal }}" sc-camel-on-key-down="{{ r.key }}" placeholder="hh:mm" inputmode="numeric" style="width:80px;min-width:0;padding:7px 9px;border:1px solid #e4e8e6;border-radius:10px;font-size:13px"><button sc-camel-on-click="{{ r.add }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:10px;padding:7px 10px;font-size:13px;font-weight:600;white-space:nowrap">Lançar</button></span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
         </sc-if>
         <sc-if value="{{ usr.isDocs }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;flex-direction:column;gap:16px">
@@ -1006,6 +1032,13 @@
             </div>
           </div>
           <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="border:1px solid #cfe0f3;background:#f2f7fd;border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:6px">
+              <span style="font-size:17px;font-weight:600;display:flex;gap:8px;align-items:center"><i class="ph-duotone ph-clock-countdown" style="color:#0b4f9c"></i>Banco de horas p/ semaninha</span>
+              <span style="font-size:34px;font-weight:600;letter-spacing:-0.03em;color:#0b3d7a;line-height:1.1">{{ bhMe.total }}</span>
+              <sc-if value="{{ bhMe.hasParts }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#3d4943">{{ bhMe.parts }}</span></sc-if>
+              <span style="font-size:12px;color:#5f6b65">{{ bhMe.ate }}</span>
+              <span style="font-size:11px;color:#7a867f">{{ bhMe.quem }}</span>
+            </div>
             <div style="border:1px solid #e4e8e6;border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:10px">
               <span style="font-size:17px;font-weight:600;display:flex;gap:8px;align-items:center"><i class="ph-duotone ph-key" style="color:#0b4f9c"></i>Alterar senha</span>
               <span style="font-size:12px;color:#5f6b65">Pelo menos 8 caracteres, com letras e números.</span>

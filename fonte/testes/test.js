@@ -25,6 +25,7 @@ const eventos = [
   { id: 4, titulo: 'Entrega de relatório cancelada', descricao: '', data: plus(2), data_fim: plus(2), inicio: '10:00:00', fim: '11:00:00', local: '', categoria: 'relatorio', prioridade: 'media', status: 'cancelado', repeticao: 'nenhuma', responsavel: '', unidade_responsavel: 'GAPPP', publico_tipo: 'unidade', removido_em: null },
 ];
 const writes = [];
+const bhLanc = [{ id: 1, nome_usuario: 'giovanna.cintra', minutos: 323, criado_em: new Date().toISOString(), criado_por: 'giovanna.cintra' }, { id: 2, nome_usuario: 'giovanna.cintra', minutos: 277, criado_em: new Date().toISOString(), criado_por: 'giovanna.cintra' }];
 const session = email => ({ access_token: 'fake.jwt.token', token_type: 'bearer', expires_in: 3600, expires_at: Math.floor(Date.now() / 1000) + 3600, refresh_token: 'r',
   user: { id: '11111111-1111-1111-1111-111111111111', aud: 'authenticated', role: 'authenticated', email, user_metadata: {}, app_metadata: {}, created_at: new Date().toISOString() } });
 let lastEmail = 'giovanna.cintra@scpma.local';
@@ -55,6 +56,9 @@ let lastEmail = 'giovanna.cintra@scpma.local';
     if (m !== 'GET' && m !== 'HEAD') {
       const body = req.postData() ? JSON.parse(req.postData()) : null;
       writes.push([m, table, u.search, body]);
+          if (table === 'banco_horas_lancamentos' && m === 'POST') { bhLanc.push({ id: bhLanc.length + 50, criado_em: new Date().toISOString(), criado_por: 'giovanna.cintra', ...body }); return json([], 201); }
+      if (table === 'banco_horas_lancamentos' && m === 'DELETE') { const id = +(u.searchParams.get('id') || '').replace('eq.', ''); const i = bhLanc.findIndex(x => x.id === id); if (i >= 0) bhLanc.splice(i, 1); return route.fulfill({ status: 204, headers: { 'access-control-allow-origin': '*' } }); }
+      if (table === 'banco_horas_areas') return json([]);
       if (m === 'POST' && table === 'documentos_arquivos') { const r = { id: docSeq++, criado_em: new Date().toISOString(), ...body }; docArqs.push(r); return json([r], 201); }
       if (m === 'POST' && table === 'documentos_pastas') { const r = { id: docSeq++, criado_em: new Date().toISOString(), ...body }; docPastas.push(r); return json([r], 201); }
       if (m === 'DELETE' && table === 'documentos_arquivos') { const id = +(u.searchParams.get('id') || '').replace('eq.', ''); const i = docArqs.findIndex(x => x.id === id); if (i >= 0) docArqs.splice(i, 1); return route.fulfill({ status: 204, headers: { 'access-control-allow-origin': '*' } }); }
@@ -77,6 +81,9 @@ let lastEmail = 'giovanna.cintra@scpma.local';
     if (table === 'usuarios_autorizados') return json(users);
     if (table === 'aprovadores_ferias_escopo') return json(m === 'GET' ? [{ nome_usuario: 'paulo.scalco', unidade: 'SCPMA' }, { nome_usuario: 'giovanna.cintra', unidade: 'GEMONIT' }] : []);
     if (table === 'eventos') return json(eventos.filter(e => !e.removido_em));
+    if (table === 'banco_horas_editores') return json([{ nome_usuario: 'giovanna.cintra', area: 'SCPMA' }, { nome_usuario: 'vinicius.chaer', area: 'SMA' }]);
+    if (table === 'banco_horas_areas' && m === 'GET') return json([{ area: 'SCPMA', atualizado_ate: '2026-11-16' }, { area: 'SMA', atualizado_ate: null }, { area: 'SUPLAN', atualizado_ate: null }]);
+    if (table === 'banco_horas_lancamentos' && m === 'GET') return json(bhLanc);
     if (table === 'hierarquia_superiores') return json([{ nome_usuario: 'giovanna.cintra', superior: 'paulo.scalco' }, { nome_usuario: 'vinicius.chaer', superior: 'giovanna.cintra' }]);
     if (table === 'evento_presencas' && u.searchParams.get('evento_id') === 'eq.7') return json([{ evento_id: 7, nome_usuario: 'giovanna.cintra', resposta: 'confirmado', aprovacao: 'pendente' }, { evento_id: 7, nome_usuario: 'paulo.scalco', resposta: 'confirmado', aprovacao: 'pendente' },
       { evento_id: 7, nome_usuario: 'jeovah.silva', resposta: 'confirmado', aprovacao: 'aprovada' }, { evento_id: 7, nome_usuario: 'vinicius.chaer', resposta: 'confirmado', aprovacao: 'pendente' }]);
@@ -168,10 +175,23 @@ let lastEmail = 'giovanna.cintra@scpma.local';
   // usuários e perfil
   await page.evaluate(() => {});
   await page.locator('aside').first().hover(); await page.getByText('Usuários', { exact: true }).first().click(); await page.waitForTimeout(400); await shot('10-usuarios');
+  // aba Banco de horas: só o bloco da área de quem lança (Giovanna = SCPMA)
+  await page.getByRole('button', { name: /Banco de horas/ }).click(); await page.waitForTimeout(300);
+  console.log('banco de horas blocos:', await page.getByText('SCPMA — Subsecretaria').count(), '| SMA oculto:', await page.getByText('SMA — Monitoramento e Avaliação').count() === 0);
+  await page.getByText('SCPMA — Subsecretaria').click(); await page.waitForTimeout(300); await shot('10b-banco-horas');
+  const bhRow = page.locator('.hub-bh-row', { hasText: 'Paulo Scalco' });
+  await bhRow.locator('input').fill('3:5x'); await bhRow.getByRole('button', { name: 'Lançar' }).click(); await page.waitForTimeout(300);
+  console.log('formato inválido barrado:', writes.filter(w => w[1] === 'banco_horas_lancamentos').length === 0);
+  await bhRow.locator('input').fill('02:15'); await bhRow.locator('input').press('Enter'); await page.waitForTimeout(500);
+  console.log('lançou:', JSON.stringify(writes.filter(w => w[1] === 'banco_horas_lancamentos').map(w => w[3])), '| total Paulo:', await bhRow.innerText().then(t => /02:15h/.test(t)));
+  await bhRow.getByRole('button', { name: /02:15h/ }).click(); await page.waitForTimeout(500);
+  console.log('removeu:', writes.filter(w => w[0] === 'DELETE' && w[1] === 'banco_horas_lancamentos').length);
+  await page.getByRole('button', { name: 'Usuários', exact: true }).first().click(); await page.waitForTimeout(300);
   await page.mouse.move(900, 400);
   await page.locator('aside').first().locator('button').filter({ hasText: 'Giovanna' }).first().click(); await page.waitForTimeout(500);
   await page.fill('input[placeholder="Nº de matrícula"]', '12345');
   await page.getByRole('button', { name: /Salvar alterações/ }).click(); await page.waitForTimeout(800); await shot('11-perfil');
+  console.log('perfil banco de horas:', await page.getByText('Banco de horas p/ semaninha').count(), '|', await page.getByText('05:23h + 04:37h = 10:00h').count(), '|', await page.getByText('Atualizado até 16/11/2026').count());
   await page.fill('input[placeholder="Nova senha"]', 'novaSenha99'); await page.fill('input[placeholder="Repita a nova senha"]', 'novaSenha99');
   await page.getByRole('button', { name: /^Alterar senha$/ }).click(); await page.waitForTimeout(600);
   console.log('troca de senha:', JSON.stringify(writes.filter(w => w[0] === 'PUTUSER').map(w => !!w[3].password)), await page.getByText('Senha alterada.').count());

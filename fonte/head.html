@@ -221,6 +221,9 @@
   .hub-main [style*="width: 400px"], .hub-main [style*="width: 440px"] { width: calc(100vw - 28px) !important; }
   .hub-main input, .hub-main select, .hub-main textarea { font-size: 16px !important; }
   .hub-fab { display: none !important; }
+  .hub-bh-row { grid-template-columns: minmax(0,1fr) auto !important; }
+  .hub-bh-row > span:nth-child(2) { grid-column: 1 / -1; order: 3; }
+  .hub-bh-row > span:nth-child(4) { grid-column: 1 / -1; order: 4; }
   .hub-search { order: 3; flex-basis: 100% !important; max-width: none !important; min-width: 0 !important; }
   .hub-cal-cell { min-height: 54px !important; padding: 6px 4px !important; flex-direction: row !important; flex-wrap: wrap; align-content: flex-start; gap: 3px !important; }
   .hub-cal-cell > span:first-child { margin-left: 0 !important; margin-right: calc(100% - 24px); }

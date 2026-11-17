@@ -50,6 +50,12 @@ const UNIT_BY_NAME = { SCPMA:'scpma', SMA:'sma', GEMONIT:'gemonit', GAPPP:'gappp
 const toUnitId = v => { if (!v) return 'scpma'; const x = String(v).trim(); return UNITS[x.toLowerCase()] ? x.toLowerCase() : (UNIT_BY_NAME[x.toUpperCase()] || 'scpma'); };
 const toUnitName = id => UNITS[toUnitId(id)][0];
 const RSVP_CATS = ['eventos', 'cursos', 'workshop', 'oficinas'];
+// Banco de horas da semaninha: áreas (superintendências) e formato hh:mm
+const BH_AREAS = [['SCPMA', 'SCPMA — Subsecretaria', ['SCPMA']], ['SMA', 'SMA — Monitoramento e Avaliação', ['SMA', 'GEMONIT', 'GAPPP']], ['SUPLAN', 'SUPLAN — Planejamento', ['SUPLAN', 'GEPLAN', 'GPMLP']]];
+const bhArea = unid => (BH_AREAS.find(a => a[2].includes(String(unid || '').toUpperCase())) || BH_AREAS[0])[0];
+const bhFmt = m => { m = Math.round(+m || 0); const neg = m < 0; m = Math.abs(m); return (neg ? '-' : '') + String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0') + 'h'; };
+const bhParse = v => { v = String(v || '').trim().replace(/h$/i, '').replace(/\s+/g, ''); const neg = v.startsWith('-'); v = v.replace(/^[-+]/, '');
+  const m = v.match(/^(\d{1,3})(?::(\d{1,2}))?$/); if (!m || (m[2] && +m[2] > 59)) return null; const t = +m[1] * 60 + +(m[2] || 0); return t ? (neg ? -t : t) : null; };
 // Status de férias: banco (minúsculo) <-> tela
 const FST_DB = { solicitada:'Solicitada', aprovada:'Aprovada', cancelado:'Cancelada', recusada:'Recusada' };
 const FST_UI = { Solicitada:'solicitada', Aprovada:'aprovada', Cancelada:'cancelado', Recusada:'recusada' };
@@ -109,7 +115,7 @@ class Component extends DCLogic {
     uSel: 'scpma', uCat: 'all', pTab: 'unidades', q: '', unitF: 'all', person: null,
     events: [], modal: false, editId: null, viewId: null, f: null, err: false, files: [],
     prof: { cargo: '', tel: '', bday: '', mat: '', pc: '', arm: '', cpf: '', foto: '' }, profSaved: '', rail: false, nivelF: 'all',
-    me: null, users: [], feriasScope: {}, hier: {}, rsvpEdit: '',
+    me: null, users: [], feriasScope: {}, hier: {}, rsvpEdit: '', bh: { lanc: [], areas: {}, editores: [] }, bhOpen: '', bhIn: {},
     online: false, connecting: true, busy: false, backendProblem: '', publicProfiles: {}, presencas: {}, presencaCounts: {}, myNextId: '', myNextDone: false,
     notifs: [], notifOpen: false, toast: null, toastErr: false, saving: false, uEdit: null, myPat: null, publicByUser: {}, convEv: {}, presencaQuem: {}, np1: '', np2: '', pwBusy: false, usrTab: 'usuarios', patItens: [], patLoaded: false, patEdit: null, patQ: '', personAdm: {}, resetInfo: null, colItens: [], colLoaded: false, colQ: '', colPessoa: '', colMine: false, colEdit: null,
     docPastas: [], docArqs: [], docLoaded: false, docPasta: null, docQ: '', docBusy: false, docFolderEdit: null, docFileEdit: null, docLinkEdit: null };
@@ -188,6 +194,39 @@ class Component extends DCLogic {
       const hier = {}; (data || []).forEach(r => { const k = String(r.nome_usuario).toLowerCase(); (hier[k] = hier[k] || []).push(String(r.superior).toLowerCase()); });
       this.setState({ hier });
     } catch (e) { console.warn('[Hub] Erro ao carregar hierarquia:', errMsg(e)); }
+  }
+  // ===== Banco de horas da semaninha (lançado pelos assessores de cada área) =====
+  async loadBH() {
+    try {
+      const sb = this.sb();
+      const [l, a, e] = await Promise.all([
+        sb.from('banco_horas_lancamentos').select('id,nome_usuario,minutos,criado_em,criado_por').order('id'),
+        sb.from('banco_horas_areas').select('area,atualizado_ate,atualizado_por'),
+        sb.from('banco_horas_editores').select('nome_usuario,area')]);
+      if (l.error) throw l.error; if (a.error) throw a.error; if (e.error) throw e.error;
+      const areas = {}; (a.data || []).forEach(r => { areas[r.area] = r; });
+      this.setState({ bh: { lanc: l.data || [], areas, editores: e.data || [] } });
+    } catch (x) { console.warn('[Hub] Erro ao carregar banco de horas:', errMsg(x)); }
+  }
+  bhEditor(area) { const c = this.cu(); return !!c && (this.state.bh.editores || []).some(r => r.area === area && String(r.nome_usuario).toLowerCase() === String(c.usuario).toLowerCase()); }
+  async addBH(usuario) {
+    const v = (this.state.bhIn || {})[usuario] || '', min = bhParse(v);
+    if (min == null) return this.notify('Informe as horas no formato hh:mm (ex.: 05:23). Para descontar horas usadas, use o sinal de menos (ex.: -02:00).', true);
+    try {
+      const { error } = await this.sb().from('banco_horas_lancamentos').insert({ nome_usuario: usuario, minutos: min });
+      if (error) throw error;
+      this.setState(st => ({ bhIn: { ...st.bhIn, [usuario]: '' } }));
+      await this.loadBH(); this.notify('Horas lançadas: ' + bhFmt(min) + '.');
+    } catch (x) { this.notify('Erro ao lançar horas: ' + errMsg(x), true); }
+  }
+  async delBH(r) {
+    if (!confirm('Remover o lançamento de ' + bhFmt(r.minutos) + '?')) return;
+    try { const { error } = await this.sb().from('banco_horas_lancamentos').delete().eq('id', r.id); if (error) throw error; await this.loadBH(); this.notify('Lançamento removido.'); }
+    catch (x) { this.notify('Erro ao remover: ' + errMsg(x), true); }
+  }
+  async setBHDate(area, data) {
+    try { const c = this.cu(); const { error } = await this.sb().from('banco_horas_areas').update({ atualizado_ate: data || null, atualizado_por: c ? c.usuario : null, atualizado_em: new Date().toISOString() }).eq('area', area); if (error) throw error; await this.loadBH(); }
+    catch (x) { this.notify('Erro ao salvar a data: ' + errMsg(x), true); }
   }
   superioresDe(usuario) { // chefes, chefes dos chefes e quem está no mesmo nível por substituição
     const h = this.state.hier || {}, out = new Set(), fila = [String(usuario || '').toLowerCase()];
@@ -291,6 +330,7 @@ class Component extends DCLogic {
   }
   async postLogin(sv) {
     await this.loadFeriasScope(); // a tabela de aprovadores só é legível depois do login
+    await this.loadBH();
     await this.loadProfile(sv);
     await this.loadPublicProfiles();
     await this.loadNotifs(sv);
@@ -1235,10 +1275,27 @@ class Component extends DCLogic {
       editing: !!s.patEdit, e: s.patEdit || {}, editTitle: s.patEdit && s.patEdit.id ? 'Editar item' : 'Novo item',
       set: ['processo', 'setor', 'equipamento', 'numero', 'responsavel', 'observacao'].reduce((o, k) => (o[k] = setPe(k), o), {}),
       save: () => this.savePatItem(), cancel: () => this.setState({ patEdit: null }) };
+    const bhMine = BH_AREAS.filter(a => this.bhEditor(a[0]));
+    const bhCan = bhMine.length > 0, bhLanc = (s.bh && s.bh.lanc) || [];
+    const fmtDia = d => d ? d.split('-').reverse().join('/') : '';
+    const bh = { areas: bhMine.map(([id, nome, unids]) => {
+      const pessoas = s.users.filter(u => unids.includes(String(u.unid || '').toUpperCase())).slice().sort((a, b) => a.nome.localeCompare(b.nome, 'pt'));
+      const at = (s.bh.areas || {})[id] || {}, open = s.bhOpen === id;
+      const rows = pessoas.map(u => { const ls = bhLanc.filter(r => String(r.nome_usuario).toLowerCase() === String(u.usuario).toLowerCase()), tot = ls.reduce((t, r) => t + r.minutos, 0);
+        return { nome: u.nome, unid: u.unid, total: bhFmt(tot), tBg: tot ? '#e7eef8' : '#f2f5f4', tFg: tot ? '#0b3d7a' : '#7a867f',
+          parts: ls.map(r => ({ txt: bhFmt(r.minutos), del: () => this.delBH(r), title: 'Lançado em ' + new Date(r.criado_em).toLocaleDateString('pt-BR') + (r.criado_por ? ' por ' + r.criado_por : '') + ' · clique para remover' })),
+          hasParts: ls.length > 0, val: (s.bhIn || {})[u.usuario] || '',
+          setVal: e => { const v = e.target.value; this.setState(st => ({ bhIn: { ...st.bhIn, [u.usuario]: v } })); },
+          key: e => { if (e.key === 'Enter') this.addBH(u.usuario); }, add: () => this.addBH(u.usuario) }; });
+      const tot = rows.reduce((t, r, i) => t + bhLanc.filter(x => String(x.nome_usuario).toLowerCase() === String(pessoas[i].usuario).toLowerCase()).reduce((a, x) => a + x.minutos, 0), 0);
+      return { id, nome, open, notOpen: !open, toggle: () => this.setState({ bhOpen: open ? '' : id }), rows, n: pessoas.length + ' pessoas · total ' + bhFmt(tot),
+        ate: at.atualizado_ate || '', ateTxt: at.atualizado_ate ? 'Atualizado até ' + fmtDia(at.atualizado_ate) : 'Data de atualização não informada',
+        setAte: e => this.setBHDate(id, e.target.value), chev: open ? 'ph-bold ph-caret-up' : 'ph-bold ph-caret-down' }; }) };
     const usrHead = ['Nome', 'Usuário', 'Acesso às unidades', 'Nível', 'Aprova férias'];
     const usr = { summary: UL.length + ' usuários · ' + nAdm + ' administradores' + (isAdmin ? ' · clique no nome para ver e editar os dados' : ''), isAdmin, notAdmin: !isAdmin,
-      isUsers: !isAdmin || (s.usrTab !== 'assplan' && s.usrTab !== 'docs'), isAssplan: isAdmin && s.usrTab === 'assplan', isDocs: isAdmin && s.usrTab === 'docs', assplan, docs,
-      tabsTop: [['usuarios', 'Usuários', 'ph-users'], ['assplan', 'Patrimônios', 'ph-laptop'], ['docs', 'Documentos e projetos', 'ph-folders']].map(([id, name, ic]) => { const on = (s.usrTab || 'usuarios') === id; return { name, icon: 'ph-duotone ' + ic, pick: () => this.setState({ usrTab: id }), bg: on ? '#1f9d4c' : 'transparent', fg: on ? '#fff' : '#3d4943', fw: on ? '600' : '500' }; }), cursor: isAdmin ? 'pointer' : 'default', nameColor: isAdmin ? '#0b4f9c' : '#122019', openTitle: isAdmin ? 'Ver e editar dados' : '',
+      isUsers: !(isAdmin && (s.usrTab === 'assplan' || s.usrTab === 'docs')) && !(bhCan && s.usrTab === 'bh'), isAssplan: isAdmin && s.usrTab === 'assplan', isDocs: isAdmin && s.usrTab === 'docs', assplan, docs,
+      isBH: bhCan && s.usrTab === 'bh', bh, showTabs: isAdmin || bhCan,
+      tabsTop: [['usuarios', 'Usuários', 'ph-users'], ...(isAdmin ? [['assplan', 'Patrimônios', 'ph-laptop'], ['docs', 'Documentos e projetos', 'ph-folders']] : []), ...(bhCan ? [['bh', 'Banco de horas', 'ph-clock-countdown']] : [])].map(([id, name, ic]) => { const on = (s.usrTab || 'usuarios') === id; return { name, icon: 'ph-duotone ' + ic, pick: () => this.setState({ usrTab: id }), bg: on ? '#1f9d4c' : 'transparent', fg: on ? '#fff' : '#3d4943', fw: on ? '600' : '500' }; }), cursor: isAdmin ? 'pointer' : 'default', nameColor: isAdmin ? '#0b4f9c' : '#122019', openTitle: isAdmin ? 'Ver e editar dados' : '',
       tabs: [['all', 'Todos'], ['admin', 'Administradores'], ['editor', 'Editores']].map(([id, name]) => { const on = s.nivelF === id; return { name, count: id === 'all' ? UL.length : UL.filter(u => u.nivel === id).length, pick: set({ nivelF: id }), bg: on ? '#fff' : 'transparent', fg: on ? '#0b3d7a' : '#5f6b65' }; }),
       list: UL.filter(u => (s.nivelF === 'all' || u.nivel === s.nivelF) && (!(s.usrQ || '').trim() || (u.nome + ' ' + u.usuario).toLowerCase().includes(s.usrQ.trim().toLowerCase())) && (!(s.usrUnits || []).length || u.acesso === 'Todas as unidades' || s.usrUnits.some(id => u.acesso.split(', ').includes(UNITS[id][0])))).slice().sort((a, b) => a.nome.localeCompare(b.nome, 'pt')).map(({ nome, usuario, acesso, nivel, senhaCriada }) => ({ nome, usuario, initials: ini(nome), photoBg: (() => { const pub = s.publicByUser[usuario.toLowerCase()], o = orgFor(usuario, nome), f = (pub && pub.foto_url) || (o && o[6]) || ''; return f ? 'url("' + f + '")' : 'none'; })(), avBg: me && usuario === me.usuario ? '#f5c518' : '#e7eef8',
         aprova: scopeOf(usuario) ? 'Aprova férias: ' + scopeOf(usuario) : '', acesso: acesso === 'Todas as unidades' ? [{ name: 'Todas as unidades', color: '#1f9d4c' }] : acesso.split(', ').map(n => ({ name: n, color: unitColor(n) })),
@@ -1356,6 +1413,12 @@ class Component extends DCLogic {
       calF, uniF, dirF, usrF, col, saveProf: () => this.saveProfile(),
       reset: { show: !!s.resetInfo, nome: s.resetInfo ? s.resetInfo.nome : '', usuario: s.resetInfo ? s.resetInfo.usuario : '', senha: s.resetInfo ? s.resetInfo.senha : '',
         copy: () => { try { navigator.clipboard.writeText(s.resetInfo.senha); this.notify('Senha copiada.'); } catch (e) {} }, close: () => this.setState({ resetInfo: null }) },
+      bhMe: (() => { const c = this.cu(); if (!c) return {}; const u = s.users.find(x => x.usuario === c.usuario) || {}, area = bhArea(u.unid);
+        const ls = ((s.bh && s.bh.lanc) || []).filter(r => String(r.nome_usuario).toLowerCase() === String(c.usuario).toLowerCase()), tot = ls.reduce((t, r) => t + r.minutos, 0);
+        const at = ((s.bh && s.bh.areas) || {})[area] || {}, eds = ((s.bh && s.bh.editores) || []).filter(r => r.area === area).map(r => (s.users.find(x => x.usuario === r.nome_usuario) || { nome: r.nome_usuario }).nome.split(' ')[0]);
+        return { total: bhFmt(tot), parts: ls.length > 1 ? ls.map(r => bhFmt(r.minutos)).join(' + ') + ' = ' + bhFmt(tot) : '', hasParts: ls.length > 1,
+          ate: at.atualizado_ate ? 'Atualizado até ' + at.atualizado_ate.split('-').reverse().join('/') : 'Ainda não atualizado',
+          quem: eds.length ? 'Lançado por ' + eds.join(', ') + ' (assessoria ' + area + ')' : '' }; })(),
       pwc: { np1: s.np1, np2: s.np2, setNp1: e => this.setState({ np1: e.target.value }), setNp2: e => this.setState({ np2: e.target.value }), save: () => this.changePassword(), btn: s.pwBusy ? 'Alterando…' : 'Alterar senha' }, hasUe: !!ueS, ue, myPat: myPatV,
       notif: { open: s.notifOpen, count: unread, has: unread > 0, list: notifList, empty: !notifList.length,
         toggle: () => { const o = !s.notifOpen; this.setState({ notifOpen: o }); if (o && unread) this.markAllRead(); }, close: set({ notifOpen: false }) },

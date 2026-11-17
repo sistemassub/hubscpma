@@ -40,6 +40,11 @@ A proteção está no banco (RLS), não no código:
   `agenda_pode_aprovar_pessoa`, usada por `agenda_aprovar_presenca` e pelo gatilho de férias; o site repete a mesma
   regra só para decidir onde mostrar os botões. Daiany e Vinicius estão cadastrados como "mesmo nível" (um acima do outro).
   A coluna `usuarios_autorizados.pode_aprovar_ferias` é só informativa e se atualiza sozinha a partir do escopo.
+- **Banco de horas da semaninha:** `banco_horas_lancamentos` (horas em minutos; negativo = horas usadas),
+  `banco_horas_areas` ("atualizado até" de SCPMA, SMA e SUPLAN) e `banco_horas_editores` (quem lança em cada área:
+  Giovanna na SCPMA, Otávio na SMA, Simone na SUPLAN). A área vem da unidade da pessoa (`agenda_area_de`).
+  Cada lançamento só é visto pela própria pessoa (caixinha no Perfil) e por quem lança naquela área
+  (aba "Banco de horas" em Usuários); administradores não veem por serem administradores.
 - **Dados pessoais** (e-mail, celular, aniversário do organograma, CPF etc.) ficam só no banco e só aparecem após o login —
   **nunca** coloque esses dados no código deste repositório (ele é público).
 
