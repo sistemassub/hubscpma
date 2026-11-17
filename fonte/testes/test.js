@@ -20,6 +20,8 @@ const eventos = [
   { id: 2, titulo: 'Curso de Monitoramento', descricao: '', data: plus(3), data_fim: plus(4), inicio: '14:00:00', fim: '17:00:00', local: 'Auditório', categoria: 'cursos', prioridade: 'media', status: 'pendente', repeticao: 'nenhuma', responsavel: 'Jeovah Quintino da Silva', unidade_responsavel: 'GEMONIT', publico_tipo: 'unidade', removido_em: null },
   { id: 3, titulo: 'Férias — Jeovah Quintino da Silva', descricao: '', data: plus(-1), data_fim: plus(5), inicio: '00:00:00', fim: '23:59:00', local: '—', categoria: 'ferias', prioridade: 'baixa', status: 'solicitada', repeticao: 'nenhuma', responsavel: 'Jeovah Quintino da Silva', unidade_responsavel: 'GEMONIT', publico_tipo: 'unidade', removido_em: null },
   { id: 5, titulo: 'Oficina com convidados', descricao: '', data: plus(1), data_fim: plus(1), inicio: '10:00:00', fim: '12:00:00', local: 'Sala 2', categoria: 'oficinas', prioridade: 'media', status: 'pendente', repeticao: 'nenhuma', responsavel: 'Giovanna Silva Cintra', unidade_responsavel: 'SCPMA', publico_tipo: 'lista', removido_em: null },
+  { id: 6, titulo: 'Férias — Giovanna Silva Cintra', descricao: '', data: plus(10), data_fim: plus(12), inicio: '00:00:00', fim: '23:59:00', local: '—', categoria: 'ferias', prioridade: 'baixa', status: 'solicitada', repeticao: 'nenhuma', responsavel: 'Giovanna Silva Cintra', unidade_responsavel: 'GEMONIT', publico_tipo: 'unidade', removido_em: null },
+  { id: 7, titulo: 'Folga teste hierarquia', descricao: '', data: plus(6), data_fim: plus(6), inicio: '08:00:00', fim: '18:00:00', local: '', categoria: 'eventos', prioridade: 'baixa', status: 'pendente', repeticao: 'nenhuma', responsavel: '', unidade_responsavel: 'SCPMA', publico_tipo: 'todos', exige_aprovacao: true, removido_em: null },
   { id: 4, titulo: 'Entrega de relatório cancelada', descricao: '', data: plus(2), data_fim: plus(2), inicio: '10:00:00', fim: '11:00:00', local: '', categoria: 'relatorio', prioridade: 'media', status: 'cancelado', repeticao: 'nenhuma', responsavel: '', unidade_responsavel: 'GAPPP', publico_tipo: 'unidade', removido_em: null },
 ];
 const writes = [];
@@ -75,6 +77,9 @@ let lastEmail = 'giovanna.cintra@scpma.local';
     if (table === 'usuarios_autorizados') return json(users);
     if (table === 'aprovadores_ferias_escopo') return json(m === 'GET' ? [{ nome_usuario: 'paulo.scalco', unidade: 'SCPMA' }, { nome_usuario: 'giovanna.cintra', unidade: 'GEMONIT' }] : []);
     if (table === 'eventos') return json(eventos.filter(e => !e.removido_em));
+    if (table === 'hierarquia_superiores') return json([{ nome_usuario: 'giovanna.cintra', superior: 'paulo.scalco' }, { nome_usuario: 'vinicius.chaer', superior: 'giovanna.cintra' }]);
+    if (table === 'evento_presencas' && u.searchParams.get('evento_id') === 'eq.7') return json([{ evento_id: 7, nome_usuario: 'giovanna.cintra', resposta: 'confirmado', aprovacao: 'pendente' }, { evento_id: 7, nome_usuario: 'paulo.scalco', resposta: 'confirmado', aprovacao: 'pendente' },
+      { evento_id: 7, nome_usuario: 'jeovah.silva', resposta: 'confirmado', aprovacao: 'aprovada' }, { evento_id: 7, nome_usuario: 'vinicius.chaer', resposta: 'confirmado', aprovacao: 'pendente' }]);
     if (table === 'evento_presencas') return json([{ evento_id: 1, nome_usuario: 'paulo.scalco', resposta: 'confirmado' }, { evento_id: 5, nome_usuario: 'jeovah.silva', resposta: 'recusado' }]);
     if (table === 'notificacoes') return json([{ id: 9, dest_usuario: 'giovanna.cintra', tipo: 'convite', titulo: 'Confirme sua presença', mensagem: 'Você foi convidado(a) para "Reunião"', lida: false, evento_id: 1, criada_em: new Date().toISOString() }]);
     if (table === 'patrimonio') return json(u.searchParams.get('nome_usuario') === 'eq.giovanna.cintra' ? [{ tem_patrimonio: true, patrimonio: '998877' }] : []);
@@ -136,6 +141,21 @@ let lastEmail = 'giovanna.cintra@scpma.local';
   await page.getByRole('button', { name: 'Aprovar' }).click(); await page.waitForTimeout(800);
   console.log('aprovação gravou:', JSON.stringify(writes.filter(w => w[1] === 'eventos' && w[0] === 'PATCH').map(w => w[3].status)));
   await page.mouse.click(1420, 20); await page.waitForTimeout(300);
+  // hierarquia: ninguém aprova as próprias férias
+  await page.getByText('Ver todos', { exact: true }).click().catch(() => {}); await page.waitForTimeout(300);
+  await page.getByText('Férias — Giovanna Silva Cintra').first().click(); await page.waitForTimeout(500);
+  console.log('próprias férias sem botão Aprovar:', await page.getByRole('button', { name: 'Aprovar' }).count() === 0);
+  await page.mouse.click(1420, 20); await page.waitForTimeout(300);
+  // folga com aprovação: só o subordinado pendente tem botões; quem já respondeu não vê "Vou participar"
+  await page.getByText('Folga teste hierarquia').first().click(); await page.waitForTimeout(600); await shot('07b-folga-hierarquia');
+  console.log('botões Aprovar na folga (esperado 1, só Vinicius):', await page.getByRole('button', { name: 'Aprovar' }).count());
+  console.log('"Vou participar" some depois de responder:', await page.getByRole('button', { name: /Vou participar/ }).count() === 0, '| mostra resposta:', await page.getByText('Você vai participar.').count() > 0);
+  await page.getByRole('button', { name: 'alterar' }).click(); await page.waitForTimeout(300);
+  console.log('"alterar" mostra os botões de novo:', await page.getByRole('button', { name: /Vou participar/ }).count() === 1);
+  await page.getByRole('button', { name: 'Aprovar' }).first().click(); await page.waitForTimeout(600);
+  console.log('aprovou Vinicius:', JSON.stringify(writes.filter(w => w[0] === 'RPC' && /aprovar_presenca/.test(w[1])).map(w => JSON.parse(w[3]).p_usuario)));
+  await page.mouse.click(1420, 20); await page.waitForTimeout(300);
+  await page.getByText('Este mês', { exact: true }).last().click().catch(() => {}); await page.waitForTimeout(300);
   // novo evento
   await page.getByRole('button', { name: /Novo evento/ }).click(); await page.waitForTimeout(400);
   await page.fill('input[placeholder="Ex.: Curso de Planejamento"]', 'Teste de criação');

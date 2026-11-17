@@ -1175,8 +1175,13 @@
           <sc-if value="{{ vm.hasRsvp }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#f6f8f7;border-radius:14px;padding:10px 12px">
               <span style="font-size:13px;color:#3d4943;flex:1;min-width:140px">{{ vm.rsvpCount }}<br><b style="font-size:12px;color:#7a5d00">{{ vm.myAprov }}</b></span>
+              <sc-if value="{{ vm.rsvpAsk }}" hint-placeholder-val="{{ true }}">
               <button sc-camel-on-click="{{ vm.rsvpYes }}" style="border:1px solid #1f9d4c;background:{{ vm.yesBg }};color:{{ vm.yesFg }};border-radius:10px;padding:7px 12px;font-size:13px;font-weight:600;display:flex;gap:6px;align-items:center"><i class="ph-bold ph-check"></i>Vou participar</button>
               <button sc-camel-on-click="{{ vm.rsvpNo }}" style="border:1px solid #b42318;background:{{ vm.noBg }};color:{{ vm.noFg }};border-radius:10px;padding:7px 12px;font-size:13px;font-weight:600;display:flex;gap:6px;align-items:center"><i class="ph-bold ph-x"></i>Não vou</button>
+              </sc-if>
+              <sc-if value="{{ vm.rsvpDone }}" hint-placeholder-val="{{ false }}">
+              <span style="font-size:13px;font-weight:600;color:#3d4943;display:flex;gap:8px;align-items:center">{{ vm.rsvpMine }}<button sc-camel-on-click="{{ vm.rsvpChange }}" style="border:0;background:transparent;color:#0b4f9c;font-size:12px;padding:0;text-decoration:underline">alterar</button></span>
+              </sc-if>
             </div>
           </sc-if>
           <sc-if value="{{ vm.canApprove }}" hint-placeholder-val="{{ false }}">

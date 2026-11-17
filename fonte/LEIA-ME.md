@@ -33,12 +33,19 @@ A proteção está no banco (RLS), não no código:
 - **Funções:** `agenda_is_admin`, `agenda_usuario_ok`, `agenda_publico_evento`, `agenda_aprovar_presenca`,
   `agenda_admin_set_nivel`, `agenda_admin_set_nome`, `agenda_admin_reset_senha`, `agenda_login_status`.
 - **Arquivos (Storage):** `fotos-perfil` (público), `anexos-eventos` e `documentos-admin` (privados).
-- **Regras de permissão:** administrador edita tudo; aprovar férias/folgas só quem está em `aprovadores_ferias_escopo`
-  para a unidade da pessoa; patrimônio, documentos e ASSPLAN só administrador.
+- **Regras de permissão:** administrador edita tudo; patrimônio, documentos e ASSPLAN só administrador.
+- **Aprovação de férias e folgas (hierarquia):** aprova quem é chefe da pessoa (direto ou acima, tabela
+  `hierarquia_superiores`) **ou** quem tem a unidade dela em `aprovadores_ferias_escopo` (substitutos, como Otávio e Luice).
+  Ninguém aprova a si mesmo nem quem está acima dele ou no mesmo nível. A regra fica na função
+  `agenda_pode_aprovar_pessoa`, usada por `agenda_aprovar_presenca` e pelo gatilho de férias; o site repete a mesma
+  regra só para decidir onde mostrar os botões. Daiany e Vinicius estão cadastrados como "mesmo nível" (um acima do outro).
+  A coluna `usuarios_autorizados.pode_aprovar_ferias` é só informativa e se atualiza sozinha a partir do escopo.
 - **Dados pessoais** (e-mail, celular, aniversário do organograma, CPF etc.) ficam só no banco e só aparecem após o login —
   **nunca** coloque esses dados no código deste repositório (ele é público).
 
 ## Para adicionar uma pessoa
-1. Banco: inserir em `usuarios_autorizados` (nome_usuario, nome_completo, unidade, nivel_acesso) e em `organograma_contatos` (org_id, e-mail, telefone, aniversário).
+1. Banco: inserir em `usuarios_autorizados` (nome_usuario, nome_completo, unidade, nivel_acesso), em `organograma_contatos` (org_id, e-mail, telefone, aniversário)
+   e em `hierarquia_superiores` (nome_usuario, superior = nome_usuario do chefe; uma linha por chefe). Se a pessoa for chefe, incluir também
+   a(s) unidade(s) dela em `aprovadores_ferias_escopo`.
 2. `logic.js`: incluir a linha no vetor `ORG0` (id, id do superior, cargo, nome completo...), com o nome igual ao `nome_completo`.
 3. Rodar `atualizar.py`, testar e publicar.

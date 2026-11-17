@@ -109,7 +109,7 @@ class Component extends DCLogic {
     uSel: 'scpma', uCat: 'all', pTab: 'unidades', q: '', unitF: 'all', person: null,
     events: [], modal: false, editId: null, viewId: null, f: null, err: false, files: [],
     prof: { cargo: '', tel: '', bday: '', mat: '', pc: '', arm: '', cpf: '', foto: '' }, profSaved: '', rail: false, nivelF: 'all',
-    me: null, users: [], feriasScope: {},
+    me: null, users: [], feriasScope: {}, hier: {}, rsvpEdit: '',
     online: false, connecting: true, busy: false, backendProblem: '', publicProfiles: {}, presencas: {}, presencaCounts: {}, myNextId: '', myNextDone: false,
     notifs: [], notifOpen: false, toast: null, toastErr: false, saving: false, uEdit: null, myPat: null, publicByUser: {}, convEv: {}, presencaQuem: {}, np1: '', np2: '', pwBusy: false, usrTab: 'usuarios', patItens: [], patLoaded: false, patEdit: null, patQ: '', personAdm: {}, resetInfo: null, colItens: [], colLoaded: false, colQ: '', colPessoa: '', colMine: false, colEdit: null,
     docPastas: [], docArqs: [], docLoaded: false, docPasta: null, docQ: '', docBusy: false, docFolderEdit: null, docFileEdit: null, docLinkEdit: null };
@@ -182,6 +182,17 @@ class Component extends DCLogic {
       const map = {}; (data || []).forEach(r => { const k = String(r.nome_usuario).toLowerCase(); (map[k] = map[k] || []).push(String(r.unidade).trim().toUpperCase()); });
       this.setState({ feriasScope: map });
     } catch (e) { console.warn('[Hub] Erro ao carregar escopo de férias:', errMsg(e)); }
+    try { // quem está acima de quem (mesma regra do banco: agenda_pode_aprovar_pessoa)
+      const { data, error } = await (sb || this.sb()).from('hierarquia_superiores').select('nome_usuario,superior');
+      if (error) throw error;
+      const hier = {}; (data || []).forEach(r => { const k = String(r.nome_usuario).toLowerCase(); (hier[k] = hier[k] || []).push(String(r.superior).toLowerCase()); });
+      this.setState({ hier });
+    } catch (e) { console.warn('[Hub] Erro ao carregar hierarquia:', errMsg(e)); }
+  }
+  superioresDe(usuario) { // chefes, chefes dos chefes e quem está no mesmo nível por substituição
+    const h = this.state.hier || {}, out = new Set(), fila = [String(usuario || '').toLowerCase()];
+    while (fila.length) (h[fila.shift()] || []).forEach(x => { if (!out.has(x)) { out.add(x); fila.push(x); } });
+    return out;
   }
   async loadEvents() {
     const sb = this.sb(); if (!sb) return 'fail';
@@ -379,7 +390,13 @@ class Component extends DCLogic {
   }
   canEdit(e) { const c = this.cu(); return !!c && (c.editUnits === 'all' || c.editUnits.includes(e.unit)); }
   // Aprovar/recusar férias: só quem está em aprovadores_ferias_escopo para a unidade (ser administrador não basta)
-  canApprove(e) { const c = this.cu(); return !!c && e.cat === 'ferias' && c.feriasUnits.includes(UNITS[e.unit][0]); }
+  canApprove(e) {
+    const c = this.cu(); if (!c || e.cat !== 'ferias') return false;
+    const n = String(e.resp || '').trim().toLowerCase(), unid = UNITS[e.unit][0];
+    const p = n && this.state.users.find(x => String(x.nome || '').trim().toLowerCase() === n || String(x.nomeOrg || '').trim().toLowerCase() === n);
+    if (p) return this.canApprovePessoa(p.usuario, unid);
+    return c.feriasUnits.includes(unid) && n !== String(c.name || '').trim().toLowerCase();
+  }
 
   // ===== Perfil =====
   async loadProfile(sv) {
@@ -589,7 +606,14 @@ class Component extends DCLogic {
     } catch (x) { console.warn('[Hub] Erro ao atualizar férias:', x); this.notify('Erro ao atualizar férias: ' + errMsg(x), true); }
   }
   // Folga que exige aprovação: o superior (quem aprova férias da unidade da pessoa) decide por servidor
-  canApprovePessoa(usuario) { const c = this.cu(), p = this.state.users.find(x => x.usuario === usuario); return !!c && !!p && !!p.unid && c.feriasUnits.includes(p.unid); }
+  // Regra (igual ao banco): aprova o chefe da pessoa (direto ou acima) ou quem tem a unidade dela no escopo;
+  // ninguém aprova a si mesmo nem quem está acima dele ou no mesmo nível.
+  canApprovePessoa(usuario, unidExtra) {
+    const c = this.cu(), alvo = String(usuario || '').toLowerCase(), me = c ? String(c.usuario).toLowerCase() : '';
+    if (!c || !alvo || alvo === me || this.superioresDe(me).has(alvo)) return false;
+    const p = this.state.users.find(x => String(x.usuario).toLowerCase() === alvo);
+    return this.superioresDe(alvo).has(me) || (!!p && !!p.unid && c.feriasUnits.includes(p.unid)) || (!!unidExtra && c.feriasUnits.includes(unidExtra));
+  }
   async setAprovacao(e, usuario, decisao) {
     if (!this.canApprovePessoa(usuario)) return;
     try {
@@ -1256,14 +1280,17 @@ class Component extends DCLogic {
           const parts = lista.map(u => ({ u, nome: nomeDe(u), r: resp(u) })).sort((a, b) => ['confirmado', '', 'recusado'].indexOf(a.r) - ['confirmado', '', 'recusado'].indexOf(b.r) || a.nome.localeCompare(b.nome, 'pt'))
             .map(p => { const ap = ve.exige && p.r === 'confirmado' ? ((pres.find(x => x.nome_usuario === p.u) || {}).aprovacao || 'pendente') : '', A = { pendente: ['Aguardando aprovação', '#fdf1c4', '#7a5d00'], aprovada: ['Aprovada', '#dcf2e3', '#146c35'], recusada: ['Recusada', '#fbe1e1', '#b42318'] };
               return { nome: p.nome, label: ap ? 'Vai participar' : R[p.r][0], bg: R[p.r][1], fg: R[p.r][2], hasAp: !!ap, apLabel: ap ? A[ap][0] : '', apBg: ap ? A[ap][1] : '', apFg: ap ? A[ap][2] : '',
-                canDecide: !!ap && this.canApprovePessoa(p.u), ok: () => this.setAprovacao(ve, p.u, 'aprovada'), no: () => this.setAprovacao(ve, p.u, 'recusada') }; });
+                canDecide: ap === 'pendente' && this.canApprovePessoa(p.u), ok: () => this.setAprovacao(ve, p.u, 'aprovada'), no: () => this.setAprovacao(ve, p.u, 'recusada') }; });
           const nSim = parts.filter(p => p.label === R.confirmado[0]).length;
           const nAp = ve.exige ? parts.filter(p => p.apLabel === 'Aprovada').length : 0;
           return { parts, hasParts: parts.length > 0, partsTitle: ve.part === 'lista' ? 'Participantes (' + nSim + ' de ' + parts.length + ' confirmados' + (ve.exige ? ', ' + nAp + ' aprovados' : '') + ')' : 'Respostas' }; })(),
         hasRsvp: RSVP_CATS.includes(ve.cat) && status(ve) !== 'cancelado' && status(ve) !== 'concluido',
         myAprov: (() => { if (!ve.exige || !mine || mine.resposta !== 'confirmado') return ''; const a = mine.aprovacao || 'pendente'; return a === 'aprovada' ? 'Sua participação foi aprovada pelo seu superior.' : a === 'recusada' ? 'Sua participação foi recusada pelo seu superior.' : 'Sua participação aguarda a aprovação do seu superior.'; })(),
         rsvpCount: (() => { const ns = pres.filter(p => p.resposta === 'confirmado').map(p => (s.users.find(x => x.usuario === p.nome_usuario) || { nome: p.nome_usuario }).nome); return ns.length ? 'Confirmaram (' + ns.length + '): ' + ns.join(', ') : 'Ninguém confirmou ainda.'; })(),
-        rsvpYes: () => this.rsvp(ve, 'confirmado'), rsvpNo: () => this.rsvp(ve, 'recusado'),
+        rsvpYes: () => { this.setState({ rsvpEdit: '' }); this.rsvp(ve, 'confirmado'); }, rsvpNo: () => { this.setState({ rsvpEdit: '' }); this.rsvp(ve, 'recusado'); },
+        rsvpAsk: !mine || s.rsvpEdit === ve.id, rsvpDone: !!mine && s.rsvpEdit !== ve.id,
+        rsvpMine: mine ? (going ? 'Você vai participar.' : 'Você não vai participar.') : '',
+        rsvpChange: () => this.setState({ rsvpEdit: ve.id }),
         yesBg: going ? '#1f9d4c' : '#fff', yesFg: going ? '#fff' : '#146c35', noBg: notGoing ? '#b42318' : '#fff', noFg: notGoing ? '#fff' : '#b42318' }; })() : {};
 
     const fo = s.fo || '';
