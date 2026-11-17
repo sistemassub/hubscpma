@@ -970,7 +970,7 @@ class Component extends DCLogic {
       ['', [['Início','ph-house',['inicio']],['Calendário','ph-calendar-blank',['agenda','cal']],['Lista de eventos','ph-list-bullets',['agenda','lista']],['Todas as unidades','ph-stack',['agenda','unidade']]]],
       ['Pessoas', [['Servidores e unidades','ph-users-three',['pessoas','unidades']],['Organograma','ph-tree-structure',['pessoas','org']],['Colegiados','ph-users-four',['colegiados']]]],
       ['Gestão', [['Relatórios','ph-chart-bar',['relatorios']],['Usuários','ph-user',['usuarios']]]],
-      ['Atalhos externos', [['Portal SIPOFE','ph-monitor',null,'https://goiasgovbr.sharepoint.com/sites/SIPOFE'],['Conecta SIPOFE','ph-address-book',null,'https://sistemassub.github.io/contatossipofe/#home'],['Projetos SCPMA','ph-kanban',null,'https://projetoscpma.netlify.app/']]],
+      ['Atalhos externos', [['Portal SIPOFE','ph-monitor',null,'https://goiasgovbr.sharepoint.com/sites/SIPOFE'],['Conecta SIPOFE','ph-address-book',null,'https://sistemassub.github.io/contatossipofe/#home']]],
     ];
     const isOn = t => !!t && t[0] === view && (!t[1] || (view === 'agenda' ? s.agTab === t[1] : view === 'pessoas' ? (s.pTab === t[1] || (t[1] === 'unidades' && s.pTab === 'diretorio')) : true));
     const navGroups = navDef.map(([label, items], gi) => ({ label: label || ' ', pt: gi ? '10px' : '0', labelOp: s.rail && label ? 1 : 0,

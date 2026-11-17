@@ -243,7 +243,7 @@ let lastEmail = 'giovanna.cintra@scpma.local';
   await page.getByRole('button', { name: /Criar evento/ }).click(); await page.waitForTimeout(1200);
   const w = writes.slice(n0);
   console.log('evento lista:', JSON.stringify(w.filter(x => x[1].startsWith('eventos')).map(x => (Array.isArray(x[3]) ? x[3][0] : x[3]).publico_tipo)), '| convidados:', JSON.stringify(w.filter(x => x[1].startsWith('evento_convidados')).map(x => [x[0], x[3]])), '| convites:', JSON.stringify(w.filter(x => x[1].startsWith('notificacoes')).map(x => x[3].dest_usuario + ':' + x[3].tipo)));
-  console.log('menu Conecta SIPOFE:', await page.locator('aside a', { hasText: 'Conecta SIPOFE' }).first().getAttribute('href'), '| Projetos no menu:', await page.locator('aside a', { hasText: 'Projetos SCPMA' }).first().getAttribute('href'), '| ordem:', JSON.stringify(await page.locator('aside a').allInnerTexts()));
+  console.log('menu Conecta SIPOFE:', await page.locator('aside a', { hasText: 'Conecta SIPOFE' }).first().getAttribute('href'), '| Projetos fora do menu:', await page.locator('aside a', { hasText: 'Projetos SCPMA' }).count() === 0, '| ordem:', JSON.stringify(await page.locator('aside a').allInnerTexts()));
   // ASSPLAN, exportações, reset e dados internos
   await page.locator('aside').first().hover(); await page.getByText('Usuários', { exact: true }).first().click(); await page.mouse.move(900, 400); await page.waitForTimeout(400);
   const [dl] = await Promise.all([page.waitForEvent('download', { timeout: 5000 }).catch(() => null), page.getByRole('button', { name: 'Excel' }).first().click()]);
