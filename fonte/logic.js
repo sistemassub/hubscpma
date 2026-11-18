@@ -61,6 +61,8 @@ const PZ_REC = [{ cat: 'mensal', regra: 'nUtil', n: 10, titulo: 'Envio do monito
 const pascoa = y => { const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3),
   h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451);
   return iso(y, Math.floor((h + l - 7 * m + 114) / 31) - 1, ((h + l - 7 * m + 114) % 31) + 1); };
+// Pontos facultativos de decretos do Estado que não seguem regra fixa (incluir aqui a cada novo decreto)
+const PF_DECRETO = { '2026-12-30': 'Ponto facultativo (decreto estadual)' };
 const _ferCache = {};
 const feriadosDoAno = y => { if (_ferCache[y]) return _ferCache[y]; const p = pascoa(y), L = {};
   const fx = (m, d, nome, tipo) => { L[iso(y, m - 1, d)] = { nome, tipo }; }, mv = (n, nome, tipo) => { L[addDays(p, n)] = { nome, tipo }; };
@@ -69,6 +71,7 @@ const feriadosDoAno = y => { if (_ferCache[y]) return _ferCache[y]; const p = pa
   fx(9, 7, 'Independência do Brasil', 'nacional'); fx(10, 12, 'N. Sra. Aparecida', 'nacional'); fx(10, 24, 'Aniversário de Goiânia', 'municipal');
   fx(11, 2, 'Finados', 'nacional'); fx(11, 15, 'Proclamação da República', 'nacional'); fx(11, 20, 'Dia da Consciência Negra', 'nacional');
   fx(12, 24, 'Véspera de Natal', 'facultativo'); fx(12, 25, 'Natal', 'nacional'); fx(12, 31, 'Véspera de Ano-Novo', 'facultativo');
+  Object.keys(PF_DECRETO).forEach(k => { if (+k.slice(0, 4) === y && !L[k]) L[k] = { nome: PF_DECRETO[k], tipo: 'facultativo' }; });
   return (_ferCache[y] = L); };
 const feriado = k => feriadosDoAno(+k.slice(0, 4))[k] || null;
 // pf = "pontos facultativos não são dias úteis"

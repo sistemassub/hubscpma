@@ -44,7 +44,8 @@ A proteção está no banco (RLS), não no código:
   (não entra na Lista de eventos, relatórios nem convites). Tabela `prazos` (categoria geceg/enc/mensal/ind/outro, título,
   data, data_fim, quem, etapa, obs) — todos os logados leem, só administradores criam/editam. Calculados no `logic.js`
   (não ficam no banco): feriados (nacionais, Goiânia e pontos facultativos), a contagem de dias úteis e os envios
-  recorrentes (`PZ_REC`: 10º dia útil = monitoramento mensal; último dia útil = indicadores). As escolhas de filtro e
+  recorrentes (`PZ_REC`: 10º dia útil = monitoramento mensal; último dia útil = indicadores). Pontos facultativos de decreto
+  que não se repetem todo ano (ex.: 30/12/2026) vão em `PF_DECRETO`, no `logic.js`. As escolhas de filtro e
   "pontos facultativos não são dias úteis" ficam salvas no navegador de cada pessoa.
 - **Banco de horas da semaninha:** `banco_horas_lancamentos` (horas em minutos; negativo = horas usadas),
   `banco_horas_areas` ("atualizado até" de SCPMA, SMA e SUPLAN) e `banco_horas_editores` (quem lança em cada área:
