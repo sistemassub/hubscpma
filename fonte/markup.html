@@ -218,6 +218,9 @@
                 <sc-if value="{{ calF.open }}" hint-placeholder-val="{{ false }}">
                   <div style="position:absolute;right:0;top:54px;z-index:30;width:400px;max-width:90vw;background:#fff;border:1px solid #e4e8e6;border-radius:20px;box-shadow:0 20px 50px #0b2b5522;padding:18px;display:flex;flex-direction:column;gap:14px">
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:#3d4943">Mês<sc-raw-select value="{{ cal.m }}" sc-camel-on-change="{{ cal.setMonth }}" style="padding:9px 10px;border:1px solid #e4e8e6;border-radius:10px;font-size:14px;background:#fff;font-weight:400;color:#122019"><sc-for list="{{ cal.months }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.n }}</option></sc-for></sc-raw-select></label><label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:#3d4943">Ano<sc-raw-select value="{{ cal.y }}" sc-camel-on-change="{{ cal.setYear }}" style="padding:9px 10px;border:1px solid #e4e8e6;border-radius:10px;font-size:14px;background:#fff;font-weight:400;color:#122019"><sc-for list="{{ cal.years }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.n }}</option></sc-for></sc-raw-select></label></div><div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;font-weight:600;color:#3d4943">Unidades</span><div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ calF.units }}" as="u" hint-placeholder-count="7"><button sc-camel-on-click="{{ u.pick }}" style="border:1px solid {{ u.border }};background:{{ u.bg }};color:{{ u.fg }};font-weight:{{ u.fw }};border-radius:999px;padding:5px 11px;font-size:12px;display:flex;gap:6px;align-items:center"><span style="width:7px;height:7px;border-radius:50%;background:{{ u.color }}"></span>{{ u.name }}</button></sc-for></div></div>
+                    <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;font-weight:600;color:#3d4943">Prazos e datas</span><div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ calF.pz }}" as="z" hint-placeholder-count="6"><button sc-camel-on-click="{{ z.pick }}" style="border:1px solid {{ z.border }};background:{{ z.bg }};color:{{ z.fg }};font-weight:{{ z.fw }};border-radius:999px;padding:5px 11px;font-size:12px;display:flex;gap:6px;align-items:center"><span style="width:7px;height:7px;border-radius:50%;background:{{ z.color }}"></span>{{ z.name }}</button></sc-for></div>
+                      <label style="display:flex;gap:8px;align-items:center;font-size:12.5px;color:#3d4943;margin-top:4px"><input type="checkbox" checked="{{ calF.pf }}" sc-camel-on-change="{{ calF.setPf }}">Pontos facultativos não são dias úteis</label>
+                      <span style="font-size:11px;color:#7a867f;line-height:1.4">Dias úteis excluem fins de semana, feriados nacionais e os de Goiânia (24/05 e 24/10). Confira o decreto de pontos facultativos do Estado.</span></div>
                     <div style="display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid #f0f3f1">
                       <button sc-camel-on-click="{{ calF.clear }}" style="border:0;background:transparent;color:#5f6b65;font-size:13px;font-weight:500">Limpar tudo</button>
                       <button sc-camel-on-click="{{ calF.toggle }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600">Aplicar</button>
@@ -231,6 +234,14 @@
               <span style="font-size:13px;color:#5f6b65">{{ calF.summary }}</span>
               <sc-for list="{{ calF.active }}" as="c" hint-placeholder-count="0"><span style="background:#e7eef8;color:#0b3d7a;border-radius:999px;padding:3px 5px 3px 11px;font-size:12px;font-weight:500;display:flex;gap:6px;align-items:center">{{ c.label }}<button sc-camel-on-click="{{ c.remove }}" style="width:18px;height:18px;border:0;border-radius:50%;background:#0b3d7a1a;color:#0b3d7a;display:grid;place-items:center;padding:0"><i class="ph-bold ph-x" style="font-size:10px"></i></button></span></sc-for>
             </div></sc-if>
+            <div class="hub-pz-tiles" data-mk="keep" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+              <sc-for list="{{ cal.tiles }}" as="t" hint-placeholder-count="3">
+                <button sc-camel-on-click="{{ t.go }}" style="text-align:left;border:1px solid #e4e8e6;background:#fff;border-radius:18px;padding:12px 14px;display:flex;gap:12px;align-items:center;min-width:0" style-hover="border-color:#c9d3e0">
+                  <span style="flex:none;width:46px;height:50px;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;text-align:center;box-shadow:inset 0 0 0 1px #e4e8e6"><span style="background:{{ t.color }};color:{{ t.fg }};font-size:10px;font-weight:700;letter-spacing:0.08em;padding:3px 0">{{ t.mon }}</span><span style="font-size:20px;font-weight:700;margin:auto;color:#122019">{{ t.day }}</span></span>
+                  <span style="display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font-size:10.5px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#7a867f">{{ t.rot }}</span><span style="font-size:13.5px;font-weight:600;color:#122019;line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">{{ t.txt }}</span><span style="font-size:12px;color:#5f6b65">{{ t.rel }}</span></span>
+                </button>
+              </sc-for>
+            </div>
             <sc-if value="{{ cal.isMes }}" hint-placeholder-val="{{ true }}">
               <div style="display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:16px;align-items:stretch">
                 <div style="border:1px solid #e4e8e6;border-radius:24px;padding:16px">
@@ -238,7 +249,7 @@
                     <sc-for list="{{ dows }}" as="w" hint-placeholder-count="7"><span style="font-size:11px;font-weight:500;letter-spacing:0.08em;color:#7a867f;padding:0 10px 6px">{{ w }}</span></sc-for>
                     <sc-for list="{{ cal.cells }}" as="c" hint-placeholder-count="35">
                       <button class="hub-cal-cell" sc-camel-on-click="{{ c.pick }}" style="text-align:left;border:0;min-height:86px;border-radius:14px;padding:8px 10px;display:flex;flex-direction:column;gap:4px;background:{{ c.bg }};visibility:{{ c.vis }};outline:{{ c.outline }}" style-hover="background:#eef3f9">
-                        <span style="width:24px;height:24px;margin-left:-4px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:600;background:{{ c.numBg }};color:{{ c.numFg }}">{{ c.n }}</span>
+                        <span class="hub-cal-top" style="display:flex;align-items:center;gap:4px;width:100%;min-width:0"><span style="width:24px;height:24px;flex:none;margin-left:-4px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:600;background:{{ c.numBg }};color:{{ c.numFg }}">{{ c.n }}</span><span class="hub-cal-du" title="{{ c.duTitle }}" style="margin-left:auto;font-size:10px;font-weight:600;color:{{ c.duFg }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0">{{ c.du }}</span></span>
                         <sc-for list="{{ c.ev }}" as="e" hint-placeholder-count="0"><span class="hub-cal-ev" title="{{ e.title }}" style="display:flex;gap:5px;align-items:center;font-size:11px;min-width:0;width:100%"><i class="{{ e.icon }}" style="color:{{ e.color }};font-size:10px;flex:none"></i><span class="hub-cal-evt" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ e.title }}</span></span></sc-for>
                       </button>
                     </sc-for>
@@ -249,6 +260,7 @@
                     <span style="font-size:13px;color:#c9d8ec">{{ sel.label }}</span>
                     <span style="font-weight:600;font-size:56px;line-height:1;letter-spacing:-0.04em">{{ sel.n }}</span>
                     <span style="font-size:13px;color:#c9d8ec">{{ sel.sub }}</span>
+                    <span style="align-self:flex-start;margin-top:8px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;background:{{ sel.stBg }};color:{{ sel.stFg }}">{{ sel.status }}</span>
                   </div>
                   <div style="display:flex;flex-direction:column;gap:10px">
                     <sc-if value="{{ sel.empty }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;color:#c9d8ec">Nenhum compromisso neste dia.</span></sc-if>
@@ -260,12 +272,40 @@
                       </button>
                     </sc-for>
                   </div>
+                  <sc-if value="{{ sel.hasPz }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;flex-direction:column;gap:8px">
+                      <span style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#c9d8ec;display:flex;gap:6px;align-items:center"><i class="ph-fill ph-flag"></i>Prazos e datas</span>
+                      <sc-for list="{{ sel.pz }}" as="p" hint-placeholder-count="1">
+                        <div style="background:#ffffff14;border-left:3px solid {{ p.color }};border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:3px">
+                          <span style="font-size:10.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#c9d8ec">{{ p.tag }}</span>
+                          <span style="font-size:14px;font-weight:500;line-height:1.3">{{ p.titulo }}</span>
+                          <sc-if value="{{ p.hasPer }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#c9d8ec">{{ p.per }}</span></sc-if>
+                          <sc-if value="{{ p.hasQuem }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#fff;font-weight:600">{{ p.quem }}</span></sc-if>
+                          <sc-if value="{{ p.hasEtapa }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#c9d8ec">{{ p.etapa }}</span></sc-if>
+                          <sc-if value="{{ p.hasObs }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#c9d8ec">{{ p.obs }}</span></sc-if>
+                          <sc-if value="{{ p.canEdit }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ p.edit }}" style="align-self:flex-start;border:0;background:transparent;color:#f5c518;padding:2px 0 0;font-size:12px;font-weight:600;display:flex;gap:4px;align-items:center"><i class="ph-bold ph-pencil-simple"></i>Editar</button></sc-if>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
                   <sc-if value="{{ sel.hasFer }}" hint-placeholder-val="{{ false }}">
                     <div style="display:flex;flex-direction:column;gap:6px">
                       <span style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#f5c518">Em férias neste dia</span>
                       <sc-for list="{{ sel.fer }}" as="p" hint-placeholder-count="1"><span style="font-size:14px;display:flex;flex-direction:column;gap:1px"><span>{{ p.name }} <span style="color:#c9d8ec">· {{ p.unit }}</span></span><span style="font-size:12px;color:#f5c518">{{ p.until }}</span></span></sc-for>
                     </div>
                   </sc-if>
+                  <sc-if value="{{ sel.hasProx }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;flex-direction:column;gap:2px;border-top:1px solid #ffffff24;padding-top:14px">
+                      <span style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#c9d8ec;margin-bottom:4px">Prazos nos próximos 14 dias</span>
+                      <sc-for list="{{ sel.prox }}" as="q" hint-placeholder-count="2">
+                        <button sc-camel-on-click="{{ q.go }}" style="border:0;background:transparent;color:#fff;text-align:left;display:grid;grid-template-columns:44px minmax(0,1fr);gap:8px;padding:6px 0" style-hover="opacity:.85">
+                          <span style="display:flex;flex-direction:column;font-size:14px;font-weight:700;line-height:1.05;color:{{ q.color }}">{{ q.d }}<span style="font-size:10px;font-weight:600;color:#c9d8ec;text-transform:uppercase">{{ q.wd }}</span></span>
+                          <span style="display:flex;flex-direction:column;min-width:0"><span style="font-size:13px;font-weight:500;line-height:1.3">{{ q.titulo }}</span><span style="font-size:11px;color:#c9d8ec">{{ q.sub }}</span></span>
+                        </button>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ sel.canAddPz }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ sel.addPz }}" style="margin-top:auto;border:1px solid #ffffff55;border-radius:999px;background:transparent;color:#fff;padding:10px;font-size:13px;font-weight:600;display:flex;gap:6px;align-items:center;justify-content:center" style-hover="background:#ffffff14"><i class="ph-bold ph-flag"></i>Inserir prazo neste dia</button></sc-if>
                   <button sc-camel-on-click="{{ openNewOnDay }}" style="margin-top:auto;border:0;border-radius:999px;background:#f5c518;color:#0b2b55;padding:12px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;justify-content:center" style-hover="background:#e6b600"><i class="ph-bold ph-plus"></i>Adicionar neste dia</button>
                 </aside>
               </div>
@@ -275,6 +315,7 @@
                 <sc-for list="{{ cal.week }}" as="d" hint-placeholder-count="7">
                   <div style="background:{{ d.bg }};color:{{ d.fg }};border:1px solid {{ d.border }};border-radius:18px;padding:12px;min-height:260px;display:flex;flex-direction:column;gap:10px">
                     <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:11px;letter-spacing:0.08em;font-weight:500;color:{{ d.sub }}">{{ d.dow }}</span><span style="font-size:22px;font-weight:600;letter-spacing:-0.03em">{{ d.num }}</span></div>
+                    <span style="font-size:10.5px;font-weight:600;color:{{ d.sub }};margin-top:-8px">{{ d.du }}</span>
                     <sc-if value="{{ d.empty }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:{{ d.sub }}">Livre</span></sc-if>
                     <sc-for list="{{ d.ev }}" as="e" hint-placeholder-count="1">
                       <button sc-camel-on-click="{{ e.view }}" style="text-align:left;border:0;border-left:3px solid {{ e.color }};background:{{ e.bg }};color:#122019;border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;color:#5f6b65">{{ e.time }} · {{ e.unit }}</span><span style="font-size:13px;line-height:1.25">{{ e.title }}</span></button>
@@ -1280,6 +1321,29 @@
         <div style="display:flex;justify-content:flex-end;gap:8px;padding:14px 22px;border-top:1px solid #e4e8e6">
           <button sc-camel-on-click="{{ usr.assplan.cancel }}" style="border:1px solid #e4e8e6;background:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:500">Cancelar</button>
           <button sc-camel-on-click="{{ usr.assplan.save }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:600">Salvar</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ pze.open }}" hint-placeholder-val="{{ false }}">
+    <div sc-camel-on-click="{{ pze.close }}" style="position:fixed;inset:0;background:#0b2b5566;display:grid;place-items:center;z-index:75;padding:20px">
+      <div sc-camel-on-click="{{ stop }}" style="width:min(560px,100%);max-height:calc(100vh - 40px);overflow:auto;background:#fff;border-radius:24px;box-shadow:0 30px 80px #0b2b5544">
+        <div style="background:#0b3d7a;color:#fff;padding:18px 22px;font-size:18px;font-weight:600;display:flex;gap:10px;align-items:center"><i class="ph-duotone ph-flag"></i>{{ pze.title }}</div>
+        <div style="padding:20px 22px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943;grid-column:1/-1">O que acontece<input value="{{ pze.e.titulo }}" sc-camel-on-input="{{ pze.set.titulo }}" maxlength="160" placeholder="Ex.: Reunião técnica com os setoriais" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label>
+          <div style="display:flex;flex-direction:column;gap:6px;grid-column:1/-1"><span style="font-size:13px;font-weight:600;color:#3d4943">Categoria</span><div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ pze.cats }}" as="c" hint-placeholder-count="5"><button sc-camel-on-click="{{ c.pick }}" style="border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.fg }};border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:600;display:flex;gap:6px;align-items:center"><span style="width:8px;height:8px;border-radius:50%;background:{{ c.color }}"></span>{{ c.name }}</button></sc-for></div></div>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Data (ou início)<input type="date" value="{{ pze.e.ini }}" sc-camel-on-input="{{ pze.set.ini }}" style="padding:10px 12px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Até (opcional)<input type="date" value="{{ pze.e.fim }}" sc-camel-on-input="{{ pze.set.fim }}" style="padding:10px 12px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Unidade ou responsável<input value="{{ pze.e.quem }}" sc-camel-on-input="{{ pze.set.quem }}" maxlength="120" placeholder="Ex.: Gerência de Monitoramento" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Etapa (opcional)<input value="{{ pze.e.etapa }}" sc-camel-on-input="{{ pze.set.etapa }}" maxlength="80" placeholder="Ex.: Etapa 1 · Preparação" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943;grid-column:1/-1">Observação<textarea value="{{ pze.e.obs }}" sc-camel-on-input="{{ pze.set.obs }}" maxlength="400" rows="2" placeholder="Opcional" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff;resize:vertical"></textarea></label>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:14px 22px;border-top:1px solid #e4e8e6">
+          <sc-if value="{{ pze.canDel }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ pze.del }}" style="border:0;background:{{ pze.delBg }};color:#b42318;border-radius:10px;padding:10px 12px;font-size:14px;font-weight:600">{{ pze.delTxt }}</button></sc-if>
+          <span style="flex:1"></span>
+          <button sc-camel-on-click="{{ pze.close }}" style="border:1px solid #e4e8e6;background:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:500">Cancelar</button>
+          <button sc-camel-on-click="{{ pze.save }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:600">Salvar</button>
         </div>
       </div>
     </div>

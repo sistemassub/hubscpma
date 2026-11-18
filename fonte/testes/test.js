@@ -82,6 +82,8 @@ let lastEmail = 'giovanna.cintra@scpma.local';
     if (table === 'usuarios_autorizados') return json(users);
     if (table === 'aprovadores_ferias_escopo') return json(m === 'GET' ? [{ nome_usuario: 'paulo.scalco', unidade: 'SCPMA' }, { nome_usuario: 'giovanna.cintra', unidade: 'GEMONIT' }] : []);
     if (table === 'eventos') return json(eventos.filter(e => !e.removido_em));
+    if (table === 'prazos' && m === 'GET') return json([{ id: 1, categoria: 'geceg', titulo: 'Apoio Tático Operacional', data: plus(-3), data_fim: plus(20), quem: 'Facilitadores Economia', etapa: null, obs: null },
+      { id: 2, categoria: 'enc', titulo: 'Reunião técnica nº 2 · alinhamento técnico', data: plus(1), data_fim: null, quem: null, etapa: 'Etapa 1 · Preparação', obs: 'Teste de observação' }]);
     if (table === 'banco_horas_editores') return json([{ nome_usuario: 'giovanna.cintra', area: 'SCPMA' }, { nome_usuario: 'vinicius.chaer', area: 'SMA' }]);
     if (table === 'banco_horas_areas' && m === 'GET') return json([{ area: 'SCPMA', atualizado_ate: '2026-11-16' }, { area: 'SMA', atualizado_ate: null }, { area: 'SUPLAN', atualizado_ate: null }]);
     if (table === 'banco_horas_lancamentos' && m === 'GET') return json(bhLanc);
@@ -311,6 +313,33 @@ let lastEmail = 'giovanna.cintra@scpma.local';
   await page.locator('button[title="Excluir"]').first().click(); await page.waitForTimeout(600);
   console.log('excluiu arquivo:', JSON.stringify(writes.filter(w => w[0] === 'STORAGE-DEL').length), JSON.stringify(writes.filter(w => w[1] === 'documentos_arquivos' && w[0] === 'DELETE').length));
   await page.getByText('Usuários', { exact: true }).first().click().catch(() => {});
+  // ===== Prazos e datas no calendário
+  await page.locator('aside').first().hover(); await page.getByText('Calendário', { exact: true }).first().click(); await page.mouse.move(900, 400); await page.waitForTimeout(400);
+  await page.getByRole('button', { name: /^Mês$/ }).click().catch(() => {}); await page.getByRole('button', { name: 'Hoje', exact: true }).click(); await page.waitForTimeout(300);
+  console.log('prazos destaques:', JSON.stringify(await page.getByText(/^(Monitoramento mensal|Monitoramento dos indicadores|Próximo marco)$/).allInnerTexts()));
+  console.log('próximo marco = reunião:', await page.getByText('Reunião técnica nº 2 · alinhamento técnico').count() > 0);
+  console.log('dia útil no painel:', await page.getByText(/º dia útil do mês|Fim de semana|Feriado ·|Ponto facultativo ·/).count() > 0, '| marcação "º útil" nas células:', await page.locator('.hub-cal-du', { hasText: /º útil/ }).count());
+  console.log('prazo no painel (Apoio Tático):', await page.getByText('Facilitadores Economia').count() > 0);
+  await shot('26-prazos-mes');
+  await page.getByRole('button', { name: /Agenda/ }).first().click(); await page.waitForTimeout(400);
+  console.log('agenda tem recorrentes:', await page.getByText(/Envio do monitoramento (mensal|dos indicadores)/).count(), '| feriados:', await page.getByText(/Proclamação da República|Consciência Negra|Finados|Natal/).count());
+  await shot('27-prazos-agenda');
+  await page.getByRole('button', { name: /Linha do tempo/ }).first().click(); await page.waitForTimeout(300);
+  console.log('linha do tempo tem "Prazos":', await page.getByText('Prazos', { exact: true }).count() > 0);
+  await page.getByRole('button', { name: /^Mês$/ }).first().click(); await page.waitForTimeout(300);
+  // filtro: esconder GECEG
+  await page.getByRole('button', { name: /Filtros/ }).first().click(); await page.waitForTimeout(200);
+  await page.getByRole('button', { name: /GECEG · 7º ciclo/ }).first().click(); await page.getByRole('button', { name: 'Aplicar' }).first().click(); await page.waitForTimeout(300);
+  console.log('filtro esconde GECEG:', await page.getByText('Facilitadores Economia').count() === 0, '| aviso:', await page.getByText('Oculto: GECEG · 7º ciclo').count());
+  await page.getByText('Oculto: GECEG · 7º ciclo').locator('xpath=..').getByRole('button').click(); await page.waitForTimeout(200);
+  // novo prazo (admin)
+  await page.getByRole('button', { name: /Inserir prazo neste dia/ }).click(); await page.waitForTimeout(300);
+  await page.getByRole('button', { name: 'Salvar', exact: true }).last().click(); await page.waitForTimeout(200);
+  console.log('prazo sem título barrado:', writes.filter(w => w[1] === 'prazos').length === 0);
+  await page.fill('input[placeholder="Ex.: Reunião técnica com os setoriais"]', 'Prazo de teste'); await page.getByRole('button', { name: /Monitoramento mensal/ }).last().click();
+  await page.fill('input[placeholder="Ex.: Gerência de Monitoramento"]', 'GEMONIT');
+  await page.getByRole('button', { name: 'Salvar', exact: true }).last().click(); await page.waitForTimeout(500);
+  console.log('prazo gravado:', JSON.stringify(writes.filter(w => w[1] === 'prazos').map(w => [w[0], w[3].titulo, w[3].categoria, w[3].quem])));
   console.log('ERROS:', errors.length ? errors : 'nenhum');
   await browser.close();
 })().catch(e => { console.error('FALHA NO TESTE:', e); process.exit(1); });

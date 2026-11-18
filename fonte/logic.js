@@ -50,6 +50,38 @@ const UNIT_BY_NAME = { SCPMA:'scpma', SMA:'sma', GEMONIT:'gemonit', GAPPP:'gappp
 const toUnitId = v => { if (!v) return 'scpma'; const x = String(v).trim(); return UNITS[x.toLowerCase()] ? x.toLowerCase() : (UNIT_BY_NAME[x.toUpperCase()] || 'scpma'); };
 const toUnitName = id => UNITS[toUnitId(id)][0];
 const RSVP_CATS = ['eventos', 'cursos', 'workshop', 'oficinas'];
+// ===== Prazos e datas da SCPMA (antigo "Calendário de datas") =====
+// [nome, cor, fundo, texto]; 'fer' = feriados (calculados, não ficam no banco)
+const PZ_CATS = { geceg: ['GECEG · 7º ciclo', '#2da44a', '#E7F6EB', '#1C7A35'], enc: ['Encerramento PPA 2026', '#00549a', '#E3EEF8', '#00549a'],
+  mensal: ['Monitoramento mensal', '#E3B800', '#FFF7CC', '#7A6200'], ind: ['Monitoramento dos indicadores', '#1B8FD0', '#E3F3FC', '#0F6B9E'],
+  outro: ['Outras datas', '#475467', '#EEF0F3', '#344054'], fer: ['Feriados', '#98A2B3', '#F2F4F7', '#667085'] };
+const PZ_FORM = ['geceg', 'enc', 'mensal', 'ind', 'outro'];
+const PZ_REC = [{ cat: 'mensal', regra: 'nUtil', n: 10, titulo: 'Envio do monitoramento mensal', obs: 'Todo 10º dia útil do mês' },
+  { cat: 'ind', regra: 'ultimoUtil', titulo: 'Envio do monitoramento dos indicadores', obs: 'Todo último dia útil do mês' }];
+const pascoa = y => { const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3),
+  h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451);
+  return iso(y, Math.floor((h + l - 7 * m + 114) / 31) - 1, ((h + l - 7 * m + 114) % 31) + 1); };
+const _ferCache = {};
+const feriadosDoAno = y => { if (_ferCache[y]) return _ferCache[y]; const p = pascoa(y), L = {};
+  const fx = (m, d, nome, tipo) => { L[iso(y, m - 1, d)] = { nome, tipo }; }, mv = (n, nome, tipo) => { L[addDays(p, n)] = { nome, tipo }; };
+  fx(1, 1, 'Confraternização Universal', 'nacional'); mv(-48, 'Carnaval', 'facultativo'); mv(-47, 'Carnaval', 'facultativo'); mv(-2, 'Sexta-feira Santa', 'nacional');
+  fx(4, 21, 'Tiradentes', 'nacional'); fx(5, 1, 'Dia do Trabalho', 'nacional'); fx(5, 24, 'N. Sra. Auxiliadora (Goiânia)', 'municipal'); mv(60, 'Corpus Christi', 'facultativo');
+  fx(9, 7, 'Independência do Brasil', 'nacional'); fx(10, 12, 'N. Sra. Aparecida', 'nacional'); fx(10, 24, 'Aniversário de Goiânia', 'municipal');
+  fx(11, 2, 'Finados', 'nacional'); fx(11, 15, 'Proclamação da República', 'nacional'); fx(11, 20, 'Dia da Consciência Negra', 'nacional');
+  fx(12, 24, 'Véspera de Natal', 'facultativo'); fx(12, 25, 'Natal', 'nacional'); fx(12, 31, 'Véspera de Ano-Novo', 'facultativo');
+  return (_ferCache[y] = L); };
+const feriado = k => feriadosDoAno(+k.slice(0, 4))[k] || null;
+// pf = "pontos facultativos não são dias úteis"
+const naoUtil = (k, pf) => { const w = dt(k).getDay(); if (w === 0 || w === 6) return true; const f = feriado(k); return f ? (f.tipo !== 'facultativo' || pf) : false; };
+const ordemUtil = (k, pf) => { if (naoUtil(k, pf)) return 0; let n = 0; for (let d = 1; d <= +k.slice(8, 10); d++) if (!naoUtil(k.slice(0, 8) + pad(d), pf)) n++; return n; };
+const pzRecMes = (y, m, pf) => { const ult = new Date(y, m + 1, 0).getDate(), out = [];
+  PZ_REC.forEach(r => { let alvo = '';
+    if (r.regra === 'nUtil') { let n = 0; for (let d = 1; d <= ult; d++) { const k = iso(y, m, d); if (!naoUtil(k, pf) && ++n === r.n) { alvo = k; break; } } }
+    if (r.regra === 'ultimoUtil') for (let d = ult; d >= 1; d--) { const k = iso(y, m, d); if (!naoUtil(k, pf)) { alvo = k; break; } }
+    if (alvo) out.push({ key: 'rec-' + r.cat + '-' + alvo, cat: r.cat, titulo: r.titulo, ini: alvo, fim: alvo, obs: r.obs, rec: true }); });
+  return out; };
+const lsGet = (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
 // Banco de horas da semaninha: áreas (superintendências) e formato hh:mm
 const BH_AREAS = [['SCPMA', 'SCPMA — Subsecretaria', ['SCPMA']], ['SMA', 'SMA — Monitoramento e Avaliação', ['SMA', 'GEMONIT', 'GAPPP']], ['SUPLAN', 'SUPLAN — Planejamento', ['SUPLAN', 'GEPLAN', 'GPMLP']]];
 const bhArea = unid => (BH_AREAS.find(a => a[2].includes(String(unid || '').toUpperCase())) || BH_AREAS[0])[0];
@@ -116,7 +148,7 @@ class Component extends DCLogic {
     uSel: 'scpma', uCat: 'all', pTab: 'unidades', q: '', unitF: 'all', person: null,
     events: [], modal: false, editId: null, viewId: null, f: null, err: false, files: [],
     prof: { cargo: '', tel: '', bday: '', mat: '', pc: '', arm: '', cpf: '', foto: '' }, profSaved: '', rail: false, nivelF: 'all',
-    me: null, users: [], feriasScope: {}, hier: {}, rsvpEdit: '', bh: { lanc: [], areas: {}, editores: [] }, bhOpen: '', bhIn: {},
+    me: null, users: [], feriasScope: {}, hier: {}, rsvpEdit: '', prazos: [], pzOff: lsGet('hub-pz-off', []), pfUtil: lsGet('hub-pz-pf', true), pzEdit: null, bh: { lanc: [], areas: {}, editores: [] }, bhOpen: '', bhIn: {},
     online: false, connecting: true, busy: false, backendProblem: '', publicProfiles: {}, presencas: {}, presencaCounts: {}, myNextId: '', myNextDone: false,
     notifs: [], notifOpen: false, toast: null, toastErr: false, saving: false, uEdit: null, myPat: null, publicByUser: {}, convEv: {}, presencaQuem: {}, np1: '', np2: '', pwBusy: false, usrTab: 'usuarios', patItens: [], patLoaded: false, patEdit: null, patQ: '', personAdm: {}, resetInfo: null, colItens: [], colLoaded: false, colQ: '', colPessoa: '', colMine: false, colEdit: null,
     docPastas: [], docArqs: [], docLoaded: false, docPasta: null, docQ: '', docBusy: false, docFolderEdit: null, docFileEdit: null, docLinkEdit: null };
@@ -208,6 +240,40 @@ class Component extends DCLogic {
       const areas = {}; (a.data || []).forEach(r => { areas[r.area] = r; });
       this.setState({ bh: { lanc: l.data || [], areas, editores: e.data || [] } });
     } catch (x) { console.warn('[Hub] Erro ao carregar banco de horas:', errMsg(x)); }
+  }
+  // ===== Prazos (calendário de datas) =====
+  async loadPrazos() {
+    try { const { data, error } = await this.sb().from('prazos').select('id,categoria,titulo,data,data_fim,quem,etapa,obs').order('data'); if (error) throw error;
+      this.setState({ prazos: (data || []).map(r => ({ key: 'pz-' + r.id, id: r.id, cat: PZ_CATS[r.categoria] ? r.categoria : 'outro', titulo: r.titulo, ini: r.data, fim: r.data_fim && r.data_fim >= r.data ? r.data_fim : r.data, quem: r.quem || '', etapa: r.etapa || '', obs: r.obs || '' })) }); }
+    catch (e) { console.warn('[Hub] Erro ao carregar prazos:', errMsg(e)); }
+  }
+  // prazos (do banco + recorrentes) que tocam o intervalo [a, b], já filtrados
+  prazosEntre(a, b) {
+    const s = this.state, off = s.pzOff || [], pf = s.pfUtil !== false, out = s.prazos.filter(p => p.ini <= b && p.fim >= a);
+    for (let d = new Date(+a.slice(0, 4), +a.slice(5, 7) - 1, 1); isoOf(d) <= b; d = new Date(d.getFullYear(), d.getMonth() + 1, 1))
+      pzRecMes(d.getFullYear(), d.getMonth(), pf).forEach(r => { if (r.ini >= a && r.ini <= b) out.push(r); });
+    return out.filter(p => !off.includes(p.cat)).sort((x, y) => x.ini.localeCompare(y.ini) || (x.rec ? 1 : 0) - (y.rec ? 1 : 0) || String(x.titulo).localeCompare(String(y.titulo)));
+  }
+  pzOpen(p, dia) { const c = this.cu(); if (!c || !c.admin) return;
+    this.setState({ pzEdit: p ? { id: p.id, cat: p.cat, titulo: p.titulo, ini: p.ini, fim: p.fim !== p.ini ? p.fim : '', quem: p.quem, etapa: p.etapa, obs: p.obs, conf: false }
+      : { cat: 'outro', titulo: '', ini: dia || this.state.day || TODAY, fim: '', quem: '', etapa: '', obs: '', conf: false } }); }
+  async pzSave() {
+    const e = this.state.pzEdit; if (!e) return;
+    const titulo = (e.titulo || '').trim();
+    if (!titulo) return this.notify('Escreva o que acontece nessa data.', true);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(e.ini || '')) return this.notify('Informe a data.', true);
+    if (e.fim && e.fim < e.ini) return this.notify('A data final precisa ser depois da inicial.', true);
+    const row = { categoria: PZ_FORM.includes(e.cat) ? e.cat : 'outro', titulo, data: e.ini, data_fim: e.fim || null, quem: (e.quem || '').trim() || null, etapa: (e.etapa || '').trim() || null, obs: (e.obs || '').trim() || null, atualizado_em: new Date().toISOString() };
+    try { const q = e.id ? this.sb().from('prazos').update(row).eq('id', e.id) : this.sb().from('prazos').insert(row); const { error } = await q; if (error) throw error;
+      const off = (this.state.pzOff || []).filter(x => x !== row.categoria); lsSet('hub-pz-off', off);
+      this.setState({ pzEdit: null, pzOff: off, day: e.ini, ym: [+e.ini.slice(0, 4), +e.ini.slice(5, 7) - 1] }); await this.loadPrazos(); this.notify(e.id ? 'Prazo atualizado.' : 'Prazo inserido.'); }
+    catch (x) { this.notify('Erro ao salvar o prazo: ' + errMsg(x), true); }
+  }
+  async pzDel() {
+    const e = this.state.pzEdit; if (!e || !e.id) return;
+    if (!e.conf) return this.setState({ pzEdit: { ...e, conf: true } });
+    try { const { error } = await this.sb().from('prazos').delete().eq('id', e.id); if (error) throw error; this.setState({ pzEdit: null }); await this.loadPrazos(); this.notify('Prazo excluído.'); }
+    catch (x) { this.notify('Erro ao excluir: ' + errMsg(x), true); }
   }
   bhEditor(area) { const c = this.cu(); return !!c && (this.state.bh.editores || []).some(r => r.area === area && String(r.nome_usuario).toLowerCase() === String(c.usuario).toLowerCase()); }
   async setBH(usuario) {
@@ -328,6 +394,7 @@ class Component extends DCLogic {
   async postLogin(sv) {
     await this.loadFeriasScope(); // a tabela de aprovadores só é legível depois do login
     await this.loadBH();
+    await this.loadPrazos();
     await this.loadProfile(sv);
     await this.loadPublicProfiles();
     await this.loadNotifs(sv);
@@ -1015,42 +1082,80 @@ class Component extends DCLogic {
     const toggle = (key, id) => () => this.setState(st => { const a = st[key]; return { [key]: a.includes(id) ? a.filter(x => x !== id) : a.concat(id) }; });
     const chipsFor = key => Object.entries(UNITS).map(([id, [name, color]]) => { const on = s[key].includes(id); return { name, color, pick: toggle(key, id), bg: on ? '#e7eef8' : 'transparent', fg: on ? '#0b3d7a' : '#5f6b65', fw: on ? '600' : '500' }; });
     const off = (new Date(y, m, 1).getDay() + 6) % 7, nd = new Date(y, m + 1, 0).getDate();
+    // ---------- Prazos e datas (camada própria, separada dos eventos)
+    const pf = s.pfUtil !== false, pzOffL = s.pzOff || [], ferOn = !pzOffL.includes('fer'), meAdm = !!(this.cu() && this.cu().admin);
+    const pzC = c => PZ_CATS[c] || PZ_CATS.outro;
+    const pzMonth = this.prazosEntre(iso(y, m, 1), iso(y, m, nd)), pzOn = (list, d) => list.filter(p => p.ini <= d && p.fim >= d);
+    const goDay = d => () => this.setState({ day: d, ym: [+d.slice(0, 4), +d.slice(5, 7) - 1], calMode: 'mes', agTab: 'cal', view: 'agenda' });
+    const pzPer = p => p.fim !== p.ini ? 'De ' + dm(p.ini) + ' a ' + dm(p.fim) : '';
+    const pzItem = (p, d) => ({ tag: pzC(p.cat)[0], titulo: p.titulo, color: pzC(p.cat)[1], per: pzPer(p), hasPer: p.fim !== p.ini, quem: p.quem || '', hasQuem: !!p.quem,
+      etapa: p.etapa || '', hasEtapa: !!p.etapa, obs: p.obs || '', hasObs: !!p.obs, canEdit: meAdm && !p.rec, edit: () => this.pzOpen(p), go: goDay(d || p.ini) });
+    const diaInfo = d => { const w = dt(d).getDay(), f = feriado(d), u = ordemUtil(d, pf);
+      if (u) return { txt: u + 'º dia útil do mês' + (f ? ' · ' + f.nome + ' (ponto facultativo)' : ''), util: true };
+      if (w === 0 || w === 6) return { txt: 'Fim de semana' + (f ? ' · ' + f.nome : ''), util: false };
+      return { txt: (f.tipo === 'facultativo' ? 'Ponto facultativo · ' : 'Feriado · ') + f.nome, util: false }; };
     const cells = [];
     for (let i = 0; i < off; i++) cells.push({ n: '', ev: [], vis: 'hidden', bg: 'transparent', outline: 'none', numBg: 'transparent', numFg: '#122019', pick: () => {} });
     for (let n = 1; n <= nd; n++) {
       const d = iso(y, m, n), wk = (off + n - 1) % 7 >= 5;
       const list = calAll.filter(e => !isFer(e) && covers(e, d)).map(e => ({ title: e.title, color: UNITS[e.unit][1], icon: 'ph-fill ph-circle' }))
         .concat(calAll.filter(e => isFer(e) && e.status !== 'cancelado' && covers(e, d)).map(e => ({ title: (e.person || e.title).split(' ')[0] + ' — ' + (e.kind || 'Férias').toLowerCase(), color: UNITS[e.unit][1], icon: 'ph-fill ph-umbrella' })));
-      const shown = list.slice(0, 2); if (list.length > 2) shown.push({ title: '+' + (list.length - 2) + ' mais', color: 'transparent', icon: 'ph-fill ph-circle' });
-      cells.push({ n, ev: shown, vis: 'visible', pick: set({ day: d }), bg: wk ? '#f6f8f7' : '#fff', outline: d === s.day ? '2px solid #0b4f9c' : 'none',
+      // prazos de vários dias: só no início, no fim, nas segundas e no dia 1º (o painel do dia mostra todos os dias)
+      const items = list.concat(pzOn(pzMonth, d).filter(p => p.ini === p.fim || d === p.ini || d === p.fim || dt(d).getDay() === 1 || n === 1)
+        .map(p => ({ title: (p.ini !== p.fim && d === p.fim ? 'Fim: ' : '') + p.titulo + (p.ini !== p.fim ? ' (até ' + dm(p.fim) + ')' : ''), color: pzC(p.cat)[1], icon: 'ph-fill ph-flag' })));
+      const shown = items.length <= 3 ? items : items.slice(0, 2).concat({ title: '+' + (items.length - 2) + ' mais', color: 'transparent', icon: 'ph-fill ph-circle' });
+      const fe = feriado(d), du = ordemUtil(d, pf), ferDia = fe && naoUtil(d, pf) && !wk;
+      cells.push({ n, ev: shown, vis: 'visible', pick: set({ day: d }), bg: ferDia ? '#f1f3f6' : wk ? '#f6f8f7' : '#fff', outline: d === s.day ? '2px solid #0b4f9c' : 'none',
+        du: du ? du + 'º útil' : (fe && ferOn ? fe.nome + (fe.tipo === 'facultativo' ? ' · pf' : '') : ''), duFg: du ? '#9aa5a0' : '#667085', duTitle: fe ? fe.nome + (fe.tipo === 'facultativo' ? ' (ponto facultativo)' : '') : '',
         numBg: d === TODAY ? '#1f9d4c' : 'transparent', numFg: d === TODAY ? '#fff' : wk ? '#7a867f' : '#122019' });
     }
     const selEv = calAll.filter(e => !isFer(e) && covers(e, s.day)).map(e => ({ title: e.title, time: e.t1 ? e.t1 + '–' + e.t2 : 'Dia todo', unit: UNITS[e.unit][0], color: UNITS[e.unit][1], loc: e.loc || '—', view: () => this.openView(e) }));
     const selFer = calAll.filter(e => isFer(e) && e.status !== 'cancelado' && covers(e, s.day)).map(e => ({ name: e.person || e.title, unit: UNITS[e.unit][0], until: (e.kind || 'Férias') + ' até ' + dm(e.end) + (e.end.slice(0, 4) !== s.day.slice(0, 4) ? '/' + e.end.slice(0, 4) : '') }));
     const sd = dt(s.day);
-    const sel = { n: sd.getDate(), label: s.day === TODAY ? 'Hoje' : WDF[sd.getDay()], sub: 'de ' + MONTHS[sd.getMonth()].toLowerCase() + ' · ' + (selEv.length === 1 ? '1 evento' : selEv.length + ' eventos'), ev: selEv, empty: !selEv.length, fer: selFer, hasFer: selFer.length > 0 };
+    const selPz = pzOn(this.prazosEntre(s.day, s.day), s.day).map(p => pzItem(p, s.day)), selInfo = diaInfo(s.day);
+    const proxPz = this.prazosEntre(TODAY, addDays(TODAY, 14)).filter(p => p.ini >= TODAY).slice(0, 8).map(p => ({ d: dm(p.ini), wd: WD[dt(p.ini).getDay()], titulo: p.titulo, sub: pzC(p.cat)[0] + (p.quem ? ' · ' + p.quem : ''), color: pzC(p.cat)[1], go: goDay(p.ini) }));
+    const sel = { n: sd.getDate(), label: s.day === TODAY ? 'Hoje' : WDF[sd.getDay()], sub: 'de ' + MONTHS[sd.getMonth()].toLowerCase() + ' · ' + (selEv.length === 1 ? '1 evento' : selEv.length + ' eventos'), ev: selEv, empty: !selEv.length && !selPz.length, fer: selFer, hasFer: selFer.length > 0,
+      status: selInfo.txt, stBg: selInfo.util ? '#1f9d4c33' : '#ffffff1f', stFg: selInfo.util ? '#bdf0cc' : '#c9d8ec',
+      pz: selPz, hasPz: selPz.length > 0, canAddPz: meAdm, addPz: () => this.pzOpen(null, s.day), prox: proxPz, hasProx: proxPz.length > 0 };
     const shift = k => () => { if (s.calMode === 'semana') { const nx = addDays(s.day, 7 * k), d = dt(nx); this.setState({ day: nx, ym: [d.getFullYear(), d.getMonth()] }); } else { const d = new Date(y, m + k, 1); this.setState({ ym: [d.getFullYear(), d.getMonth()], day: isoOf(d) }); } };
-    const monday = addDays(s.day, -((sd.getDay() + 6) % 7)), sunday = addDays(monday, 6);
+    const monday = addDays(s.day, -((sd.getDay() + 6) % 7)), sunday = addDays(monday, 6), pzWeek = this.prazosEntre(monday, sunday);
     const week = [0,1,2,3,4,5,6].map(i => { const d = addDays(monday, i), t = d === TODAY;
-      const ev = calAll.filter(e => covers(e, d)).sort((a, b) => (a.t1 || '').localeCompare(b.t1 || '')).map(e => ({ title: e.title, time: e.t1 ? e.t1 + '–' + e.t2 : 'Dia todo', color: UNITS[e.unit][1], unit: UNITS[e.unit][0], view: () => this.openView(e), bg: t ? '#fff' : UNITS[e.unit][1] + '1f' }));
-      return { dow: WD[dt(d).getDay()].toUpperCase(), num: +d.slice(8, 10), ev, empty: !ev.length, bg: t ? '#1f9d4c' : '#fff', fg: t ? '#fff' : '#122019', sub: t ? '#dcf2e3' : '#7a867f', border: t ? '#1f9d4c' : '#e4e8e6' }; });
+      const ev = calAll.filter(e => covers(e, d)).sort((a, b) => (a.t1 || '').localeCompare(b.t1 || '')).map(e => ({ title: e.title, time: e.t1 ? e.t1 + '–' + e.t2 : 'Dia todo', color: UNITS[e.unit][1], unit: UNITS[e.unit][0], view: () => this.openView(e), bg: t ? '#fff' : UNITS[e.unit][1] + '1f' }))
+        .concat(pzOn(pzWeek, d).map(p => ({ title: p.titulo, time: 'Prazo', color: pzC(p.cat)[1], unit: pzC(p.cat)[0], view: goDay(d), bg: t ? '#fff' : pzC(p.cat)[2] })));
+      const fw = feriado(d), uw = ordemUtil(d, pf);
+      return { dow: WD[dt(d).getDay()].toUpperCase(), num: +d.slice(8, 10), ev, empty: !ev.length, du: uw ? uw + 'º útil' : (fw && ferOn ? fw.nome : ''), bg: t ? '#1f9d4c' : '#fff', fg: t ? '#fff' : '#122019', sub: t ? '#dcf2e3' : '#7a867f', border: t ? '#1f9d4c' : '#e4e8e6' }; });
     const weekTitle = (+monday.slice(8, 10)) + (monday.slice(5, 7) !== sunday.slice(5, 7) ? ' de ' + MONTHS[+monday.slice(5, 7) - 1].toLowerCase() : '') + ' – ' + (+sunday.slice(8, 10)) + ' de ' + MONTHS[+sunday.slice(5, 7) - 1].toLowerCase();
     const mS = iso(y, m, 1), mE = iso(y, m, nd);
     const inMonth = e => eS(e) <= mE && e.end >= mS;
-    const agendaGroups = groupBy(calAll.filter(inMonth));
+    const agendaGroups = (() => { const mp = {}; const add = (k, r) => { (mp[k] = mp[k] || []).push(r); };
+      calAll.filter(inMonth).forEach(e => add(eS(e), Object.assign(evRow(e), { ord: 0 })));
+      pzMonth.forEach(p => add(p.ini < mS ? mS : p.ini, { ord: 1, view: goDay(p.ini < mS ? mS : p.ini), color: pzC(p.cat)[1], t1: p.fim !== p.ini ? 'até ' + dm(p.fim) : 'Prazo', title: p.titulo,
+        meta: [pzC(p.cat)[0], p.etapa, p.quem, p.obs].filter(Boolean).join(' · '), hasConf: false, conf: '', tag: p.rec ? 'Recorrente' : 'Prazo', tagBg: pzC(p.cat)[2], tagFg: pzC(p.cat)[3] }));
+      if (ferOn) for (let i = 1; i <= nd; i++) { const k = iso(y, m, i), f = feriado(k); if (f) add(k, { ord: 2, view: goDay(k), color: PZ_CATS.fer[1], t1: 'Dia todo', title: f.nome + (f.tipo === 'facultativo' ? ' (ponto facultativo)' : f.tipo === 'municipal' ? ' (Goiânia)' : ''), meta: 'Feriado', hasConf: false, conf: '', tag: f.tipo === 'facultativo' ? 'Ponto facultativo' : 'Feriado', tagBg: PZ_CATS.fer[2], tagFg: PZ_CATS.fer[3] }); }
+      return Object.keys(mp).sort().map(k => ({ label: longDate(k), wd: WDF[dt(k).getDay()] + (ordemUtil(k, pf) ? ' · ' + ordemUtil(k, pf) + 'º dia útil' : ''), rows: mp[k].sort((a, b) => a.ord - b.ord || String(a.t1).localeCompare(String(b.t1))) })); })();
     const tlRows = Object.entries(UNITS).filter(([id]) => !s.calUnits.length || s.calUnits.includes(id)).map(([id, [name, color]]) => { const lanes = [];
       const bars = calAll.filter(e => e.unit === id && inMonth(e)).sort((a, b) => eS(a).localeCompare(eS(b))).map(e => {
         const a = eS(e) < mS ? 1 : +eS(e).slice(8, 10), b = e.end > mE ? nd : +e.end.slice(8, 10);
         let lane = lanes.findIndex(l => l < a); if (lane < 0) { lane = lanes.length; lanes.push(b); } else lanes[lane] = b;
         return { title: e.title, col: a + ' / ' + (b + 1), row: String(lane + 1), bg: color, fg: '#fff', opacity: isFer(e) ? '0.75' : '1', view: () => this.openView(e) }; });
       return { name, color, bars, minH: Math.max(1, lanes.length) * 30 + 'px' }; });
+    if (pzMonth.length) { const lanes = [];
+      const bars = pzMonth.map(p => { const a = p.ini < mS ? 1 : +p.ini.slice(8, 10), b = p.fim > mE ? nd : +p.fim.slice(8, 10);
+        let lane = lanes.findIndex(l => l < a); if (lane < 0) { lane = lanes.length; lanes.push(b); } else lanes[lane] = b;
+        return { title: p.titulo, col: a + ' / ' + (b + 1), row: String(lane + 1), bg: pzC(p.cat)[1], fg: p.cat === 'mensal' ? '#1d1a00' : '#fff', opacity: '1', view: goDay(p.ini < mS ? mS : p.ini) }; });
+      tlRows.unshift({ name: 'Prazos', color: '#0b3d7a', bars, minH: Math.max(1, lanes.length) * 30 + 'px' }); }
     const tlDays = Array.from({ length: nd }, (_, i) => { const d = iso(y, m, i + 1); return { n: i + 1, fg: d === TODAY ? '#fff' : ((off + i) % 7 >= 5 ? '#9aa5a0' : '#3d4943'), bg: d === TODAY ? '#1f9d4c' : 'transparent' }; });
     const cal = { title: s.calMode === 'semana' ? weekTitle : MONTHS[m] + ' de ' + y, m: String(m), y: String(y),
       months: MONTHS.map((n, i) => ({ v: String(i), n })), years: [...new Set([y - 1, y, y + 1].concat(all.map(e => +String(e.start || '').slice(0, 4)).filter(Boolean)))].sort().map(String).map(x => ({ v: x, n: x })),
       setMonth: e => { const mm = +e.target.value; this.setState({ ym: [y, mm], day: iso(y, mm, 1) }); }, setYear: e => { const yy = +e.target.value; this.setState({ ym: [yy, m], day: iso(yy, m, 1) }); },
       modes: [['mes','Mês','ph-calendar-blank'],['semana','Semana','ph-columns'],['agenda','Agenda','ph-list-dashes'],['timeline','Linha do tempo','ph-chart-bar-horizontal']].map(([id, name, ic]) => { const on = s.calMode === id; return { name, icon: 'ph-duotone ' + ic, pick: set({ calMode: id }), bg: on ? '#fff' : 'transparent', fg: on ? '#0b3d7a' : '#7a867f', sh: on ? '0 1px 3px #0b2b5524' : 'none', fw: on ? '600' : '500' }; }),
       isMes: s.calMode === 'mes', isSemana: s.calMode === 'semana', isAgenda: s.calMode === 'agenda', isTl: s.calMode === 'timeline',
-      cells, week, agendaGroups, agendaEmpty: !agendaGroups.length, tlRows, tlDays, tlCols: 'repeat(' + nd + ',minmax(0,1fr))', units: chipsFor('calUnits') };
+      cells, week, agendaGroups, agendaEmpty: !agendaGroups.length, tlRows, tlDays,
+      tiles: (() => { const fut = this.prazosEntre(TODAY, addDays(TODAY, 120)).filter(p => p.ini >= TODAY);
+        return [['Monitoramento mensal', p => p.cat === 'mensal' && p.rec], ['Monitoramento dos indicadores', p => p.cat === 'ind' && p.rec], ['Próximo marco', p => !p.rec]].map(([rot, f]) => { const p = fut.find(f);
+          if (!p) return { rot, has: false, none: true, txt: 'Sem datas futuras', mon: '', day: '', rel: '', color: '#98A2B3', fg: '#fff', go: () => {} };
+          return { rot, has: true, none: false, mon: MONTHS[+p.ini.slice(5, 7) - 1].slice(0, 3).toUpperCase(), day: +p.ini.slice(8, 10), color: pzC(p.cat)[1], fg: p.cat === 'mensal' ? '#1d1a00' : '#fff',
+            txt: p.rec ? WDF[dt(p.ini).getDay()] + ' · ' + ordemUtil(p.ini, pf) + 'º dia útil' : p.titulo, rel: rel(diff(TODAY, p.ini)), go: goDay(p.ini) }; }); })(), tlCols: 'repeat(' + nd + ',minmax(0,1fr))', units: chipsFor('calUnits') };
 
     let from = s.from, to = s.to;
     const [ly, lm] = s.lym;
@@ -1352,7 +1457,14 @@ class Component extends DCLogic {
     const pickUnits = key => Object.entries(UNITS).map(([id, [name, color]]) => { const arr = s[key] || []; const on = arr.includes(id); return { name, color, pick: () => this.setState(st => { const a = st[key] || []; return { [key]: a.includes(id) ? a.filter(x => x !== id) : a.concat(id) }; }), bg: on ? '#e7eef8' : '#fff', fg: on ? '#0b3d7a' : '#3d4943', fw: on ? '600' : '500', border: on ? '#0b4f9c' : '#e4e8e6' }; });
     const unitChips = key => (s[key] || []).map(id => ({ label: UNITS[id][0], remove: () => this.setState(st => ({ [key]: (st[key] || []).filter(x => x !== id) })) }));
     const fWrap = (k, active, extra) => ({ open: fo === k, toggle: tog(k), active, hasActive: active.length > 0, activeCount: active.length, bg: active.length ? '#eaf6ee' : '#fff', border: active.length ? '#1f9d4c' : '#e4e8e6', ...extra });
-    const calF = fWrap('cal', unitChips('calUnits'), { units: pickUnits('calUnits'), clear: set({ calUnits: [] }), summary: 'Exibindo' });
+    const pzSetOff = v => { lsSet('hub-pz-off', v); this.setState({ pzOff: v }); }, pfSet = v => { lsSet('hub-pz-pf', v); this.setState({ pfUtil: v }); };
+    const calActive = unitChips('calUnits');
+    (s.pzOff || []).forEach(c => calActive.push({ label: 'Oculto: ' + PZ_CATS[c][0], remove: () => pzSetOff((s.pzOff || []).filter(x => x !== c)) }));
+    if (s.pfUtil === false) calActive.push({ label: 'Pontos facultativos contam como dias úteis', remove: () => pfSet(true) });
+    const calF = fWrap('cal', calActive, { units: pickUnits('calUnits'), clear: () => { this.setState({ calUnits: [] }); pzSetOff([]); pfSet(true); }, summary: 'Exibindo',
+      pz: Object.entries(PZ_CATS).map(([id, c]) => { const on = !(s.pzOff || []).includes(id); return { name: c[0], color: c[1], pick: () => pzSetOff(on ? (s.pzOff || []).concat(id) : (s.pzOff || []).filter(x => x !== id)),
+        border: on ? c[1] : '#e4e8e6', bg: on ? c[2] : 'transparent', fg: on ? c[3] : '#7a867f', fw: on ? '600' : '500' }; }),
+      pf: s.pfUtil !== false, setPf: e => pfSet(!!e.target.checked) });
     const uniActive = [];
     if ((s.uWhen || 'prox') !== 'prox') uniActive.push({ label: s.uWhen === 'pass' ? 'Realizados' : 'Todos os períodos', remove: set({ uWhen: 'prox' }) });
     if (s.uCat !== 'all') uniActive.push({ label: catName(s.uCat), remove: set({ uCat: 'all' }) });
@@ -1410,6 +1522,13 @@ class Component extends DCLogic {
       calF, uniF, dirF, usrF, col, saveProf: () => this.saveProfile(),
       reset: { show: !!s.resetInfo, nome: s.resetInfo ? s.resetInfo.nome : '', usuario: s.resetInfo ? s.resetInfo.usuario : '', senha: s.resetInfo ? s.resetInfo.senha : '',
         copy: () => { try { navigator.clipboard.writeText(s.resetInfo.senha); this.notify('Senha copiada.'); } catch (e) {} }, close: () => this.setState({ resetInfo: null }) },
+      pze: (() => { const e = s.pzEdit; if (!e) return { open: false };
+        const setP = k => ev => { const v = ev.target.value; this.setState(st => ({ pzEdit: { ...st.pzEdit, [k]: v, conf: false } })); };
+        return { open: true, title: e.id ? 'Editar prazo' : 'Novo prazo', e, set: ['titulo', 'ini', 'fim', 'quem', 'etapa', 'obs'].reduce((o, k) => (o[k] = setP(k), o), {}),
+          cats: PZ_FORM.map(c => { const on = e.cat === c; return { name: PZ_CATS[c][0], color: PZ_CATS[c][1], pick: () => this.setState(st => ({ pzEdit: { ...st.pzEdit, cat: c } })),
+            border: on ? PZ_CATS[c][1] : '#e4e8e6', bg: on ? PZ_CATS[c][2] : '#fff', fg: on ? PZ_CATS[c][3] : '#3d4943' }; }),
+          canDel: !!e.id, delTxt: e.conf ? 'Confirmar exclusão' : 'Excluir', delBg: e.conf ? '#fdecea' : 'transparent',
+          save: () => this.pzSave(), del: () => this.pzDel(), close: () => this.setState({ pzEdit: null }) }; })(),
       bhMe: (() => { const c = this.cu(); if (!c) return {}; const u = s.users.find(x => x.usuario === c.usuario) || {}, area = bhArea(u.unid);
         const ls = ((s.bh && s.bh.lanc) || []).filter(r => String(r.nome_usuario).toLowerCase() === String(c.usuario).toLowerCase()), tot = ls.reduce((t, r) => t + r.minutos, 0);
         const at = ((s.bh && s.bh.areas) || {})[area] || {}, eds = ((s.bh && s.bh.editores) || []).filter(r => r.area === area).map(r => (s.users.find(x => x.usuario === r.nome_usuario) || { nome: r.nome_usuario }).nome.split(' ')[0]);

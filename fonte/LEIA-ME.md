@@ -40,6 +40,12 @@ A proteção está no banco (RLS), não no código:
   `agenda_pode_aprovar_pessoa`, usada por `agenda_aprovar_presenca` e pelo gatilho de férias; o site repete a mesma
   regra só para decidir onde mostrar os botões. Daiany e Vinicius estão cadastrados como "mesmo nível" (um acima do outro).
   A coluna `usuarios_autorizados.pode_aprovar_ferias` é só informativa e se atualiza sozinha a partir do escopo.
+- **Prazos e datas (antigo "Calendário de datas · SCPMA"):** camada própria do Calendário, separada dos eventos
+  (não entra na Lista de eventos, relatórios nem convites). Tabela `prazos` (categoria geceg/enc/mensal/ind/outro, título,
+  data, data_fim, quem, etapa, obs) — todos os logados leem, só administradores criam/editam. Calculados no `logic.js`
+  (não ficam no banco): feriados (nacionais, Goiânia e pontos facultativos), a contagem de dias úteis e os envios
+  recorrentes (`PZ_REC`: 10º dia útil = monitoramento mensal; último dia útil = indicadores). As escolhas de filtro e
+  "pontos facultativos não são dias úteis" ficam salvas no navegador de cada pessoa.
 - **Banco de horas da semaninha:** `banco_horas_lancamentos` (horas em minutos; negativo = horas usadas),
   `banco_horas_areas` ("atualizado até" de SCPMA, SMA e SUPLAN) e `banco_horas_editores` (quem lança em cada área:
   Giovanna na SCPMA, Otávio na SMA, Simone na SUPLAN). A área vem da unidade da pessoa (`agenda_area_de`).

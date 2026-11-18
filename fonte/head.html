@@ -225,7 +225,11 @@
   .hub-bh-row > span:nth-child(3) { grid-column: 1 / -1; }
   .hub-search { order: 3; flex-basis: 100% !important; max-width: none !important; min-width: 0 !important; }
   .hub-cal-cell { min-height: 54px !important; padding: 6px 4px !important; flex-direction: row !important; flex-wrap: wrap; align-content: flex-start; gap: 3px !important; }
-  .hub-cal-cell > span:first-child { margin-left: 0 !important; margin-right: calc(100% - 24px); }
+  .hub-cal-cell > .hub-cal-top { width: 100% !important; justify-content: center; }
+  .hub-cal-cell > .hub-cal-top > span:first-child { margin-left: 0 !important; }
+  .hub-cal-du { display: none; }
+  .hub-pz-tiles { display: flex !important; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 4px; }
+  .hub-pz-tiles > * { flex: 0 0 82%; scroll-snap-align: start; }
   .hub-cal-ev { width: auto !important; }
   .hub-cal-ev > i { display: block; width: 7px; height: 7px; border-radius: 50%; background: currentColor; font-size: 0 !important; }
   .hub-cal-evt { display: none; }
