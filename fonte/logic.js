@@ -1103,7 +1103,7 @@ class Component extends DCLogic {
       // prazos de vários dias: só no início, no fim, nas segundas e no dia 1º (o painel do dia mostra todos os dias)
       const items = list.concat(pzOn(pzMonth, d).filter(p => p.ini === p.fim || d === p.ini || d === p.fim || dt(d).getDay() === 1 || n === 1)
         .map(p => ({ title: (p.ini !== p.fim && d === p.fim ? 'Fim: ' : '') + p.titulo + (p.ini !== p.fim ? ' (até ' + dm(p.fim) + ')' : ''), color: pzC(p.cat)[1], icon: 'ph-fill ph-flag' })));
-      const shown = items.length <= 3 ? items : items.slice(0, 2).concat({ title: '+' + (items.length - 2) + ' mais', color: 'transparent', icon: 'ph-fill ph-circle' });
+      const shown = items.length <= 4 ? items : items.slice(0, 3).concat({ title: '+' + (items.length - 3) + ' mais', color: 'transparent', icon: 'ph-fill ph-circle' });
       const fe = feriado(d), du = ordemUtil(d, pf), ferDia = fe && naoUtil(d, pf) && !wk;
       cells.push({ n, ev: shown, vis: 'visible', pick: set({ day: d }), bg: ferDia ? '#f1f3f6' : wk ? '#f6f8f7' : '#fff', outline: d === s.day ? '2px solid #0b4f9c' : 'none',
         du: du ? du + 'º útil' : (fe && ferOn ? fe.nome + (fe.tipo === 'facultativo' ? ' · pf' : '') : ''), duFg: du ? '#9aa5a0' : '#667085', duTitle: fe ? fe.nome + (fe.tipo === 'facultativo' ? ' (ponto facultativo)' : '') : '',
