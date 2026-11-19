@@ -236,7 +236,7 @@ class Component extends DCLogic {
     try {
       const sb = this.sb();
       const [l, a, e] = await Promise.all([
-        sb.from('banco_horas_lancamentos').select('id,nome_usuario,minutos,criado_em,criado_por').order('id'),
+        sb.from('banco_horas_lancamentos').select('id,nome_usuario,minutos,banco,criado_em,criado_por').order('id'),
         sb.from('banco_horas_areas').select('area,atualizado_ate,atualizado_por'),
         sb.from('banco_horas_editores').select('nome_usuario,area')]);
       if (l.error) throw l.error; if (a.error) throw a.error; if (e.error) throw e.error;
@@ -279,15 +279,15 @@ class Component extends DCLogic {
     catch (x) { this.notify('Erro ao excluir: ' + errMsg(x), true); }
   }
   bhEditor(area) { const c = this.cu(); return !!c && (this.state.bh.editores || []).some(r => r.area === area && String(r.nome_usuario).toLowerCase() === String(c.usuario).toLowerCase()); }
-  async setBH(usuario) {
-    const v = String((this.state.bhIn || {})[usuario] ?? '').trim();
+  async setBH(usuario, banco) {
+    const k = usuario + '|' + banco, v = String((this.state.bhIn || {})[k] ?? '').trim();
     const min = v === '' || /^0+:?0*$/.test(v) ? 0 : bhParse(v);
     if (min == null || min < 0) return this.notify('Digite as horas só com números (ex.: 523 = 05:23). Os minutos vão até 59.', true);
     try {
-      const { error } = await this.sb().rpc('agenda_bh_definir', { p_usuario: usuario, p_minutos: min });
+      const { error } = await this.sb().rpc('agenda_bh_definir', { p_usuario: usuario, p_minutos: min, p_banco: banco });
       if (error) throw error;
-      this.setState(st => { const b = { ...st.bhIn }; delete b[usuario]; return { bhIn: b }; });
-      await this.loadBH(); this.notify('Banco de horas atualizado: ' + bhFmt(min) + '.');
+      this.setState(st => { const b = { ...st.bhIn }; delete b[k]; return { bhIn: b }; });
+      await this.loadBH(); this.notify('Bancão ' + banco + ' atualizado: ' + bhFmt(min) + '.');
     } catch (x) { this.notify('Erro ao salvar as horas: ' + errMsg(x), true); }
   }
   async setBHDate(area, data) {
@@ -1386,13 +1386,15 @@ class Component extends DCLogic {
     const bh = { areas: bhMine.map(([id, nome, unids]) => {
       const pessoas = s.users.filter(u => unids.includes(String(u.unid || '').toUpperCase())).slice().sort((a, b) => a.nome.localeCompare(b.nome, 'pt'));
       const at = (s.bh.areas || {})[id] || {}, open = s.bhOpen === id;
-      const rows = pessoas.map(u => { const ls = bhLanc.filter(r => String(r.nome_usuario).toLowerCase() === String(u.usuario).toLowerCase()), tot = ls.reduce((t, r) => t + r.minutos, 0);
-        return { nome: u.nome, unid: u.unid, total: bhFmt(tot), tBg: tot ? '#e7eef8' : '#f2f5f4', tFg: tot ? '#0b3d7a' : '#7a867f',
-          val: (s.bhIn || {})[u.usuario] ?? (tot ? bhFmt(tot).replace(/h$/, '') : ''), changed: (s.bhIn || {})[u.usuario] != null,
-          setVal: e => { const v = bhMask(e.target.value); e.target.value = v; this.setState(st => ({ bhIn: { ...st.bhIn, [u.usuario]: v } })); },
-          key: e => { if (e.key === 'Enter') this.setBH(u.usuario); }, save: () => this.setBH(u.usuario),
-          btnBg: (s.bhIn || {})[u.usuario] != null ? '#1f9d4c' : '#e4e8e6', btnFg: (s.bhIn || {})[u.usuario] != null ? '#fff' : '#5f6b65' }; });
-      const tot = rows.reduce((t, r, i) => t + bhLanc.filter(x => String(x.nome_usuario).toLowerCase() === String(pessoas[i].usuario).toLowerCase()).reduce((a, x) => a + x.minutos, 0), 0);
+      const somaDe = (u, b) => bhLanc.filter(r => String(r.nome_usuario).toLowerCase() === String(u).toLowerCase() && (!b || (r.banco || '52h') === b)).reduce((t, r) => t + r.minutos, 0);
+      const rows = pessoas.map(u => { const tot = somaDe(u.usuario);
+        const campo = b => { const k = u.usuario + '|' + b, cur = somaDe(u.usuario, b), edit = (s.bhIn || {})[k] != null;
+          return { label: 'Bancão ' + b, val: edit ? s.bhIn[k] : (cur ? bhFmt(cur).replace(/h$/, '') : ''),
+            setVal: e => { const v = bhMask(e.target.value); e.target.value = v; this.setState(st => ({ bhIn: { ...st.bhIn, [k]: v } })); },
+            key: e => { if (e.key === 'Enter') this.setBH(u.usuario, b); }, save: () => this.setBH(u.usuario, b),
+            btnBg: edit ? '#1f9d4c' : '#e4e8e6', btnFg: edit ? '#fff' : '#5f6b65' }; };
+        return { nome: u.nome, unid: u.unid, total: bhFmt(tot), tBg: tot ? '#e7eef8' : '#f2f5f4', tFg: tot ? '#0b3d7a' : '#7a867f', b52: campo('52h'), b8: campo('8h') }; });
+      const tot = pessoas.reduce((t, u) => t + somaDe(u.usuario), 0);
       return { id, nome, open, notOpen: !open, toggle: () => this.setState({ bhOpen: open ? '' : id }), rows, n: pessoas.length + ' pessoas · total ' + bhFmt(tot),
         ate: at.atualizado_ate || '', ateTxt: at.atualizado_ate ? 'Atualizado até ' + fmtDia(at.atualizado_ate) : 'Data de atualização não informada',
         setAte: e => this.setBHDate(id, e.target.value), chev: open ? 'ph-bold ph-caret-up' : 'ph-bold ph-caret-down' }; }) };
@@ -1535,7 +1537,8 @@ class Component extends DCLogic {
       bhMe: (() => { const c = this.cu(); if (!c) return {}; const u = s.users.find(x => x.usuario === c.usuario) || {}, area = bhArea(u.unid);
         const ls = ((s.bh && s.bh.lanc) || []).filter(r => String(r.nome_usuario).toLowerCase() === String(c.usuario).toLowerCase()), tot = ls.reduce((t, r) => t + r.minutos, 0);
         const at = ((s.bh && s.bh.areas) || {})[area] || {}, eds = ((s.bh && s.bh.editores) || []).filter(r => r.area === area).map(r => (s.users.find(x => x.usuario === r.nome_usuario) || { nome: r.nome_usuario }).nome.split(' ')[0]);
-        return { total: bhFmt(tot), parts: ls.length > 1 ? ls.map(r => bhFmt(r.minutos)).join(' + ') + ' = ' + bhFmt(tot) : '', hasParts: ls.length > 1,
+        const de = b => ls.filter(r => (r.banco || '52h') === b).reduce((t, r) => t + r.minutos, 0);
+        return { total: bhFmt(tot), b52: bhFmt(de('52h')), b8: bhFmt(de('8h')),
           ate: at.atualizado_ate ? 'Atualizado até ' + at.atualizado_ate.split('-').reverse().join('/') : 'Ainda não atualizado',
           quem: eds.length ? 'Lançado por ' + eds.join(', ') + ' (assessoria ' + area + ')' : '' }; })(),
       pwc: { np1: s.np1, np2: s.np2, setNp1: e => this.setState({ np1: e.target.value }), setNp2: e => this.setState({ np2: e.target.value }), save: () => this.changePassword(), btn: s.pwBusy ? 'Alterando…' : 'Alterar senha' }, hasUe: !!ueS, ue, myPat: myPatV,

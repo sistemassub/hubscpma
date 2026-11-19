@@ -222,7 +222,10 @@
   .hub-main input, .hub-main select, .hub-main textarea { font-size: 16px !important; }
   .hub-fab { display: none !important; }
   .hub-bh-row { grid-template-columns: minmax(0,1fr) auto !important; }
-  .hub-bh-row > span:nth-child(3) { grid-column: 1 / -1; }
+  .hub-bh-head { display: none !important; }
+  .hub-bh-row > .hub-bh-campo { grid-column: 1 / -1; align-items: center; }
+  .hub-bh-row > .hub-bh-campo::before { content: attr(data-label); font-size: 12px; color: #5f6b65; width: 82px; flex: none; }
+  .hub-bh-row > span:last-child { grid-column: 2; grid-row: 1; }
   .hub-search { order: 3; flex-basis: 100% !important; max-width: none !important; min-width: 0 !important; }
   .hub-cal-cell { min-height: 54px !important; padding: 6px 4px !important; flex-direction: row !important; flex-wrap: wrap; align-content: flex-start; gap: 3px !important; }
   .hub-cal-cell > .hub-cal-top { width: 100% !important; justify-content: center; }

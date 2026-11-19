@@ -47,7 +47,8 @@ A proteção está no banco (RLS), não no código:
   recorrentes (`PZ_REC`: 10º dia útil = monitoramento mensal; último dia útil = indicadores). Pontos facultativos de decreto
   que não se repetem todo ano (ex.: 30/12/2026) vão em `PF_DECRETO`, no `logic.js`. As escolhas de filtro e
   "pontos facultativos não são dias úteis" ficam salvas no navegador de cada pessoa.
-- **Banco de horas da semaninha:** `banco_horas_lancamentos` (horas em minutos; negativo = horas usadas),
+- **Banco de horas da semaninha:** `banco_horas_lancamentos` (horas em minutos; coluna `banco` = '52h' ou '8h', um valor por
+  pessoa e bancão, gravado pela função `agenda_bh_definir`; o Total é a soma e não é editável),
   `banco_horas_areas` ("atualizado até" de SCPMA, SMA e SUPLAN) e `banco_horas_editores` (quem lança em cada área:
   Giovanna na SCPMA, Otávio na SMA, Simone na SUPLAN). A área vem da unidade da pessoa (`agenda_area_de`).
   Cada lançamento só é visto pela própria pessoa (caixinha no Perfil) e por quem lança naquela área

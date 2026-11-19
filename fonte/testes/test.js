@@ -25,7 +25,7 @@ const eventos = [
   { id: 4, titulo: 'Entrega de relatório cancelada', descricao: '', data: plus(2), data_fim: plus(2), inicio: '10:00:00', fim: '11:00:00', local: '', categoria: 'relatorio', prioridade: 'media', status: 'cancelado', repeticao: 'nenhuma', responsavel: '', unidade_responsavel: 'GAPPP', publico_tipo: 'unidade', removido_em: null },
 ];
 const writes = [];
-const bhLanc = [{ id: 1, nome_usuario: 'giovanna.cintra', minutos: 323, criado_em: new Date().toISOString(), criado_por: 'giovanna.cintra' }, { id: 2, nome_usuario: 'giovanna.cintra', minutos: 277, criado_em: new Date().toISOString(), criado_por: 'giovanna.cintra' }];
+const bhLanc = [{ id: 1, nome_usuario: 'giovanna.cintra', minutos: 323, banco: '52h', criado_em: new Date().toISOString(), criado_por: 'giovanna.cintra' }, { id: 2, nome_usuario: 'giovanna.cintra', minutos: 277, banco: '8h', criado_em: new Date().toISOString(), criado_por: 'giovanna.cintra' }];
 const session = email => ({ access_token: 'fake.jwt.token', token_type: 'bearer', expires_in: 3600, expires_at: Math.floor(Date.now() / 1000) + 3600, refresh_token: 'r',
   user: { id: '11111111-1111-1111-1111-111111111111', aud: 'authenticated', role: 'authenticated', email, user_metadata: {}, app_metadata: {}, created_at: new Date().toISOString() } });
 let lastEmail = 'giovanna.cintra@scpma.local';
@@ -51,7 +51,7 @@ let lastEmail = 'giovanna.cintra@scpma.local';
     if (p === '/rest/v1/rpc/agenda_login_status') { const b = JSON.parse(req.postData() || '{}'); const x = users.find(y => y.nome_usuario === b.p_usuario); return json(x ? [{ existe: true, senha_criada: x.senha_criada }] : [{ existe: false, senha_criada: false }]); }
     if (p === '/rest/v1/rpc/agenda_admin_reset_senha') return json('Hub1a2b3c45');
     if (p === '/rest/v1/rpc/agenda_admin_contas') return json([{ nome_usuario: 'giovanna.cintra', id: '11111111-1111-1111-1111-111111111111' }, { nome_usuario: 'jeovah.silva', id: '22222222-2222-2222-2222-222222222222' }]);
-    if (p === '/rest/v1/rpc/agenda_bh_definir') { const b = JSON.parse(req.postData() || '{}'); writes.push(['RPC', p, '', b]); for (let i = bhLanc.length - 1; i >= 0; i--) if (bhLanc[i].nome_usuario === b.p_usuario) bhLanc.splice(i, 1); if (b.p_minutos > 0) bhLanc.push({ id: 900 + bhLanc.length, nome_usuario: b.p_usuario, minutos: b.p_minutos, criado_em: new Date().toISOString() }); return json(null); }
+    if (p === '/rest/v1/rpc/agenda_bh_definir') { const b = JSON.parse(req.postData() || '{}'); writes.push(['RPC', p, '', b]); for (let i = bhLanc.length - 1; i >= 0; i--) if (bhLanc[i].nome_usuario === b.p_usuario && bhLanc[i].banco === b.p_banco) bhLanc.splice(i, 1); if (b.p_minutos > 0) bhLanc.push({ id: 900 + bhLanc.length, nome_usuario: b.p_usuario, minutos: b.p_minutos, banco: b.p_banco, criado_em: new Date().toISOString() }); return json(null); }
     if (p.startsWith('/rest/v1/rpc/')) { writes.push(['RPC', p, '', req.postData()]); return json([{ nome_usuario: 'jeovah.silva' }]); }
     const table = p.replace('/rest/v1/', '');
     if (m !== 'GET' && m !== 'HEAD') {
@@ -182,22 +182,24 @@ let lastEmail = 'giovanna.cintra@scpma.local';
   await page.getByRole('button', { name: /Banco de horas/ }).click(); await page.waitForTimeout(300);
   console.log('banco de horas blocos:', await page.getByText('SCPMA — Subsecretaria').count(), '| SMA oculto:', await page.getByText('SMA — Monitoramento e Avaliação').count() === 0);
   await page.getByText('SCPMA — Subsecretaria').click(); await page.waitForTimeout(300); await shot('10b-banco-horas');
-  const bhRow = page.locator('.hub-bh-row', { hasText: 'Paulo Scalco' }), bhIn = bhRow.locator('input');
+  const bhRow = page.locator('.hub-bh-row', { hasText: 'Paulo Scalco' }), bhIn = bhRow.getByLabel('Bancão 52h'), bh8 = bhRow.getByLabel('Bancão 8h');
   await bhIn.click(); await bhIn.pressSequentially('523'); await page.waitForTimeout(200);
   console.log('máscara 523 ->', await bhIn.inputValue());
   await bhIn.press('Enter'); await page.waitForTimeout(500);
   const bhRpc = () => writes.filter(w => w[0] === 'RPC' && /agenda_bh_definir/.test(w[1])).map(w => w[3]);
   console.log('salvou:', JSON.stringify(bhRpc()), '| total Paulo:', await bhRow.innerText().then(t => /05:23h/.test(t)));
-  await bhIn.fill(''); await bhIn.pressSequentially('1032'); await bhRow.getByRole('button', { name: 'Salvar' }).click(); await page.waitForTimeout(500);
+  await bhIn.fill(''); await bhIn.pressSequentially('1032'); await bhRow.getByRole('button', { name: 'Salvar' }).first().click(); await page.waitForTimeout(500);
   console.log('sobrescreveu:', JSON.stringify(bhRpc().slice(-1)), '| total Paulo:', await bhRow.innerText().then(t => /10:32h/.test(t) && !/05:23h/.test(t)));
   await bhIn.fill(''); await bhIn.pressSequentially('575'); await bhIn.press('Enter'); await page.waitForTimeout(300);
   console.log('minutos > 59 barrados:', bhRpc().length === 2);
+  await bh8.click(); await bh8.pressSequentially('228'); await bh8.press('Enter'); await page.waitForTimeout(500);
+  console.log('bancão 8h:', JSON.stringify(bhRpc().slice(-1)), '| total 52h+8h = 13:00h:', await bhRow.innerText().then(t => /13:00h/.test(t)), '| total não editável:', await bhRow.locator('input').count() === 2);
   await page.getByRole('button', { name: 'Usuários', exact: true }).first().click(); await page.waitForTimeout(300);
   await page.mouse.move(900, 400);
   await page.locator('aside').first().locator('button').filter({ hasText: 'Giovanna' }).first().click(); await page.waitForTimeout(500);
   await page.fill('input[placeholder="Nº de matrícula"]', '12345');
   await page.getByRole('button', { name: /Salvar alterações/ }).click(); await page.waitForTimeout(800); await shot('11-perfil');
-  console.log('perfil banco de horas:', await page.getByText('Banco de horas p/ semaninha').count(), '|', await page.getByText('05:23h + 04:37h = 10:00h').count(), '|', await page.getByText('Atualizado até 16/11/2026').count());
+  console.log('perfil banco de horas:', await page.getByText('Banco de horas p/ semaninha').count(), '|', [await page.getByText('Bancão 52h', { exact: true }).count(), await page.getByText('05:23h').count(), await page.getByText('04:37h').count(), await page.getByText('10:00h').count()].join(','), '|', await page.getByText('Atualizado até 16/11/2026').count());
   await page.fill('input[placeholder="Nova senha"]', 'novaSenha99'); await page.fill('input[placeholder="Repita a nova senha"]', 'novaSenha99');
   await page.getByRole('button', { name: /^Alterar senha$/ }).click(); await page.waitForTimeout(600);
   console.log('troca de senha:', JSON.stringify(writes.filter(w => w[0] === 'PUTUSER').map(w => !!w[3].password)), await page.getByText('Senha alterada.').count());
