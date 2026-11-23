@@ -53,6 +53,8 @@ A proteção está no banco (RLS), não no código:
   Giovanna na SCPMA, Otávio na SMA, Simone na SUPLAN). A área vem da unidade da pessoa (`agenda_area_de`).
   Cada lançamento só é visto pela própria pessoa (caixinha no Perfil) e por quem lança naquela área
   (aba "Banco de horas" em Usuários); administradores não veem por serem administradores.
+- **Perfis no organograma:** a visão `perfis_publicos` roda com as permissões de quem consulta (`security_invoker`) e lê da
+  função `agenda_perfis_publicos()`, que só entrega nome, cargo, unidade, contato, aniversário e foto, e só para usuários autorizados.
 - **Dados pessoais** (e-mail, celular, aniversário do organograma, CPF etc.) ficam só no banco e só aparecem após o login —
   **nunca** coloque esses dados no código deste repositório (ele é público).
 
