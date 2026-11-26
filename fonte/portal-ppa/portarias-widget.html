@@ -1,0 +1,220 @@
+<!-- Portarias do PPA · lista automática a partir do Hub SCPMA. Cole este código inteiro no widget HTML da página (uma única vez). -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
+<style>
+h1.entry-title, .entry-title, .page-title, h1.elementor-page-title { display: none !important; }
+.banner-portarias { position: relative; left: 50%; transform: translateX(-50%); width: 100vw; box-sizing: border-box; background: linear-gradient(90deg, #006e54 0%, #0ca37c 100%); box-shadow: inset 0 8px 10px -8px rgba(0,0,0,.35); padding: 70px 16px; margin: 0 0 40px; text-align: center; }
+.banner-portarias h2 { margin: 0; color: #fff; font-family: 'Roboto', Arial, sans-serif; font-size: 28px; font-weight: 700; letter-spacing: .3px; text-transform: uppercase; line-height: 1.2; }
+.tabela-leis-wrap { position: relative; left: 50%; transform: translateX(-50%); width: min(1100px, 92vw); box-sizing: border-box; font-family: inherit; font-size: 14px; color: #333; margin-bottom: 60px; }
+.tabela-leis-wrap *, .tabela-leis-wrap *::before, .tabela-leis-wrap *::after { box-sizing: border-box; }
+#tabela-leis_wrapper { width: 100%; }
+.tl-topo { text-align: center; margin-bottom: 24px; }
+.tl-topo .dt-buttons { float: none !important; display: inline-block; margin: 0 !important; }
+.tabela-leis-wrap button.dt-button { background: #02765a !important; color: #fff !important; border: none !important; border-radius: 25px !important; padding: 11px 34px !important; font-size: 15px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,.15) !important; transition: background .2s, transform .1s; }
+.tabela-leis-wrap button.dt-button:hover { background: #015944 !important; transform: translateY(-1px); }
+.tl-barra { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+.tl-barra .dataTables_length, .tl-barra .dataTables_filter { float: none !important; margin: 0 !important; padding: 0 !important; text-align: left !important; }
+.tl-barra label { display: inline-flex; align-items: center; gap: 8px; margin: 0; font-size: 14px; font-weight: 500; color: #444; }
+.tl-barra select, .tl-barra input { height: 38px; border: 1px solid #cfd8d4 !important; border-radius: 8px !important; padding: 0 12px !important; margin: 0 !important; background: #fff; font-size: 14px; color: #333; }
+.tl-barra input { width: 280px; }
+.tl-barra select:focus, .tl-barra input:focus, .tabela-leis-wrap thead input:focus { outline: none; border-color: #02765a !important; box-shadow: 0 0 0 3px rgba(2,118,90,.15); }
+.tl-tabela { border: 1px solid #dfe5e2; border-radius: 10px; overflow: hidden; background: #fff; }
+#tabela-leis { width: 100% !important; }
+@media (max-width: 768px) { .tl-tabela { overflow-x: auto; } }
+#tabela-leis { width: 100% !important; margin: 0 !important; border: none !important; border-collapse: collapse; }
+#tabela-leis thead th { background: #f1f5f3; color: #2d3b36; font-weight: 700; font-size: 13px; letter-spacing: .4px; text-align: left; padding: 14px 16px; border-bottom: 1px solid #dfe5e2; }
+#tabela-leis thead th:first-child { width: 32%; }
+#tabela-leis thead tr:nth-child(2) th { background: #fff; background-image: none; cursor: default; padding: 10px 16px; }
+#tabela-leis thead input { width: 100%; height: 36px; padding: 0 12px; border: 1px solid #cfd8d4; border-radius: 8px; font-size: 13px; font-weight: 400; background: #fff; }
+#tabela-leis tbody tr { background: #fff; }
+#tabela-leis tbody tr td { background-color: transparent !important; padding: 14px 16px; border-top: 1px solid #e8eeeb; vertical-align: top; font-size: 14px; line-height: 1.55; }
+#tabela-leis tbody tr:hover { background: #f4faf6; }
+#tabela-leis tbody td a { color: #0b6bb5; text-decoration: underline; font-weight: 600; }
+#tabela-leis tbody td a:hover { color: #084c82; }
+#tabela-leis tbody td.dataTables_empty { text-align: center; padding: 28px 16px; color: #777; }
+.tl-rodape { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
+.tl-rodape .dataTables_info { float: none !important; padding: 0 !important; font-size: 13px; color: #666; }
+.tl-rodape .dataTables_paginate { float: none !important; padding: 0 !important; margin: 0 !important; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.tl-rodape .dataTables_paginate > span { display: flex; gap: 6px; }
+#tabela-leis_wrapper .paginate_button { display: inline-flex !important; align-items: center; justify-content: center; min-width: 36px; height: 36px; padding: 0 12px !important; margin: 0 !important; border: 1px solid #d5ddd9 !important; border-radius: 8px !important; background: #fff !important; color: #333 !important; font-size: 13px; font-weight: 500; cursor: pointer; box-shadow: none !important; }
+#tabela-leis_wrapper .paginate_button:hover { background: #e6f2ef !important; color: #015944 !important; border-color: #02765a !important; }
+#tabela-leis_wrapper .paginate_button.current, #tabela-leis_wrapper .paginate_button.current:hover { background: #02765a !important; color: #fff !important; border-color: #02765a !important; }
+#tabela-leis_wrapper .paginate_button.disabled, #tabela-leis_wrapper .paginate_button.disabled:hover { opacity: .45; cursor: default; background: #fff !important; color: #777 !important; border-color: #d5ddd9 !important; }
+#tabela-leis_wrapper .ellipsis { border: none !important; min-width: 0; padding: 0 4px !important; }
+@media (max-width: 640px) {
+.tl-barra { flex-direction: column; align-items: stretch; }
+.tl-barra .dataTables_filter label { width: 100%; }
+.tl-barra input { width: 100%; flex: 1; }
+.tl-rodape { flex-direction: column; align-items: flex-start; }
+.tl-rodape .dataTables_paginate { justify-content: flex-start; }
+#tabela-leis thead th:first-child { width: 40%; }
+}
+.tabela-leis-wrap thead select.tl-filtro-orgao { width: 100%; height: 38px; border: 1px solid #cfd8d4; border-radius: 8px; padding: 0 10px; background: #fff; font-size: 13px; color: #333; cursor: pointer; }
+</style>
+<div class="banner-portarias"><h2>Portarias</h2></div>
+<div class="tabela-leis-wrap">
+<table id="tabela-leis" class="display" style="width:100%">
+<thead>
+<tr><th>PORTARIA</th><th>ÓRGÃO</th><th>EMENTA</th></tr>
+<tr><th></th><th></th><th></th></tr>
+</thead>
+<tbody>
+<!-- NÃO PRECISA MAIS COLAR PORTARIAS AQUI: a lista vem automaticamente do Hub SCPMA (aba Usuários > Portarias). As linhas abaixo só aparecem se o Hub estiver fora do ar. -->
+<tr>
+<td><a href="https://ppa.go.gov.br/wp-content/uploads/sites/9/2026/11/Portaria_311_DGPC___diario_oficial_2026_11_24_pag_31_24_11_2026.pdf" target="_blank">Portaria Economia nº 311, de 17 de novembro de 2026</a></td>
+<td>Delegacia-Geral da Polícia Civil – DGPC</td>
+<td>Fica aprovada, no âmbito do Plano Plurianual – PPA 2024–2027, em decorrência da solicitação realizada pela Delegacia Geral da Polícia Civil – DGPC no âmbito da Revisão de Metas Físicas de 2026, a alteração da meta física da Entrega: 20632 – COMPLEXO ESTADUAL DA POLÍCIA CIVIL PRIMEIRA FASE IMPLANTADO, conforme especificado no Anexo Único desta Portaria.</td>
+</tr>
+<tr>
+<td><a href="https://ppa.go.gov.br/wp-content/uploads/sites/9/2026/10/Portaria-CODEGO-SEI-202510216000411.pdf" target="_blank">Portaria Economia nº 290, de 23 de outubro de 2026</a></td>
+<td>Companhia de Desenvolvimento Econômico de Goiás – CODEGO</td>
+<td>Fica aprovada a revisão de metas físicas e financeiras do Plano Plurianual – PPA para o quadriênio 2024–2027, referente à Companhia de Desenvolvimento Econômico de Goiás – CODEGO, conforme Anexo Único desta Portaria.</td>
+</tr>
+<tr>
+<td><a href="https://ppa.go.gov.br/wp-content/uploads/sites/9/2026/10/SEI_97558128_PORTARIA_NUMERACAO_MANUAL_289.pdf" target="_blank">Portaria Economia nº 289, de 23 de outubro de 2026</a></td>
+<td>Defensoria Pública do Estado de Goiás – DPE-GO</td>
+<td>Fica aprovada a revisão de metas físicas do Plano Plurianual – PPA para o quadriênio 2024–2027, referente à Defensoria Pública do Estado de Goiás – DPE-GO, conforme Anexo desta Portaria.</td>
+</tr>
+<tr>
+<td><a href="https://ppa.go.gov.br/wp-content/uploads/sites/9/2026/11/Portaria-Economia-283-22102026-SES_D.O.pdf" target="_blank">Portaria Economia nº 283, de 22 de outubro de 2026</a></td>
+<td>Secretaria de Estado da Saúde – SES</td>
+<td>Fica aprovada a criação de nova entrega no Plano Plurianual – PPA para o quadriênio 2024–2027, referente à Secretaria de Estado da Saúde, denominada: USUÁRIO ATENDIDO COM MEDICAMENTOS DO COMPONENTE DE ASSISTÊNCIA FARMACÊUTICA EM ONCOLOGIA (AF-ONCO), para o ano de 2027.</td>
+</tr>
+<tr>
+<td><a href="https://ppa.go.gov.br/wp-content/uploads/sites/9/2026/10/PORTARIA_ECONOMIA_N__278.pdf" target="_blank">Portaria Economia nº 278, de 20 de outubro de 2026</a></td>
+<td>Secretaria de Estado da Saúde – SES</td>
+<td>Fica aprovada a criação de nova entrega no Plano Plurianual – PPA para o quadriênio 2024–2027, referente à Secretaria de Estado da Saúde, denominada: NOVA SEDE DO HOSPITAL DE URGÊNCIAS DE GOIÁS DR. VALDEMIRO CRUZ – HUGO ADQUIRIDA E ESTRUTURADA.</td>
+</tr>
+<tr>
+<td><a href="https://ppa.go.gov.br/wp-content/uploads/sites/9/2026/10/PORTARIA_ECONOMIA_N__261___DE_07_DE_outubro_DE_2026.pdf" target="_blank">Portaria Economia nº 261, de 7 de outubro de 2026</a></td>
+<td>Indústria Química do Estado de Goiás – IQUEGO</td>
+<td>Fica aprovada a revisão do Plano Plurianual – PPA para o quadriênio 2024–2027, referente à Indústria Química do Estado de Goiás – IQUEGO, com a inclusão da entrega “Insumos Estratégicos de Saúde Pública Distribuído”, conforme Anexo Único desta Portaria.</td>
+</tr>
+<tr>
+<td><a href="https://ppa.go.gov.br/wp-content/uploads/sites/9/2026/10/SEI_96677904_PORTARIA_NUMERACAO_MANUAL_258.pdf" target="_blank">Portaria Economia nº 258, de 5 de outubro de 2026</a></td>
+<td>Saneamento de Goiás S/A – SANEAGO</td>
+<td>Fica aprovada a revisão de metas físicas e financeiras do Plano Plurianual – PPA para o quadriênio 2024–2027, referente à Saneamento de Goiás S/A – SANEAGO, conforme Anexo desta Portaria.</td>
+</tr>
+<tr>
+<td><a href="https://ppa.go.gov.br/wp-content/uploads/sites/9/2026/10/PORTARIA_ECONOMIA_N__227.pdf" target="_blank">Portaria Economia nº 227, de 14 de setembro de 2026</a></td>
+<td>Secretaria de Estado da Segurança Pública – SSP</td>
+<td>Ficam aprovadas, em decorrência da alteração da estrutura administrativa do Estado promovida pela Lei nº 24.395, de 29 de junho de 2026, que instituiu a Diretoria da Polícia Científica – DPCI na estrutura básica da Secretaria de Estado da Segurança Pública, as revisões dos elementos gerenciais e operacionais do Plano Plurianual – PPA 2024–2027, compreendendo as iniciativas, entregas, órgãos responsáveis, metas e demais atributos especificados no Anexo desta Portaria.</td>
+</tr>
+<tr>
+<td><a href="https://ppa.go.gov.br/wp-content/uploads/sites/9/2026/10/PORTARIA_ECONOMIA_N__225.pdf" target="_blank">Portaria Economia nº 225, de 11 de setembro de 2026</a></td>
+<td>Geral (todos os órgãos)</td>
+<td>Retifica a Portaria nº 108, de 30 de abril de 2026, referente à publicação do Caderno de Revisão de Metas Físicas do Plano Plurianual (PPA) 2024–2027.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<script>
+(function () {
+  function carregar(src, jaExiste) {
+    return new Promise(function (ok, erro) {
+      if (jaExiste()) { ok(); return; }
+      var s = document.createElement('script');
+      s.src = src;
+      s.onload = ok;
+      s.onerror = erro;
+      document.head.appendChild(s);
+    });
+  }
+  function esperarJQuery(cb) {
+    var tentativas = 0;
+    (function checar() {
+      if (window.jQuery) { cb(window.jQuery); return; }
+      tentativas++;
+      if (tentativas > 30) {
+        carregar('https://code.jquery.com/jquery-3.7.1.min.js', function () { return !!window.jQuery; })
+          .then(function () { cb(window.jQuery); });
+        return;
+      }
+      setTimeout(checar, 100);
+    })();
+  }
+  /* Lista de portarias vinda do Hub SCPMA (atualiza sozinha).
+     Se o Hub não responder, a página mostra as linhas escritas abaixo, como antes. */
+  var HUB_URL = 'https://wlixkuxembfiotbmyrgk.supabase.co/rest/v1/portarias'
+    + '?select=nome,data,orgao,ementa,arquivo_url&publicado=eq.true&order=data.desc.nullslast,id.desc';
+  var HUB_KEY = 'sb_publishable_5kJA97mc8eDIbLdiEMiu0A_yoLrxx1_';
+  function carregarDoHub() {
+    var corpo = document.querySelector('#tabela-leis tbody');
+    if (!corpo || !window.fetch) { return Promise.resolve(); }
+    var tempo = new Promise(function (ok) { setTimeout(ok, 8000); });
+    var busca = fetch(HUB_URL, { headers: { apikey: HUB_KEY, Authorization: 'Bearer ' + HUB_KEY } })
+      .then(function (r) { if (!r.ok) { throw new Error('HTTP ' + r.status); } return r.json(); })
+      .then(function (lista) {
+        if (!Array.isArray(lista) || !lista.length) { return; }
+        var frag = document.createDocumentFragment();
+        lista.forEach(function (p) {
+          var tr = document.createElement('tr');
+          var td1 = document.createElement('td');
+          if (p.arquivo_url && /^https:\/\//i.test(p.arquivo_url)) {
+            var a = document.createElement('a');
+            a.href = p.arquivo_url; a.target = '_blank'; a.rel = 'noopener';
+            a.textContent = p.nome || '';
+            td1.appendChild(a);
+          } else { td1.textContent = p.nome || ''; }
+          var td2 = document.createElement('td'); td2.textContent = p.orgao || '';
+          var td3 = document.createElement('td'); td3.textContent = p.ementa || '';
+          tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
+          frag.appendChild(tr);
+        });
+        corpo.innerHTML = '';
+        corpo.appendChild(frag);
+      })
+      .catch(function (e) { if (window.console) { console.warn('Portarias: usando a lista da página (Hub indisponível).', e); } });
+    return Promise.race([busca, tempo]);
+  }
+  function iniciar($) {
+    var $t = $('#tabela-leis');
+    if ($t.length === 0) { return; }
+    if ($.fn.dataTable.isDataTable('#tabela-leis')) { return; }
+    $t.find('thead tr:eq(1) th').each(function (i) {
+      var titulo = $t.find('thead tr:eq(0) th').eq(i).text();
+      if (titulo === 'ÓRGÃO') {
+        $(this).html('<select class="tl-filtro-orgao"><option value="">Todos os órgãos</option></select>');
+      } else {
+        $(this).html('<input type="text" placeholder="Filtrar ' + titulo + '">');
+      }
+    });
+    var tabela = $t.DataTable({
+      orderCellsTop: true,
+      order: [],
+      pageLength: 50,
+      language: { url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/pt-BR.json' },
+      dom: '<"tl-topo"B><"tl-barra"lf><"tl-tabela"rt><"tl-rodape"ip>',
+      buttons: [{ extend: 'excelHtml5', text: 'Exportar Dados' }]
+    });
+    $('#tabela-leis_filter input').attr('placeholder', 'Buscar nas portarias...');
+    var colOrgao = $t.find('thead tr:eq(0) th').filter(function () { return $(this).text() === 'ÓRGÃO'; }).index();
+    var $sel = $t.find('thead tr:eq(1) th select.tl-filtro-orgao');
+    function preencherOrgaos() {
+      $sel.find('option:not(:first)').remove();
+      tabela.column(colOrgao).data().unique().sort().each(function (d) {
+        if (d) { $sel.append($('<option>').val(d).text(d)); }
+      });
+    }
+    if (tabela.settings()[0]._bInitComplete) { preencherOrgaos(); }
+    tabela.on('init.dt', preencherOrgaos);
+    $sel.on('click', function (e) { e.stopPropagation(); })
+      .on('change', function () {
+        var val = this.value ? '^' + $.fn.dataTable.util.escapeRegex(this.value) + '$' : '';
+        tabela.column(colOrgao).search(val, true, false).draw();
+      });
+    $t.find('thead tr:eq(1) th input')
+      .on('click', function (e) { e.stopPropagation(); })
+      .on('keyup change', function () {
+        tabela.column($(this).parent().index()).search(this.value).draw();
+      });
+  }
+  esperarJQuery(function ($) {
+    carregar('https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js', function () { return !!$.fn.DataTable; })
+      .then(function () { return carregar('https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js', function () { return !!$.fn.dataTable.Buttons; }); })
+      .then(function () { return carregar('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js', function () { return !!window.JSZip; }); })
+      .then(function () { return carregar('https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js', function () { return !!$.fn.dataTable.ext.buttons.excelHtml5; }); })
+      .then(function () { return carregarDoHub(); })
+      .then(function () { $(function () { iniciar($); }); });
+  });
+})();
+</script>

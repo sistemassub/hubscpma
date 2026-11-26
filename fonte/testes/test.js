@@ -47,6 +47,7 @@ let lastEmail = 'giovanna.cintra@scpma.local';
     if (p.startsWith('/auth/v1/logout')) return route.fulfill({ status: 204 });
     if (p.startsWith('/storage/v1/object/sign/')) return json({ signedURL: '/object/sign/documentos-admin/x.pdf?token=abc' });
     if (p.startsWith('/storage/v1/object/documentos-admin') && m === 'DELETE') { writes.push(['STORAGE-DEL', p, '', req.postData()]); return json([]); }
+    if (p.startsWith('/storage/v1/object/portarias/')) { writes.push(['PORT-UP', p, '', null]); return json({ Key: p }); }
     if (p.startsWith('/storage/v1/object/documentos-admin/')) { writes.push(['STORAGE-UP', p, '', null]); return json({ Key: p }); }
     if (p === '/rest/v1/rpc/agenda_login_status') { const b = JSON.parse(req.postData() || '{}'); const x = users.find(y => y.nome_usuario === b.p_usuario); return json(x ? [{ existe: true, senha_criada: x.senha_criada }] : [{ existe: false, senha_criada: false }]); }
     if (p === '/rest/v1/rpc/agenda_admin_reset_senha') return json('Hub1a2b3c45');
@@ -82,6 +83,7 @@ let lastEmail = 'giovanna.cintra@scpma.local';
     if (table === 'usuarios_autorizados') return json(users);
     if (table === 'aprovadores_ferias_escopo') return json(m === 'GET' ? [{ nome_usuario: 'paulo.scalco', unidade: 'SCPMA' }, { nome_usuario: 'giovanna.cintra', unidade: 'GEMONIT' }] : []);
     if (table === 'eventos') return json(eventos.filter(e => !e.removido_em));
+    if (table === 'portarias' && m === 'GET') return json([{ id: 1, nome: 'Portaria Economia nº 311, de 17 de novembro de 2026', data: '2026-11-17', orgao: 'Delegacia-Geral da Polícia Civil – DGPC', ementa: 'Fica aprovada a alteração da meta física.', arquivo_url: 'https://ppa.go.gov.br/x.pdf', arquivo_caminho: null, publicado: true, criado_em: new Date().toISOString() }]);
     if (table === 'prazos' && m === 'GET') return json([{ id: 1, categoria: 'geceg', titulo: 'Apoio Tático Operacional', data: plus(-3), data_fim: plus(20), quem: 'Facilitadores Economia', etapa: null, obs: null },
       { id: 2, categoria: 'enc', titulo: 'Reunião técnica nº 2 · alinhamento técnico', data: plus(1), data_fim: null, quem: null, etapa: 'Etapa 1 · Preparação', obs: 'Teste de observação' }]);
     if (table === 'banco_horas_editores') return json([{ nome_usuario: 'giovanna.cintra', area: 'SCPMA' }, { nome_usuario: 'vinicius.chaer', area: 'SMA' }]);
@@ -315,6 +317,23 @@ let lastEmail = 'giovanna.cintra@scpma.local';
   await page.locator('button[title="Excluir"]').first().click(); await page.waitForTimeout(600);
   console.log('excluiu arquivo:', JSON.stringify(writes.filter(w => w[0] === 'STORAGE-DEL').length), JSON.stringify(writes.filter(w => w[1] === 'documentos_arquivos' && w[0] === 'DELETE').length));
   await page.getByText('Usuários', { exact: true }).first().click().catch(() => {});
+  // ===== Portarias (vão para o portal do PPA)
+  await page.locator('aside').first().hover(); await page.getByText('Usuários', { exact: true }).first().click(); await page.mouse.move(900, 400); await page.waitForTimeout(300);
+  console.log('aba Portarias depois de Patrimônios:', JSON.stringify(await page.locator('button', { hasText: /^(Usuários|Patrimônios|Portarias|Documentos e projetos|Banco de horas)$/ }).allInnerTexts()));
+  await page.getByRole('button', { name: 'Portarias', exact: true }).click(); await page.waitForTimeout(500);
+  console.log('portarias listadas:', await page.getByText('Portaria Economia nº 311, de 17 de novembro de 2026').count(), '| aviso do portal:', await page.getByText('portal do PPA', { exact: false }).count() > 0);
+  await page.getByRole('button', { name: /Nova portaria/ }).click(); await page.waitForTimeout(300);
+  await page.getByRole('button', { name: /Salvar e publicar/ }).click(); await page.waitForTimeout(200);
+  console.log('portaria vazia barrada:', writes.filter(w => w[1] === 'portarias').length === 0);
+  await page.fill('input[placeholder^="Ex.: Portaria Economia"]', 'Portaria Economia nº 320, de 25 de novembro de 2026');
+  await page.fill('input[placeholder^="Ex.: Secretaria de Estado da Saúde"]', 'Secretaria de Estado da Saúde – SES');
+  await page.fill('textarea[placeholder="Fica aprovada…"]', 'Fica aprovada a revisão de metas físicas do PPA 2024–2027.');
+  await page.getByRole('button', { name: /Salvar e publicar/ }).click(); await page.waitForTimeout(200);
+  console.log('sem PDF barrada:', writes.filter(w => w[1] === 'portarias').length === 0);
+  await page.locator('input[type="file"][accept^="application/pdf"]').setInputFiles({ name: 'Portaria 320.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF-1.4 teste') });
+  await page.getByRole('button', { name: /Salvar e publicar/ }).click(); await page.waitForTimeout(700);
+  console.log('PDF enviado:', JSON.stringify(writes.filter(w => w[0] === 'PORT-UP').map(w => w[1].replace(/\d{10,}/, 'TS'))), '| gravou:', JSON.stringify(writes.filter(w => w[1] === 'portarias').map(w => [w[0], w[3].nome, w[3].orgao, w[3].publicado, /\/storage\/v1\/object\/public\/portarias\//.test(w[3].arquivo_url)])));
+  await shot('28-portarias');
   // ===== Prazos e datas no calendário
   await page.locator('aside').first().hover(); await page.getByText('Calendário', { exact: true }).first().click(); await page.mouse.move(900, 400); await page.waitForTimeout(400);
   await page.getByRole('button', { name: /^Mês$/ }).click().catch(() => {}); await page.getByRole('button', { name: 'Hoje', exact: true }).click(); await page.waitForTimeout(300);

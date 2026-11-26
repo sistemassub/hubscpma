@@ -963,6 +963,32 @@
             </sc-if>
           </div>
         </sc-if>
+        <sc-if value="{{ usr.isPort }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;gap:10px;align-items:flex-start;background:#eaf6ee;border:1px solid #cfe9d8;border-radius:14px;padding:12px 14px;font-size:13px;color:#146c35"><i class="ph-duotone ph-broadcast" style="font-size:18px;flex:none"></i><span>Toda portaria salva aqui com <b>“Publicar no portal”</b> aparece automaticamente na página de Portarias do <a href="{{ usr.port.portal }}" target="_blank" rel="noopener" style="color:#0b4f9c;font-weight:600">portal do PPA</a>, com nome, órgão, ementa e o PDF. Não precisa editar o portal.</span></div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <div style="position:relative;flex:1;min-width:220px">
+                <i class="ph-duotone ph-magnifying-glass" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7a867f;font-size:16px"></i>
+                <input value="{{ usr.port.q }}" sc-camel-on-input="{{ usr.port.setQ }}" placeholder="Buscar por número, órgão ou ementa" style="width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border:1px solid #e4e8e6;border-radius:14px;font-size:14px;background:#f6f8f7">
+              </div>
+              <button sc-camel-on-click="{{ usr.port.novo }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:14px;padding:11px 16px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap"><i class="ph-bold ph-plus"></i>Nova portaria</button>
+            </div>
+            <span style="font-size:13px;color:#5f6b65">{{ usr.port.summary }}</span>
+            <sc-if value="{{ usr.port.loading }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;color:#7a867f">Carregando portarias…</span></sc-if>
+            <sc-if value="{{ usr.port.empty }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;color:#7a867f">Nenhuma portaria encontrada.</span></sc-if>
+            <sc-for list="{{ usr.port.list }}" as="p" hint-placeholder-count="3">
+              <div style="border:1px solid #e4e8e6;border-radius:16px;padding:14px 16px;display:flex;gap:14px;align-items:flex-start;background:#fff">
+                <span style="flex:none;width:40px;height:40px;border-radius:12px;background:#fbe1e1;color:#b42318;display:grid;place-items:center;font-size:20px"><i class="ph-duotone ph-file-pdf"></i></span>
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+                  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><sc-if value="{{ p.hasUrl }}" hint-placeholder-val="{{ true }}"><a href="{{ p.url }}" target="_blank" rel="noopener" style="font-size:15px;font-weight:600;color:#0b4f9c">{{ p.nome }}</a></sc-if><span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;background:{{ p.stBg }};color:{{ p.stFg }}">{{ p.st }}</span></div>
+                  <span style="font-size:13px;font-weight:600;color:#3d4943">{{ p.orgao }}</span>
+                  <span style="font-size:13px;color:#5f6b65;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">{{ p.ementa }}</span>
+                </div>
+                <button sc-camel-on-click="{{ p.edit }}" title="Editar" style="flex:none;border:1px solid #e4e8e6;background:#fff;border-radius:10px;padding:7px 10px;font-size:13px;font-weight:600;display:flex;gap:5px;align-items:center"><i class="ph-bold ph-pencil-simple"></i>Editar</button>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
         <sc-if value="{{ usr.isAssplan }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;flex-direction:column;gap:16px">
             <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -1326,6 +1352,36 @@
         <div style="display:flex;justify-content:flex-end;gap:8px;padding:14px 22px;border-top:1px solid #e4e8e6">
           <button sc-camel-on-click="{{ usr.assplan.cancel }}" style="border:1px solid #e4e8e6;background:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:500">Cancelar</button>
           <button sc-camel-on-click="{{ usr.assplan.save }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:600">Salvar</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ pte.open }}" hint-placeholder-val="{{ false }}">
+    <div sc-camel-on-click="{{ pte.close }}" style="position:fixed;inset:0;background:#0b2b5566;display:grid;place-items:center;z-index:75;padding:20px">
+      <div sc-camel-on-click="{{ stop }}" style="width:min(640px,100%);max-height:calc(100vh - 40px);overflow:auto;background:#fff;border-radius:24px;box-shadow:0 30px 80px #0b2b5544">
+        <div style="background:#0b3d7a;color:#fff;padding:18px 22px;font-size:18px;font-weight:600;display:flex;gap:10px;align-items:center"><i class="ph-duotone ph-scroll"></i>{{ pte.title }}</div>
+        <div style="padding:20px 22px;display:grid;grid-template-columns:minmax(0,1fr) 170px;gap:14px">
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Portaria<input value="{{ pte.e.nome }}" sc-camel-on-input="{{ pte.set.nome }}" maxlength="200" placeholder="Ex.: Portaria Economia nº 311, de 17 de novembro de 2026" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Data<input type="date" value="{{ pte.e.data }}" sc-camel-on-input="{{ pte.set.data }}" style="padding:10px 12px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943;grid-column:1/-1">Órgão<input list="hub-port-orgaos" value="{{ pte.e.orgao }}" sc-camel-on-input="{{ pte.set.orgao }}" maxlength="200" placeholder="Ex.: Secretaria de Estado da Saúde – SES" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"><datalist id="hub-port-orgaos"><sc-for list="{{ pte.orgaos }}" as="x" hint-placeholder-count="0"><option value="{{ x.o }}"></option></sc-for></datalist></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943;grid-column:1/-1">Ementa<textarea value="{{ pte.e.ementa }}" sc-camel-on-input="{{ pte.set.ementa }}" maxlength="3000" rows="5" placeholder="Fica aprovada…" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff;resize:vertical;line-height:1.45"></textarea></label>
+          <div style="display:flex;flex-direction:column;gap:8px;grid-column:1/-1">
+            <span style="font-size:13px;font-weight:600;color:#3d4943">PDF da portaria</span>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <label style="border:1px solid #e4e8e6;background:#fff;border-radius:12px;padding:9px 14px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;cursor:pointer"><i class="ph-bold ph-upload-simple"></i>Escolher PDF<input type="file" accept="application/pdf,.pdf" sc-camel-on-change="{{ pte.pick }}" style="display:none"></label>
+              <span style="font-size:13px;color:#5f6b65">{{ pte.fileTxt }}</span>
+              <sc-if value="{{ pte.hasCur }}" hint-placeholder-val="{{ false }}"><a href="{{ pte.cur }}" target="_blank" rel="noopener" style="font-size:13px;color:#0b4f9c;font-weight:600">abrir</a></sc-if>
+            </div>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5f6b65">ou cole o link do PDF (se ele já estiver publicado em outro lugar)<input value="{{ pte.e.arquivo_url }}" sc-camel-on-input="{{ pte.set.arquivo_url }}" placeholder="https://…" style="padding:9px 12px;border:1px solid #e4e8e6;border-radius:10px;font-size:13px;background:#fff"></label>
+          </div>
+          <label style="display:flex;gap:8px;align-items:center;font-size:14px;color:#122019;grid-column:1/-1"><input type="checkbox" checked="{{ pte.pub }}" sc-camel-on-change="{{ pte.setPub }}">Publicar no portal do PPA</label>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:14px 22px;border-top:1px solid #e4e8e6">
+          <sc-if value="{{ pte.canDel }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ pte.del }}" style="border:0;background:{{ pte.delBg }};color:#b42318;border-radius:10px;padding:10px 12px;font-size:14px;font-weight:600">{{ pte.delTxt }}</button></sc-if>
+          <span style="flex:1"></span>
+          <button sc-camel-on-click="{{ pte.close }}" style="border:1px solid #e4e8e6;background:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:500">Cancelar</button>
+          <button sc-camel-on-click="{{ pte.save }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:600">{{ pte.saveTxt }}</button>
         </div>
       </div>
     </div>

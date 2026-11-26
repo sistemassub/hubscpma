@@ -44,6 +44,8 @@ const AUTH_EMAIL_DOMAIN = 'scpma.local';
 const authEmail = u => String(u).trim().toLowerCase() + '@' + AUTH_EMAIL_DOMAIN;
 const ANEXOS_BUCKET = 'anexos-eventos';
 const DOCS_BUCKET = 'documentos-admin';
+const PORT_BUCKET = 'portarias'; // PDFs públicos: o portal do PPA lê a tabela portarias e linka estes arquivos
+const PORTAL_PPA = 'https://ppa.go.gov.br/elementor-200795/';
 // só aceita endereços http(s); sem esquema, assume https://
 const toUrl = v => { v = String(v || '').trim(); if (!v) return ''; if (!/^[a-z][a-z0-9+.-]*:/i.test(v)) v = 'https://' + v; return /^https?:\/\/[^\s]+$/i.test(v) ? v : ''; };
 const UNIT_BY_NAME = { SCPMA:'scpma', SMA:'sma', GEMONIT:'gemonit', GAPPP:'gappp', SUPLAN:'suplan', GEPLAN:'geplan', GPMLP:'gpmlp' };
@@ -151,7 +153,7 @@ class Component extends DCLogic {
     uSel: 'scpma', uCat: 'all', pTab: 'unidades', q: '', unitF: 'all', person: null,
     events: [], modal: false, editId: null, viewId: null, f: null, err: false, files: [],
     prof: { cargo: '', tel: '', bday: '', mat: '', pc: '', arm: '', cpf: '', foto: '' }, profSaved: '', rail: false, nivelF: 'all',
-    me: null, users: [], feriasScope: {}, hier: {}, rsvpEdit: '', prazos: [], pzOff: lsGet('hub-pz-off', []), pfUtil: lsGet('hub-pz-pf', true), pzEdit: null, bh: { lanc: [], areas: {}, editores: [] }, bhOpen: '', bhIn: {},
+    me: null, users: [], portList: [], portLoaded: false, portEdit: null, portQ: '', portBusy: false, feriasScope: {}, hier: {}, rsvpEdit: '', prazos: [], pzOff: lsGet('hub-pz-off', []), pfUtil: lsGet('hub-pz-pf', true), pzEdit: null, bh: { lanc: [], areas: {}, editores: [] }, bhOpen: '', bhIn: {},
     online: false, connecting: true, busy: false, backendProblem: '', publicProfiles: {}, presencas: {}, presencaCounts: {}, myNextId: '', myNextDone: false,
     notifs: [], notifOpen: false, toast: null, toastErr: false, saving: false, uEdit: null, myPat: null, publicByUser: {}, convEv: {}, presencaQuem: {}, np1: '', np2: '', pwBusy: false, usrTab: 'usuarios', patItens: [], patLoaded: false, patEdit: null, patQ: '', personAdm: {}, resetInfo: null, colItens: [], colLoaded: false, colQ: '', colPessoa: '', colMine: false, colEdit: null,
     docPastas: [], docArqs: [], docLoaded: false, docPasta: null, docQ: '', docBusy: false, docFolderEdit: null, docFileEdit: null, docLinkEdit: null };
@@ -816,6 +818,52 @@ class Component extends DCLogic {
       await this.loadDocs(); this.notify('Pasta excluída.');
     } catch (e) { console.warn('[Hub] Erro ao excluir pasta:', e); this.notify('Erro ao excluir a pasta: ' + errMsg(e), true); }
   }
+  // ===== Portarias (publicadas automaticamente no portal do PPA) =====
+  async loadPortarias() {
+    try { const { data, error } = await this.sb().from('portarias').select('id,nome,data,orgao,ementa,arquivo_url,arquivo_caminho,publicado,criado_em').order('data', { ascending: false, nullsFirst: false }).order('id', { ascending: false });
+      if (error) throw error; this.setState({ portList: data || [], portLoaded: true }); }
+    catch (e) { console.warn('[Hub] Erro ao carregar portarias:', errMsg(e)); this.setState({ portLoaded: true }); }
+  }
+  portOpen(p) { this._portFile = null;
+    this.setState({ portEdit: p ? { id: p.id, nome: p.nome, data: p.data || '', orgao: p.orgao, ementa: p.ementa, arquivo_url: p.arquivo_url || '', arquivo_caminho: p.arquivo_caminho || '', publicado: p.publicado !== false, fileName: '', conf: false }
+      : { nome: '', data: TODAY, orgao: '', ementa: '', arquivo_url: '', arquivo_caminho: '', publicado: true, fileName: '', conf: false } }); }
+  async portSave() {
+    const e = this.state.portEdit; if (!e || this.state.portBusy) return;
+    const nome = (e.nome || '').trim(), orgao = (e.orgao || '').trim(), ementa = (e.ementa || '').trim(), f = this._portFile;
+    if (!nome) return this.notify('Informe o nome da portaria (ex.: Portaria Economia nº 311, de 17 de novembro de 2026).', true);
+    if (!orgao) return this.notify('Informe o órgão.', true);
+    if (!ementa) return this.notify('Informe a ementa.', true);
+    let url = (e.arquivo_url || '').trim();
+    if (!f && !url) return this.notify('Anexe o PDF da portaria (ou informe o link dele).', true);
+    if (!f && !/^https:\/\/\S+$/i.test(url)) return this.notify('O link do PDF precisa começar com https://', true);
+    if (f && (f.type !== 'application/pdf' && !/\.pdf$/i.test(f.name))) return this.notify('O arquivo precisa ser um PDF.', true);
+    if (f && f.size > 20 * 1024 * 1024) return this.notify('O PDF passa de 20 MB.', true);
+    this.setState({ portBusy: true });
+    let caminho = e.arquivo_caminho || null, novo = null;
+    try {
+      if (f) {
+        const seguro = f.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Za-z0-9._-]+/g, '_');
+        novo = (e.data || TODAY).slice(0, 4) + '/' + Date.now() + '-' + seguro;
+        const up = await this.sb().storage.from(PORT_BUCKET).upload(novo, f, { upsert: false, contentType: 'application/pdf' });
+        if (up.error) throw up.error;
+        url = this.sb().storage.from(PORT_BUCKET).getPublicUrl(novo).data.publicUrl;
+      }
+      const row = { nome, data: e.data || null, orgao, ementa, arquivo_url: url, arquivo_caminho: novo || (f ? null : (url === e.arquivo_url ? caminho : null)), publicado: !!e.publicado, atualizado_em: new Date().toISOString() };
+      const { error } = await (e.id ? this.sb().from('portarias').update(row).eq('id', e.id) : this.sb().from('portarias').insert(row));
+      if (error) { if (novo) await this.sb().storage.from(PORT_BUCKET).remove([novo]); throw error; }
+      if (caminho && caminho !== row.arquivo_caminho) await this.sb().storage.from(PORT_BUCKET).remove([caminho]).catch(() => {});
+      this._portFile = null; this.setState({ portEdit: null, portBusy: false }); await this.loadPortarias();
+      this.notify(row.publicado ? (e.id ? 'Portaria atualizada — o portal do PPA já mostra a mudança.' : 'Portaria publicada — já aparece no portal do PPA.') : 'Portaria salva sem publicar no portal.');
+    } catch (x) { this.setState({ portBusy: false }); this.notify('Erro ao salvar a portaria: ' + errMsg(x), true); }
+  }
+  async portDel() {
+    const e = this.state.portEdit; if (!e || !e.id) return;
+    if (!e.conf) return this.setState({ portEdit: { ...e, conf: true } });
+    try { const { error } = await this.sb().from('portarias').delete().eq('id', e.id); if (error) throw error;
+      if (e.arquivo_caminho) await this.sb().storage.from(PORT_BUCKET).remove([e.arquivo_caminho]).catch(() => {});
+      this.setState({ portEdit: null }); await this.loadPortarias(); this.notify('Portaria excluída — já saiu do portal do PPA.'); }
+    catch (x) { this.notify('Erro ao excluir: ' + errMsg(x), true); }
+  }
   async uploadDocs(files) {
     const c = this.cu(), pasta = this.state.docPasta || null;
     if (!files.length) return;
@@ -1363,6 +1411,7 @@ class Component extends DCLogic {
       folderOpts: [{ v: '', n: 'Raiz (sem pasta)' }].concat(s.docPastas.map(x => ({ v: String(x.id), n: pathOf(x.id).map(y => y.nome).join(' / ') })).sort((a, b) => a.n.localeCompare(b.n, 'pt'))),
       saveFile: () => this.saveDocArq(), cancelFile: () => this.setState({ docFileEdit: null }) };
     // aba ASSPLAN (patrimônio dos computadores) — só administradores
+    if (isAdmin && s.view === 'usuarios' && s.usrTab === 'portarias' && !s.portLoaded && !this._portLoading) { this._portLoading = true; this.loadPortarias().finally(() => { this._portLoading = false; }); }
     if (isAdmin && s.view === 'usuarios' && s.usrTab === 'assplan' && !s.patLoaded && !this._patLoading) { this._patLoading = true; this.loadPatItens().finally(() => { this._patLoading = false; }); }
     const pq = normName(s.patQ || '');
     const patList = (s.patItens || []).filter(it => !pq || normName([it.processo, it.setor, it.equipamento, it.numero, it.responsavel, it.observacao].join(' ')).includes(pq));
@@ -1400,9 +1449,14 @@ class Component extends DCLogic {
         setAte: e => this.setBHDate(id, e.target.value), chev: open ? 'ph-bold ph-caret-up' : 'ph-bold ph-caret-down' }; }) };
     const usrHead = ['Nome', 'Usuário', 'Acesso às unidades', 'Nível', 'Aprova férias'];
     const usr = { summary: UL.length + ' usuários · ' + nAdm + ' administradores' + (isAdmin ? ' · clique no nome para ver e editar os dados' : ''), isAdmin, notAdmin: !isAdmin,
-      isUsers: !(isAdmin && (s.usrTab === 'assplan' || s.usrTab === 'docs')) && !(bhCan && s.usrTab === 'bh'), isAssplan: isAdmin && s.usrTab === 'assplan', isDocs: isAdmin && s.usrTab === 'docs', assplan, docs,
+      isUsers: !(isAdmin && (s.usrTab === 'assplan' || s.usrTab === 'docs' || s.usrTab === 'portarias')) && !(bhCan && s.usrTab === 'bh'),
+      isPort: isAdmin && s.usrTab === 'portarias', port: (() => { const q = (s.portQ || '').trim().toLowerCase(), L = s.portList || [];
+        const list = L.filter(p => !q || (p.nome + ' ' + p.orgao + ' ' + p.ementa).toLowerCase().includes(q)).map(p => ({ nome: p.nome, orgao: p.orgao, ementa: p.ementa, url: p.arquivo_url || '', hasUrl: !!p.arquivo_url,
+          data: p.data ? p.data.split('-').reverse().join('/') : '', st: p.publicado ? 'No portal' : 'Oculta', stBg: p.publicado ? '#dcf2e3' : '#f2f5f4', stFg: p.publicado ? '#146c35' : '#5f6b65', edit: () => this.portOpen(p) }));
+        return { list, empty: s.portLoaded && !list.length, loading: !s.portLoaded, q: s.portQ || '', setQ: e => this.setState({ portQ: e.target.value }),
+          summary: L.filter(p => p.publicado).length + ' no portal do PPA' + (L.some(p => !p.publicado) ? ' · ' + L.filter(p => !p.publicado).length + ' oculta(s)' : ''), novo: () => this.portOpen(null), portal: PORTAL_PPA }; })(), isAssplan: isAdmin && s.usrTab === 'assplan', isDocs: isAdmin && s.usrTab === 'docs', assplan, docs,
       isBH: bhCan && s.usrTab === 'bh', bh, showTabs: isAdmin || bhCan,
-      tabsTop: [['usuarios', 'Usuários', 'ph-users'], ...(isAdmin ? [['assplan', 'Patrimônios', 'ph-laptop'], ['docs', 'Documentos e projetos', 'ph-folders']] : []), ...(bhCan ? [['bh', 'Banco de horas', 'ph-clock-countdown']] : [])].map(([id, name, ic]) => { const on = (s.usrTab || 'usuarios') === id; return { name, icon: 'ph-duotone ' + ic, pick: () => this.setState({ usrTab: id }), bg: on ? '#1f9d4c' : 'transparent', fg: on ? '#fff' : '#3d4943', fw: on ? '600' : '500' }; }), cursor: isAdmin ? 'pointer' : 'default', nameColor: isAdmin ? '#0b4f9c' : '#122019', openTitle: isAdmin ? 'Ver e editar dados' : '',
+      tabsTop: [['usuarios', 'Usuários', 'ph-users'], ...(isAdmin ? [['assplan', 'Patrimônios', 'ph-laptop'], ['portarias', 'Portarias', 'ph-scroll'], ['docs', 'Documentos e projetos', 'ph-folders']] : []), ...(bhCan ? [['bh', 'Banco de horas', 'ph-clock-countdown']] : [])].map(([id, name, ic]) => { const on = (s.usrTab || 'usuarios') === id; return { name, icon: 'ph-duotone ' + ic, pick: () => this.setState({ usrTab: id }), bg: on ? '#1f9d4c' : 'transparent', fg: on ? '#fff' : '#3d4943', fw: on ? '600' : '500' }; }), cursor: isAdmin ? 'pointer' : 'default', nameColor: isAdmin ? '#0b4f9c' : '#122019', openTitle: isAdmin ? 'Ver e editar dados' : '',
       tabs: [['all', 'Todos'], ['admin', 'Administradores'], ['editor', 'Editores']].map(([id, name]) => { const on = s.nivelF === id; return { name, count: id === 'all' ? UL.length : UL.filter(u => u.nivel === id).length, pick: set({ nivelF: id }), bg: on ? '#fff' : 'transparent', fg: on ? '#0b3d7a' : '#5f6b65' }; }),
       list: UL.filter(u => (s.nivelF === 'all' || u.nivel === s.nivelF) && (!(s.usrQ || '').trim() || (u.nome + ' ' + u.usuario).toLowerCase().includes(s.usrQ.trim().toLowerCase())) && (!(s.usrUnits || []).length || u.acesso === 'Todas as unidades' || s.usrUnits.some(id => u.acesso.split(', ').includes(UNITS[id][0])))).slice().sort((a, b) => a.nome.localeCompare(b.nome, 'pt')).map(({ nome, usuario, acesso, nivel, senhaCriada }) => ({ nome, usuario, initials: ini(nome), photoBg: (() => { const pub = s.publicByUser[usuario.toLowerCase()], o = orgFor(usuario, nome), f = (pub && pub.foto_url) || (o && o[6]) || ''; return f ? 'url("' + f + '")' : 'none'; })(), avBg: me && usuario === me.usuario ? '#f5c518' : '#e7eef8',
         aprova: scopeOf(usuario) ? 'Aprova férias: ' + scopeOf(usuario) : '', acesso: acesso === 'Todas as unidades' ? [{ name: 'Todas as unidades', color: '#1f9d4c' }] : acesso.split(', ').map(n => ({ name: n, color: unitColor(n) })),
@@ -1527,6 +1581,15 @@ class Component extends DCLogic {
       calF, uniF, dirF, usrF, col, saveProf: () => this.saveProfile(),
       reset: { show: !!s.resetInfo, nome: s.resetInfo ? s.resetInfo.nome : '', usuario: s.resetInfo ? s.resetInfo.usuario : '', senha: s.resetInfo ? s.resetInfo.senha : '',
         copy: () => { try { navigator.clipboard.writeText(s.resetInfo.senha); this.notify('Senha copiada.'); } catch (e) {} }, close: () => this.setState({ resetInfo: null }) },
+      pte: (() => { const e = s.portEdit; if (!e) return { open: false };
+        const setT = k => ev => { const v = ev.target.value; this.setState(st => ({ portEdit: { ...st.portEdit, [k]: v, conf: false } })); };
+        return { open: true, title: e.id ? 'Editar portaria' : 'Nova portaria', e, set: ['nome', 'data', 'orgao', 'ementa', 'arquivo_url'].reduce((o, k) => (o[k] = setT(k), o), {}),
+          orgaos: [...new Set((s.portList || []).map(p => p.orgao))].sort((a, b) => a.localeCompare(b, 'pt')).map(o => ({ o })),
+          pick: ev => { const f = (ev.target.files || [])[0]; ev.target.value = ''; this._portFile = f || null; this.setState(st => ({ portEdit: { ...st.portEdit, fileName: f ? f.name : '' } })); },
+          fileTxt: e.fileName ? 'Novo PDF: ' + e.fileName : (e.arquivo_url ? 'PDF atual mantido' : 'Nenhum PDF escolhido'), hasCur: !!e.arquivo_url && !e.fileName, cur: e.arquivo_url,
+          pub: !!e.publicado, setPub: ev => { const v = !!ev.target.checked; this.setState(st => ({ portEdit: { ...st.portEdit, publicado: v } })); },
+          canDel: !!e.id, delTxt: e.conf ? 'Confirmar exclusão' : 'Excluir', delBg: e.conf ? '#fdecea' : 'transparent', saveTxt: s.portBusy ? 'Salvando…' : (e.publicado ? 'Salvar e publicar' : 'Salvar'),
+          save: () => this.portSave(), del: () => this.portDel(), close: () => { this._portFile = null; this.setState({ portEdit: null }); } }; })(),
       pze: (() => { const e = s.pzEdit; if (!e) return { open: false };
         const setP = k => ev => { const v = ev.target.value; this.setState(st => ({ pzEdit: { ...st.pzEdit, [k]: v, conf: false } })); };
         return { open: true, title: e.id ? 'Editar prazo' : 'Novo prazo', e, set: ['titulo', 'ini', 'fim', 'quem', 'etapa', 'obs'].reduce((o, k) => (o[k] = setP(k), o), {}),
