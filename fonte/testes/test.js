@@ -50,6 +50,7 @@ let lastEmail = 'giovanna.cintra@scpma.local';
     if (p.startsWith('/auth/v1/logout')) return route.fulfill({ status: 204 });
     if (p.startsWith('/storage/v1/object/sign/')) return json({ signedURL: '/object/sign/documentos-admin/x.pdf?token=abc' });
     if (p.startsWith('/storage/v1/object/documentos-admin') && m === 'DELETE') { writes.push(['STORAGE-DEL', p, '', req.postData()]); return json([]); }
+    if (p.startsWith('/storage/v1/object/colegiados-portarias/')) { writes.push(['COLPORT-UP', p, '', null]); return json({ Key: p }); }
     if (p.startsWith('/storage/v1/object/portarias/')) { writes.push(['PORT-UP', p, '', null]); return json({ Key: p }); }
     if (p.startsWith('/storage/v1/object/documentos-admin/')) { writes.push(['STORAGE-UP', p, '', null]); return json({ Key: p }); }
     if (p === '/rest/v1/rpc/agenda_login_status') { const b = JSON.parse(req.postData() || '{}'); const x = users.find(y => y.nome_usuario === b.p_usuario); return json(x ? [{ existe: true, senha_criada: x.senha_criada }] : [{ existe: false, senha_criada: false }]); }
@@ -86,7 +87,7 @@ let lastEmail = 'giovanna.cintra@scpma.local';
     if (table === 'usuarios_autorizados') return json(users);
     if (table === 'aprovadores_ferias_escopo') return json(m === 'GET' ? [{ nome_usuario: 'paulo.scalco', unidade: 'SCPMA' }, { nome_usuario: 'giovanna.cintra', unidade: 'GEMONIT' }] : []);
     if (table === 'eventos') return json(eventos.filter(e => !e.removido_em));
-    if (table === 'colegiado_portarias' && m === 'GET') return json([{ id: 1, colegiado_id: 1, nome: 'Portaria nº 77, de 2 de março de 2026', data: '2026-03-02', ementa: 'Designa representantes.', arquivo_url: 'https://x/77.pdf', arquivo_caminho: null }]);
+    if (table === 'colegiado_portarias' && m === 'GET') return json([{ id: 1, colegiado_id: 1, nome: 'Portaria nº 77, de 2 de março de 2026', data: '2026-03-02', ementa: 'Designa representantes.', arquivo_caminho: '1/77.pdf' }]);
     if (table === 'portarias' && m === 'GET') return json([{ id: 1, nome: 'Portaria Economia nº 311, de 17 de novembro de 2026', data: '2026-11-17', orgao: 'Delegacia-Geral da Polícia Civil – DGPC', ementa: 'Fica aprovada a alteração da meta física.', arquivo_url: 'https://ppa.go.gov.br/x.pdf', arquivo_caminho: null, publicado: true, criado_em: new Date().toISOString() }]);
     if (table === 'prazos' && m === 'GET') return json([{ id: 1, categoria: 'geceg', titulo: 'Apoio Tático Operacional', data: plus(-3), data_fim: plus(20), quem: 'Facilitadores Economia', etapa: null, obs: null },
       { id: 2, categoria: 'enc', titulo: 'Reunião técnica nº 2 · alinhamento técnico', data: plus(1), data_fim: null, quem: null, etapa: 'Etapa 1 · Preparação', obs: 'Teste de observação' }]);
@@ -249,8 +250,12 @@ let lastEmail = 'giovanna.cintra@scpma.local';
   console.log('portaria colegiado sem colegiado barrada:', writes.filter(w => w[1] === 'colegiado_portarias').length === 0);
   await page.locator('select').filter({ hasText: 'Escolha o colegiado' }).selectOption({ label: 'CEM — Conselho Estadual da Mulher' });
   await page.fill('input[placeholder^="Ex.: Portaria nº 123"]', 'Portaria nº 88, de 5 de março de 2026');
+  await page.locator('input[type="file"][accept^="application/pdf"]').setInputFiles({ name: 'Portaria 88.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF-1.4 teste') }); await page.waitForTimeout(800);
+  await page.fill('input[placeholder^="Ex.: Portaria nº 123"]', 'Portaria nº 88, de 5 de março de 2026');
   await page.getByRole('button', { name: 'Salvar', exact: true }).last().click(); await page.waitForTimeout(500);
-  console.log('portaria colegiado gravada:', JSON.stringify(writes.filter(w => w[1] === 'colegiado_portarias').map(w => [w[0], w[3].nome, w[3].colegiado_id])));
+  console.log('portaria colegiado gravada:', JSON.stringify(writes.filter(w => w[1] === 'colegiado_portarias').map(w => [w[0], w[3].nome, w[3].colegiado_id, !('arquivo_url' in w[3]), /^1\/\d+-Portaria_88\.pdf$/.test(w[3].arquivo_caminho)])), '| PDF na pasta privada:', writes.filter(w => w[0] === 'COLPORT-UP').length, '| na pasta do PPA:', writes.filter(w => w[0] === 'PORT-UP').length);
+  const [popCol] = await Promise.all([page.waitForEvent('popup', { timeout: 4000 }).catch(() => null), page.getByRole('button', { name: 'Portaria nº 77, de 2 de março de 2026' }).click()]);
+  console.log('abrir PDF do colegiado (link temporário):', popCol ? (popCol.url().includes('token=') || popCol.url().startsWith('chrome-error') ? 'ok' : popCol.url()) : 'SEM JANELA'); if (popCol) await popCol.close();
   await shot('21b-colegiados-portarias');
   await page.getByRole('button', { name: /^Colegiados/ }).first().click(); await page.waitForTimeout(200);
   await page.locator('aside').first().hover(); await page.getByText('Central', { exact: true }).first().click(); await page.mouse.move(900, 400); await page.waitForTimeout(250); await page.getByRole('button', { name: 'Organograma', exact: true }).first().click(); await page.mouse.move(900,400); await page.waitForTimeout(400);

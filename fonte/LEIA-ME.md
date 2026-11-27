@@ -55,9 +55,11 @@ A proteção está no banco (RLS), não no código:
   preenche nome, data, órgão (completa a sigla com órgãos já usados) e ementa (resumida por `ementaResumida` a partir do
   Art. 1º, no padrão do portal: "Fica aprovada a … do Plano Plurianual – PPA para o quadriênio …, referente à <órgão>, conforme Anexo desta Portaria."). Teste: `PDFJS_DIR=<pdfjs-dist>/package`
   em ambiente sem internet; o PDF de exemplo é `testes/portaria-exemplo.pdf` (portaria pública).
-- **Portarias dos colegiados:** aba Colegiados → Portarias. Tabela `colegiado_portarias` (colegiado_id, nome, data, ementa, PDF
-  no Storage `portarias/colegiados/`); todos os logados consultam, só administradores cadastram. Ficam separadas das portarias do
-  PPA e não vão para o portal.
+- **Portarias dos colegiados:** aba Colegiados → Portarias. Tabela `colegiado_portarias` (colegiado_id, nome, data, ementa,
+  arquivo_caminho) e PDFs no Storage **privado** `colegiados-portarias` (abre por link temporário, só com login); todos os logados
+  consultam, só administradores cadastram. Não são publicadas em lugar nenhum.
+- **Nada do Hub é público:** todas as tabelas exigem login (sem permissão para `anon`). Única exceção intencional: as portarias do
+  PPA marcadas como publicadas (tabela `portarias` e Storage `portarias`), lidas pelo portal do PPA.
 - **Navegação:** menu = Início · Calendário · Unidades (agenda: Lista | Por unidade) · Central (Unidades · Organograma · Diretório) ·
   Colegiados · Usuários. Relatórios e a página de Férias saíram do menu; quem está de férias aparece na Visão Geral (Início).
 - **Banco de horas da semaninha:** `banco_horas_lancamentos` (horas em minutos; coluna `banco` = '52h' ou '8h', um valor por

@@ -46,6 +46,7 @@ const ANEXOS_BUCKET = 'anexos-eventos';
 const DOCS_BUCKET = 'documentos-admin';
 const PORT_BUCKET = 'portarias'; // PDFs públicos: o portal do PPA lê a tabela portarias e linka estes arquivos
 const PORTAL_PPA = 'https://ppa.go.gov.br/elementor-200795/';
+const COLPORT_BUCKET = 'colegiados-portarias'; // privado: só quem tem login no Hub abre (link temporário)
 // Leitura automática do PDF da portaria (pdf.js, carregado só quando alguém escolhe um PDF)
 const PDFJS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
 let _pdfjs = null;
@@ -849,13 +850,18 @@ class Component extends DCLogic {
   // ===== Colegiados =====
   // ===== Portarias dos colegiados (aba Portarias em Colegiados) =====
   async loadColPortarias() {
-    try { const { data, error } = await this.sb().from('colegiado_portarias').select('id,colegiado_id,nome,data,ementa,arquivo_url,arquivo_caminho').order('data', { ascending: false, nullsFirst: false }).order('id', { ascending: false });
+    try { const { data, error } = await this.sb().from('colegiado_portarias').select('id,colegiado_id,nome,data,ementa,arquivo_caminho').order('data', { ascending: false, nullsFirst: false }).order('id', { ascending: false });
       if (error) throw error; this.setState({ cpList: data || [], cpLoaded: true }); }
     catch (e) { console.warn('[Hub] Erro ao carregar portarias dos colegiados:', errMsg(e)); this.setState({ cpLoaded: true }); }
   }
   cpOpen(p, colId) { this._cpFile = null;
-    this.setState({ cpEdit: p ? { id: p.id, colegiado_id: p.colegiado_id ? String(p.colegiado_id) : '', nome: p.nome, data: p.data || '', ementa: p.ementa || '', arquivo_url: p.arquivo_url || '', arquivo_caminho: p.arquivo_caminho || '', fileName: '', conf: false }
-      : { colegiado_id: colId ? String(colId) : '', nome: '', data: TODAY, ementa: '', arquivo_url: '', arquivo_caminho: '', fileName: '', conf: false } }); }
+    this.setState({ cpEdit: p ? { id: p.id, colegiado_id: p.colegiado_id ? String(p.colegiado_id) : '', nome: p.nome, data: p.data || '', ementa: p.ementa || '', arquivo_caminho: p.arquivo_caminho || '', fileName: '', conf: false }
+      : { colegiado_id: colId ? String(colId) : '', nome: '', data: TODAY, ementa: '', arquivo_caminho: '', fileName: '', conf: false } }); }
+  async cpAbrir(caminho) { // link temporário (5 min), gerado só para quem está logado
+    if (!caminho) return;
+    try { const { data, error } = await this.sb().storage.from(COLPORT_BUCKET).createSignedUrl(caminho, 300); if (error) throw error; window.open(data.signedUrl, '_blank', 'noopener'); }
+    catch (x) { this.notify('Não foi possível abrir o PDF: ' + errMsg(x), true); }
+  }
   async cpLer(f) {
     this.setState(st => ({ cpEdit: st.cpEdit && { ...st.cpEdit, lendo: 'Lendo o PDF…', lido: '' } }));
     try {
@@ -872,22 +878,20 @@ class Component extends DCLogic {
   }
   async cpSave() {
     const e = this.state.cpEdit; if (!e || this.state.cpBusy) return;
-    const nome = (e.nome || '').trim(), f = this._cpFile; let url = (e.arquivo_url || '').trim();
+    const nome = (e.nome || '').trim(), f = this._cpFile;
     if (!e.colegiado_id) return this.notify('Escolha o colegiado.', true);
     if (!nome) return this.notify('Informe o número/nome da portaria.', true);
-    if (!f && url && !/^https:\/\/\S+$/i.test(url)) return this.notify('O link do PDF precisa começar com https://', true);
     if (f && (f.type !== 'application/pdf' && !/\.pdf$/i.test(f.name))) return this.notify('O arquivo precisa ser um PDF.', true);
     if (f && f.size > 20 * 1024 * 1024) return this.notify('O PDF passa de 20 MB.', true);
     this.setState({ cpBusy: true }); let novo = null;
     try {
       if (f) { const seguro = f.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Za-z0-9._-]+/g, '_');
-        novo = 'colegiados/' + Date.now() + '-' + seguro;
-        const up = await this.sb().storage.from(PORT_BUCKET).upload(novo, f, { upsert: false, contentType: 'application/pdf' }); if (up.error) throw up.error;
-        url = this.sb().storage.from(PORT_BUCKET).getPublicUrl(novo).data.publicUrl; }
-      const row = { colegiado_id: +e.colegiado_id, nome, data: e.data || null, ementa: (e.ementa || '').trim() || null, arquivo_url: url || null, arquivo_caminho: novo || (url && url === e.arquivo_url ? e.arquivo_caminho || null : null), atualizado_em: new Date().toISOString() };
+        novo = e.colegiado_id + '/' + Date.now() + '-' + seguro;
+        const up = await this.sb().storage.from(COLPORT_BUCKET).upload(novo, f, { upsert: false, contentType: 'application/pdf' }); if (up.error) throw up.error; }
+      const row = { colegiado_id: +e.colegiado_id, nome, data: e.data || null, ementa: (e.ementa || '').trim() || null, arquivo_caminho: novo || e.arquivo_caminho || null, atualizado_em: new Date().toISOString() };
       const { error } = await (e.id ? this.sb().from('colegiado_portarias').update(row).eq('id', e.id) : this.sb().from('colegiado_portarias').insert(row));
-      if (error) { if (novo) await this.sb().storage.from(PORT_BUCKET).remove([novo]); throw error; }
-      if (e.arquivo_caminho && e.arquivo_caminho !== row.arquivo_caminho) await this.sb().storage.from(PORT_BUCKET).remove([e.arquivo_caminho]).catch(() => {});
+      if (error) { if (novo) await this.sb().storage.from(COLPORT_BUCKET).remove([novo]); throw error; }
+      if (e.arquivo_caminho && e.arquivo_caminho !== row.arquivo_caminho) await this.sb().storage.from(COLPORT_BUCKET).remove([e.arquivo_caminho]).catch(() => {});
       this._cpFile = null; this.setState({ cpEdit: null, cpBusy: false }); await this.loadColPortarias(); this.notify(e.id ? 'Portaria atualizada.' : 'Portaria adicionada.');
     } catch (x) { this.setState({ cpBusy: false }); this.notify('Erro ao salvar a portaria: ' + errMsg(x), true); }
   }
@@ -895,7 +899,7 @@ class Component extends DCLogic {
     const e = this.state.cpEdit; if (!e || !e.id) return;
     if (!e.conf) return this.setState({ cpEdit: { ...e, conf: true } });
     try { const { error } = await this.sb().from('colegiado_portarias').delete().eq('id', e.id); if (error) throw error;
-      if (e.arquivo_caminho) await this.sb().storage.from(PORT_BUCKET).remove([e.arquivo_caminho]).catch(() => {});
+      if (e.arquivo_caminho) await this.sb().storage.from(COLPORT_BUCKET).remove([e.arquivo_caminho]).catch(() => {});
       this.setState({ cpEdit: null }); await this.loadColPortarias(); this.notify('Portaria excluída.'); }
     catch (x) { this.notify('Erro ao excluir: ' + errMsg(x), true); }
   }
@@ -1486,7 +1490,7 @@ class Component extends DCLogic {
     const colNome = id => { const c = (s.colItens || []).find(x => +x.id === +id); return c ? (c.sigla ? c.sigla + ' — ' : '') + c.nome : 'Colegiado não informado'; };
     const cpq = semAcento((s.cpQ || '').trim());
     const cpRows = (s.cpList || []).filter(p => (!s.cpCol || String(p.colegiado_id) === String(s.cpCol)) && (!cpq || semAcento(p.nome + ' ' + (p.ementa || '') + ' ' + colNome(p.colegiado_id)).includes(cpq)))
-      .map(p => ({ nome: p.nome, url: p.arquivo_url || '', hasUrl: !!p.arquivo_url, noUrl: !p.arquivo_url, data: p.data ? p.data.split('-').reverse().join('/') : '', hasData: !!p.data, col: colNome(p.colegiado_id), ementa: p.ementa || '', hasEm: !!p.ementa, edit: () => this.cpOpen(p) }));
+      .map(p => ({ nome: p.nome, abrir: () => this.cpAbrir(p.arquivo_caminho), hasUrl: !!p.arquivo_caminho, noUrl: !p.arquivo_caminho, data: p.data ? p.data.split('-').reverse().join('/') : '', hasData: !!p.data, col: colNome(p.colegiado_id), ementa: p.ementa || '', hasEm: !!p.ementa, edit: () => this.cpOpen(p) }));
     const col = { loading: !s.colLoaded, empty: s.colLoaded && !colList.length, isAdm: !!(me && me.admin),
       tabs: [['lista', 'Colegiados', 'ph-users-four'], ['portarias', 'Portarias', 'ph-scroll']].map(([id, name, ic]) => { const on = (s.colTab || 'lista') === id; return { name: name + (id === 'portarias' && (s.cpList || []).length ? ' (' + s.cpList.length + ')' : ''), icon: 'ph-duotone ' + ic, pick: set({ colTab: id }), bg: on ? '#1f9d4c' : 'transparent', fg: on ? '#fff' : '#3d4943', fw: on ? '600' : '500' }; }),
       isLista: (s.colTab || 'lista') === 'lista', isPort: s.colTab === 'portarias',
@@ -1753,10 +1757,10 @@ class Component extends DCLogic {
         copy: () => { try { navigator.clipboard.writeText(s.resetInfo.senha); this.notify('Senha copiada.'); } catch (e) {} }, close: () => this.setState({ resetInfo: null }) },
       cpe: (() => { const e = s.cpEdit; if (!e) return { open: false };
         const setC = k => ev => { const v = ev.target.value; this.setState(st => ({ cpEdit: { ...st.cpEdit, [k]: v, conf: false } })); };
-        return { open: true, title: e.id ? 'Editar portaria do colegiado' : 'Nova portaria do colegiado', e, set: ['colegiado_id', 'nome', 'data', 'ementa', 'arquivo_url'].reduce((o, k) => (o[k] = setC(k), o), {}),
+        return { open: true, title: e.id ? 'Editar portaria do colegiado' : 'Nova portaria do colegiado', e, set: ['colegiado_id', 'nome', 'data', 'ementa'].reduce((o, k) => (o[k] = setC(k), o), {}),
           opts: [{ v: '', n: 'Escolha o colegiado…' }].concat((s.colItens || []).map(c => ({ v: String(c.id), n: (c.sigla ? c.sigla + ' — ' : '') + c.nome }))),
           pick: ev => { const f = (ev.target.files || [])[0]; ev.target.value = ''; this._cpFile = f || null; this.setState(st => ({ cpEdit: { ...st.cpEdit, fileName: f ? f.name : '' } })); if (f) this.cpLer(f); },
-          fileTxt: e.fileName ? 'Novo PDF: ' + e.fileName : (e.arquivo_url ? 'PDF atual mantido' : 'Nenhum PDF escolhido'), hasCur: !!e.arquivo_url && !e.fileName, cur: e.arquivo_url,
+          fileTxt: e.fileName ? 'Novo PDF: ' + e.fileName : (e.arquivo_caminho ? 'PDF atual mantido' : 'Nenhum PDF escolhido'), hasCur: !!e.arquivo_caminho && !e.fileName, abrirCur: () => this.cpAbrir(e.arquivo_caminho),
           lendo: e.lendo || '', hasLendo: !!e.lendo, lido: e.lido || '', hasLido: !!e.lido && !e.lendo, lidoBg: /^Preenchido/.test(e.lido || '') ? '#eaf6ee' : '#fdf1c4', lidoFg: /^Preenchido/.test(e.lido || '') ? '#146c35' : '#7a5d00',
           canDel: !!e.id, delTxt: e.conf ? 'Confirmar exclusão' : 'Excluir', delBg: e.conf ? '#fdecea' : 'transparent', saveTxt: s.cpBusy ? 'Salvando…' : 'Salvar',
           save: () => this.cpSave(), del: () => this.cpDel(), close: () => { this._cpFile = null; this.setState({ cpEdit: null }); } }; })(),
