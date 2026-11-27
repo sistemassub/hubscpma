@@ -4,31 +4,31 @@ const path = require('path');
 const OUT = process.argv[2], SHOTS = process.argv[3];
 
 const users = [
-  { nome_usuario: 'giovanna.cintra', nome_completo: 'Giovanna Silva Cintra', unidade: 'SCPMA', nivel_acesso: 'admin', senha_criada: true, pode_aprovar_ferias: false },
-  { nome_usuario: 'jeovah.silva', nome_completo: 'Jeovah Quintino da Silva', nome_organograma: 'Jeovah Renomeado Silva', unidade: 'GEMONIT', nivel_acesso: 'usuario', senha_criada: false, pode_aprovar_ferias: false },
-  { nome_usuario: 'paulo.scalco', nome_completo: 'Paulo Scalco', unidade: 'SCPMA', nivel_acesso: 'admin', senha_criada: true, pode_aprovar_ferias: true },
-  { nome_usuario: 'vinicius.chaer', nome_completo: 'Vinicius Mamede Salum Chaer', unidade: 'SMA', nivel_acesso: 'usuario', senha_criada: false, pode_aprovar_ferias: true },
+  { nome_usuario: 'ana.souza', nome_completo: 'Ana Clara Souza', unidade: 'SCPMA', nivel_acesso: 'admin', senha_criada: true, pode_aprovar_ferias: false },
+  { nome_usuario: 'carlos.rocha', nome_completo: 'Carlos Eduardo Rocha', nome_organograma: 'Carlos Renomeado Rocha', unidade: 'GEMONIT', nivel_acesso: 'usuario', senha_criada: false, pode_aprovar_ferias: false },
+  { nome_usuario: 'bruno.lima', nome_completo: 'Bruno Lima', unidade: 'SCPMA', nivel_acesso: 'admin', senha_criada: true, pode_aprovar_ferias: true },
+  { nome_usuario: 'daniel.prado', nome_completo: 'Daniel Martins Prado', unidade: 'SMA', nivel_acesso: 'usuario', senha_criada: false, pode_aprovar_ferias: true },
 ];
 const t = new Date(); const iso = d => d.toISOString().slice(0, 10);
 const plus = n => { const d = new Date(t); d.setDate(d.getDate() + n); return iso(d); };
 let nextId = 100;
 const docPastas = [{ id: 1, pai_id: null, nome: 'Processos 2026', criado_em: new Date().toISOString() }];
-const docArqs = [{ id: 1, pasta_id: 1, nome: 'Termo de recebimento.pdf', caminho: '1/1-termo.pdf', tamanho: 204800, tipo: 'application/pdf', criado_em: new Date().toISOString(), enviado_por: 'giovanna.cintra' }];
+const docArqs = [{ id: 1, pasta_id: 1, nome: 'Termo de recebimento.pdf', caminho: '1/1-termo.pdf', tamanho: 204800, tipo: 'application/pdf', criado_em: new Date().toISOString(), enviado_por: 'ana.souza' }];
 let docSeq = 10;
 const eventos = [
-  { id: 1, titulo: 'Reunião de alinhamento SCPMA', descricao: 'Pauta: metas do trimestre', data: plus(0), data_fim: plus(0), inicio: '09:00:00', fim: '10:30:00', local: 'Sala 3', categoria: 'eventos', prioridade: 'alta', status: 'pendente', repeticao: 'nenhuma', responsavel: 'Giovanna Silva Cintra', unidade_responsavel: 'SCPMA', publico_tipo: 'todos', removido_em: null },
-  { id: 2, titulo: 'Curso de Monitoramento', descricao: '', data: plus(3), data_fim: plus(4), inicio: '14:00:00', fim: '17:00:00', local: 'Auditório', categoria: 'cursos', prioridade: 'media', status: 'pendente', repeticao: 'nenhuma', responsavel: 'Jeovah Quintino da Silva', unidade_responsavel: 'GEMONIT', publico_tipo: 'unidade', removido_em: null },
-  { id: 3, titulo: 'Férias — Jeovah Quintino da Silva', descricao: '', data: plus(-1), data_fim: plus(5), inicio: '00:00:00', fim: '23:59:00', local: '—', categoria: 'ferias', prioridade: 'baixa', status: 'solicitada', repeticao: 'nenhuma', responsavel: 'Jeovah Quintino da Silva', unidade_responsavel: 'GEMONIT', publico_tipo: 'unidade', removido_em: null },
-  { id: 5, titulo: 'Oficina com convidados', descricao: '', data: plus(1), data_fim: plus(1), inicio: '10:00:00', fim: '12:00:00', local: 'Sala 2', categoria: 'oficinas', prioridade: 'media', status: 'pendente', repeticao: 'nenhuma', responsavel: 'Giovanna Silva Cintra', unidade_responsavel: 'SCPMA', publico_tipo: 'lista', removido_em: null },
-  { id: 6, titulo: 'Férias — Giovanna Silva Cintra', descricao: '', data: plus(10), data_fim: plus(12), inicio: '00:00:00', fim: '23:59:00', local: '—', categoria: 'ferias', prioridade: 'baixa', status: 'solicitada', repeticao: 'nenhuma', responsavel: 'Giovanna Silva Cintra', unidade_responsavel: 'GEMONIT', publico_tipo: 'unidade', removido_em: null },
+  { id: 1, titulo: 'Reunião de alinhamento SCPMA', descricao: 'Pauta: metas do trimestre', data: plus(0), data_fim: plus(0), inicio: '09:00:00', fim: '10:30:00', local: 'Sala 3', categoria: 'eventos', prioridade: 'alta', status: 'pendente', repeticao: 'nenhuma', responsavel: 'Ana Clara Souza', unidade_responsavel: 'SCPMA', publico_tipo: 'todos', removido_em: null },
+  { id: 2, titulo: 'Curso de Monitoramento', descricao: '', data: plus(3), data_fim: plus(4), inicio: '14:00:00', fim: '17:00:00', local: 'Auditório', categoria: 'cursos', prioridade: 'media', status: 'pendente', repeticao: 'nenhuma', responsavel: 'Carlos Eduardo Rocha', unidade_responsavel: 'GEMONIT', publico_tipo: 'unidade', removido_em: null },
+  { id: 3, titulo: 'Férias — Carlos Eduardo Rocha', descricao: '', data: plus(-1), data_fim: plus(5), inicio: '00:00:00', fim: '23:59:00', local: '—', categoria: 'ferias', prioridade: 'baixa', status: 'solicitada', repeticao: 'nenhuma', responsavel: 'Carlos Eduardo Rocha', unidade_responsavel: 'GEMONIT', publico_tipo: 'unidade', removido_em: null },
+  { id: 5, titulo: 'Oficina com convidados', descricao: '', data: plus(1), data_fim: plus(1), inicio: '10:00:00', fim: '12:00:00', local: 'Sala 2', categoria: 'oficinas', prioridade: 'media', status: 'pendente', repeticao: 'nenhuma', responsavel: 'Ana Clara Souza', unidade_responsavel: 'SCPMA', publico_tipo: 'lista', removido_em: null },
+  { id: 6, titulo: 'Férias — Ana Clara Souza', descricao: '', data: plus(10), data_fim: plus(12), inicio: '00:00:00', fim: '23:59:00', local: '—', categoria: 'ferias', prioridade: 'baixa', status: 'solicitada', repeticao: 'nenhuma', responsavel: 'Ana Clara Souza', unidade_responsavel: 'GEMONIT', publico_tipo: 'unidade', removido_em: null },
   { id: 7, titulo: 'Folga teste hierarquia', descricao: '', data: plus(6), data_fim: plus(6), inicio: '08:00:00', fim: '18:00:00', local: '', categoria: 'eventos', prioridade: 'baixa', status: 'pendente', repeticao: 'nenhuma', responsavel: '', unidade_responsavel: 'SCPMA', publico_tipo: 'todos', exige_aprovacao: true, removido_em: null },
   { id: 4, titulo: 'Entrega de relatório cancelada', descricao: '', data: plus(2), data_fim: plus(2), inicio: '10:00:00', fim: '11:00:00', local: '', categoria: 'relatorio', prioridade: 'media', status: 'cancelado', repeticao: 'nenhuma', responsavel: '', unidade_responsavel: 'GAPPP', publico_tipo: 'unidade', removido_em: null },
 ];
 const writes = [];
-const bhLanc = [{ id: 1, nome_usuario: 'giovanna.cintra', minutos: 323, banco: '52h', criado_em: new Date().toISOString(), criado_por: 'giovanna.cintra' }, { id: 2, nome_usuario: 'giovanna.cintra', minutos: 277, banco: '8h', criado_em: new Date().toISOString(), criado_por: 'giovanna.cintra' }];
+const bhLanc = [{ id: 1, nome_usuario: 'ana.souza', minutos: 323, banco: '52h', criado_em: new Date().toISOString(), criado_por: 'ana.souza' }, { id: 2, nome_usuario: 'ana.souza', minutos: 277, banco: '8h', criado_em: new Date().toISOString(), criado_por: 'ana.souza' }];
 const session = email => ({ access_token: 'fake.jwt.token', token_type: 'bearer', expires_in: 3600, expires_at: Math.floor(Date.now() / 1000) + 3600, refresh_token: 'r',
   user: { id: '11111111-1111-1111-1111-111111111111', aud: 'authenticated', role: 'authenticated', email, user_metadata: {}, app_metadata: {}, created_at: new Date().toISOString() } });
-let lastEmail = 'giovanna.cintra@scpma.local';
+let lastEmail = 'ana.souza@scpma.local';
 
 (async () => {
   const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' }).catch(() => chromium.launch());
@@ -55,14 +55,14 @@ let lastEmail = 'giovanna.cintra@scpma.local';
     if (p.startsWith('/storage/v1/object/documentos-admin/')) { writes.push(['STORAGE-UP', p, '', null]); return json({ Key: p }); }
     if (p === '/rest/v1/rpc/agenda_login_status') { const b = JSON.parse(req.postData() || '{}'); const x = users.find(y => y.nome_usuario === b.p_usuario); return json(x ? [{ existe: true, senha_criada: x.senha_criada }] : [{ existe: false, senha_criada: false }]); }
     if (p === '/rest/v1/rpc/agenda_admin_reset_senha') return json('Hub1a2b3c45');
-    if (p === '/rest/v1/rpc/agenda_admin_contas') return json([{ nome_usuario: 'giovanna.cintra', id: '11111111-1111-1111-1111-111111111111' }, { nome_usuario: 'jeovah.silva', id: '22222222-2222-2222-2222-222222222222' }]);
+    if (p === '/rest/v1/rpc/agenda_admin_contas') return json([{ nome_usuario: 'ana.souza', id: '11111111-1111-1111-1111-111111111111' }, { nome_usuario: 'carlos.rocha', id: '22222222-2222-2222-2222-222222222222' }]);
     if (p === '/rest/v1/rpc/agenda_bh_definir') { const b = JSON.parse(req.postData() || '{}'); writes.push(['RPC', p, '', b]); for (let i = bhLanc.length - 1; i >= 0; i--) if (bhLanc[i].nome_usuario === b.p_usuario && bhLanc[i].banco === b.p_banco) bhLanc.splice(i, 1); if (b.p_minutos > 0) bhLanc.push({ id: 900 + bhLanc.length, nome_usuario: b.p_usuario, minutos: b.p_minutos, banco: b.p_banco, criado_em: new Date().toISOString() }); return json(null); }
-    if (p.startsWith('/rest/v1/rpc/')) { writes.push(['RPC', p, '', req.postData()]); return json([{ nome_usuario: 'jeovah.silva' }]); }
+    if (p.startsWith('/rest/v1/rpc/')) { writes.push(['RPC', p, '', req.postData()]); return json([{ nome_usuario: 'carlos.rocha' }]); }
     const table = p.replace('/rest/v1/', '');
     if (m !== 'GET' && m !== 'HEAD') {
       const body = req.postData() ? JSON.parse(req.postData()) : null;
       writes.push([m, table, u.search, body]);
-          if (table === 'banco_horas_lancamentos' && m === 'POST') { bhLanc.push({ id: bhLanc.length + 50, criado_em: new Date().toISOString(), criado_por: 'giovanna.cintra', ...body }); return json([], 201); }
+          if (table === 'banco_horas_lancamentos' && m === 'POST') { bhLanc.push({ id: bhLanc.length + 50, criado_em: new Date().toISOString(), criado_por: 'ana.souza', ...body }); return json([], 201); }
       if (table === 'banco_horas_lancamentos' && m === 'DELETE') { const id = +(u.searchParams.get('id') || '').replace('eq.', ''); const i = bhLanc.findIndex(x => x.id === id); if (i >= 0) bhLanc.splice(i, 1); return route.fulfill({ status: 204, headers: { 'access-control-allow-origin': '*' } }); }
       if (table === 'banco_horas_areas') return json([]);
       if (m === 'POST' && table === 'documentos_arquivos') { const r = { id: docSeq++, criado_em: new Date().toISOString(), ...body }; docArqs.push(r); return json([r], 201); }
@@ -75,33 +75,34 @@ let lastEmail = 'giovanna.cintra@scpma.local';
       if (table === 'eventos' && m === 'PATCH') { const id = +(u.searchParams.get('id') || '').replace('eq.', ''); const ev = eventos.find(e => e.id === id); if (ev) Object.assign(ev, body); return json([ev]); }
       return json(Array.isArray(body) ? body : [body || {}], 201);
     }
-    if (table === 'evento_convidados' && m === 'GET') return json(u.searchParams.get('evento_id') === 'eq.5' ? [{ nome_usuario: 'jeovah.silva' }, { nome_usuario: 'paulo.scalco' }, { nome_usuario: 'giovanna.cintra' }] : []);
+    if (table === 'evento_convidados' && m === 'GET') return json(u.searchParams.get('evento_id') === 'eq.5' ? [{ nome_usuario: 'carlos.rocha' }, { nome_usuario: 'bruno.lima' }, { nome_usuario: 'ana.souza' }] : []);
     if (table === 'documentos_pastas' && m === 'GET') return json(docPastas);
     if (table === 'documentos_arquivos' && m === 'GET') return json(docArqs);
     if (table === 'documentos_pastas' && m === 'POST') { const b = JSON.parse(req.postData() || '{}'); const r = { id: docSeq++, criado_em: new Date().toISOString(), ...b }; docPastas.push(r); writes.push(['POST', table, '', b]); return json([r], 201); }
     if (table === 'documentos_arquivos' && m === 'POST') { const b = JSON.parse(req.postData() || '{}'); const r = { id: docSeq++, criado_em: new Date().toISOString(), ...b }; docArqs.push(r); writes.push(['POST', table, '', b]); return json([r], 201); }
     if (table === 'documentos_arquivos' && m === 'DELETE') { const id = +(u.searchParams.get('id') || '').replace('eq.', ''); const i = docArqs.findIndex(x => x.id === id); if (i >= 0) docArqs.splice(i, 1); writes.push(['DELETE', table, u.search, null]); return route.fulfill({ status: 204, headers: { 'access-control-allow-origin': '*' } }); }
-    if (table === 'patrimonio_itens' && m === 'GET') return json([{ id: 1, processo: '202500004062849', setor: 'ASSPLAN', equipamento: 'POSITIVO', numero: '3722767', responsavel: 'Giovanna', observacao: '' }, { id: 2, processo: '202500004062849', setor: 'GAPPP', equipamento: 'POSITIVO', numero: '3722772', responsavel: '', observacao: '' }]);
+    if (table === 'patrimonio_itens' && m === 'GET') return json([{ id: 1, processo: '202500004062849', setor: 'ASSPLAN', equipamento: 'POSITIVO', numero: '3722767', responsavel: 'Ana', observacao: '' }, { id: 2, processo: '202500004062849', setor: 'GAPPP', equipamento: 'POSITIVO', numero: '3722772', responsavel: '', observacao: '' }]);
     if (table === 'colegiados' && m === 'GET') return json(require('./colegiados.json').map((x, i) => ({ id: i + 1, ...x })));
+    if (table === 'organograma') return json(require('./organograma.json'));
     if (table === 'organograma_contatos') return json(require('./contatos.json'));
     if (table === 'usuarios_autorizados') return json(users);
-    if (table === 'aprovadores_ferias_escopo') return json(m === 'GET' ? [{ nome_usuario: 'paulo.scalco', unidade: 'SCPMA' }, { nome_usuario: 'giovanna.cintra', unidade: 'GEMONIT' }] : []);
+    if (table === 'aprovadores_ferias_escopo') return json(m === 'GET' ? [{ nome_usuario: 'bruno.lima', unidade: 'SCPMA' }, { nome_usuario: 'ana.souza', unidade: 'GEMONIT' }] : []);
     if (table === 'eventos') return json(eventos.filter(e => !e.removido_em));
     if (table === 'colegiado_portarias' && m === 'GET') return json([{ id: 1, colegiado_id: 1, nome: 'Portaria nº 77, de 2 de março de 2026', data: '2026-03-02', ementa: 'Designa representantes.', arquivo_caminho: '1/77.pdf' }]);
     if (table === 'portarias' && m === 'GET') return json([{ id: 1, nome: 'Portaria Economia nº 311, de 17 de novembro de 2026', data: '2026-11-17', orgao: 'Delegacia-Geral da Polícia Civil – DGPC', ementa: 'Fica aprovada a alteração da meta física.', arquivo_url: 'https://ppa.go.gov.br/x.pdf', arquivo_caminho: null, publicado: true, criado_em: new Date().toISOString() }]);
     if (table === 'prazos' && m === 'GET') return json([{ id: 1, categoria: 'geceg', titulo: 'Apoio Tático Operacional', data: plus(-3), data_fim: plus(20), quem: 'Facilitadores Economia', etapa: null, obs: null },
       { id: 2, categoria: 'enc', titulo: 'Reunião técnica nº 2 · alinhamento técnico', data: plus(1), data_fim: null, quem: null, etapa: 'Etapa 1 · Preparação', obs: 'Teste de observação' }]);
-    if (table === 'banco_horas_editores') return json([{ nome_usuario: 'giovanna.cintra', area: 'SCPMA' }, { nome_usuario: 'vinicius.chaer', area: 'SMA' }]);
+    if (table === 'banco_horas_editores') return json([{ nome_usuario: 'ana.souza', area: 'SCPMA' }, { nome_usuario: 'daniel.prado', area: 'SMA' }]);
     if (table === 'banco_horas_areas' && m === 'GET') return json([{ area: 'SCPMA', atualizado_ate: '2026-11-16' }, { area: 'SMA', atualizado_ate: null }, { area: 'SUPLAN', atualizado_ate: null }]);
     if (table === 'banco_horas_lancamentos' && m === 'GET') return json(bhLanc);
-    if (table === 'hierarquia_superiores') return json([{ nome_usuario: 'giovanna.cintra', superior: 'paulo.scalco' }, { nome_usuario: 'vinicius.chaer', superior: 'giovanna.cintra' }]);
-    if (table === 'evento_presencas' && u.searchParams.get('evento_id') === 'eq.7') return json([{ evento_id: 7, nome_usuario: 'giovanna.cintra', resposta: 'confirmado', aprovacao: 'pendente' }, { evento_id: 7, nome_usuario: 'paulo.scalco', resposta: 'confirmado', aprovacao: 'pendente' },
-      { evento_id: 7, nome_usuario: 'jeovah.silva', resposta: 'confirmado', aprovacao: 'aprovada' }, { evento_id: 7, nome_usuario: 'vinicius.chaer', resposta: 'confirmado', aprovacao: 'pendente' }]);
-    if (table === 'evento_presencas') return json([{ evento_id: 1, nome_usuario: 'paulo.scalco', resposta: 'confirmado' }, { evento_id: 5, nome_usuario: 'jeovah.silva', resposta: 'recusado' }]);
-    if (table === 'notificacoes') return json([{ id: 9, dest_usuario: 'giovanna.cintra', tipo: 'convite', titulo: 'Confirme sua presença', mensagem: 'Você foi convidado(a) para "Reunião"', lida: false, evento_id: 1, criada_em: new Date().toISOString() }]);
-    if (table === 'patrimonio') return json(u.searchParams.get('nome_usuario') === 'eq.giovanna.cintra' ? [{ tem_patrimonio: true, patrimonio: '998877' }] : []);
+    if (table === 'hierarquia_superiores') return json([{ nome_usuario: 'ana.souza', superior: 'bruno.lima' }, { nome_usuario: 'daniel.prado', superior: 'ana.souza' }]);
+    if (table === 'evento_presencas' && u.searchParams.get('evento_id') === 'eq.7') return json([{ evento_id: 7, nome_usuario: 'ana.souza', resposta: 'confirmado', aprovacao: 'pendente' }, { evento_id: 7, nome_usuario: 'bruno.lima', resposta: 'confirmado', aprovacao: 'pendente' },
+      { evento_id: 7, nome_usuario: 'carlos.rocha', resposta: 'confirmado', aprovacao: 'aprovada' }, { evento_id: 7, nome_usuario: 'daniel.prado', resposta: 'confirmado', aprovacao: 'pendente' }]);
+    if (table === 'evento_presencas') return json([{ evento_id: 1, nome_usuario: 'bruno.lima', resposta: 'confirmado' }, { evento_id: 5, nome_usuario: 'carlos.rocha', resposta: 'recusado' }]);
+    if (table === 'notificacoes') return json([{ id: 9, dest_usuario: 'ana.souza', tipo: 'convite', titulo: 'Confirme sua presença', mensagem: 'Você foi convidado(a) para "Reunião"', lida: false, evento_id: 1, criada_em: new Date().toISOString() }]);
+    if (table === 'patrimonio') return json(u.searchParams.get('nome_usuario') === 'eq.ana.souza' ? [{ tem_patrimonio: true, patrimonio: '998877' }] : []);
     if (table === 'perfis' && u.searchParams.get('id') === 'eq.22222222-2222-2222-2222-222222222222') return json([{ cargo: 'Analista', telefone: '62 1', cpf: '111.222.333-44' }]);
-    if (table === 'perfis_publicos') return json([{ nome_usuario: 'jeovah.silva', cargo: 'Assistente de Gestão Administrativa', nome_completo: 'Jeovah Q. Silva', telefone: '62 9 0000-1111', data_nascimento: '', foto_url: 'https://x.supabase.co/storage/v1/object/public/fotos-perfil/2/avatar.png' }]);
+    if (table === 'perfis_publicos') return json([{ nome_usuario: 'carlos.rocha', cargo: 'Assistente de Gestão Administrativa', nome_completo: 'Carlos Q. Silva', telefone: '62 9 0000-1111', data_nascimento: '', foto_url: 'https://x.supabase.co/storage/v1/object/public/fotos-perfil/2/avatar.png' }]);
     return json([]);
   });
   const shot = async n => page.screenshot({ path: path.join(SHOTS, n + '.png') });
@@ -109,8 +110,8 @@ let lastEmail = 'giovanna.cintra@scpma.local';
   await page.goto('file://' + OUT);
   await page.waitForTimeout(2500);
   await shot('01-login');
-  // primeiro acesso (jeovah, sem senha) -> pede confirmação
-  await page.fill('input[placeholder="nome.sobrenome"]', 'jeovah.silva');
+  // primeiro acesso (carlos, sem senha) -> pede confirmação
+  await page.fill('input[placeholder="nome.sobrenome"]', 'carlos.rocha');
   await page.fill('input[placeholder="••••••••"]', 'senha123');
   await page.locator('button').filter({ hasText: /^(Entrar|Criar senha e entrar)$/ }).click();
   await page.waitForTimeout(500);
@@ -122,7 +123,7 @@ let lastEmail = 'giovanna.cintra@scpma.local';
   console.log('senha só letras recusada:', await page.getByText('pelo menos 8 caracteres, com letras e números').count() > 0);
   await page.getByText('← Voltar').click();
   // login normal (admin)
-  await page.fill('input[placeholder="nome.sobrenome"]', 'giovanna.cintra');
+  await page.fill('input[placeholder="nome.sobrenome"]', 'ana.souza');
   await page.fill('input[placeholder="••••••••"]', 'errada');
   await page.locator('button').filter({ hasText: /^(Entrar|Criar senha e entrar)$/ }).click();
   await page.waitForTimeout(800);
@@ -154,23 +155,23 @@ let lastEmail = 'giovanna.cintra@scpma.local';
   await page.getByText('Ver todos', { exact: true }).click(); await page.waitForTimeout(300);
   console.log('ver todos:', await sumTxt());
   await page.getByText('Este mês', { exact: true }).last().click(); await page.waitForTimeout(300);
-  await page.getByText('Férias — Jeovah Quintino da Silva').first().click(); await page.waitForTimeout(500); await shot('07-ferias-aprovar');
+  await page.getByText('Férias — Carlos Eduardo Rocha').first().click(); await page.waitForTimeout(500); await shot('07-ferias-aprovar');
   await page.getByRole('button', { name: 'Aprovar' }).click(); await page.waitForTimeout(800);
   console.log('aprovação gravou:', JSON.stringify(writes.filter(w => w[1] === 'eventos' && w[0] === 'PATCH').map(w => w[3].status)));
   await page.mouse.click(1420, 20); await page.waitForTimeout(300);
   // hierarquia: ninguém aprova as próprias férias
   await page.getByText('Ver todos', { exact: true }).click().catch(() => {}); await page.waitForTimeout(300);
-  await page.getByText('Férias — Giovanna Silva Cintra').first().click(); await page.waitForTimeout(500);
+  await page.getByText('Férias — Ana Clara Souza').first().click(); await page.waitForTimeout(500);
   console.log('próprias férias sem botão Aprovar:', await page.getByRole('button', { name: 'Aprovar' }).count() === 0);
   await page.mouse.click(1420, 20); await page.waitForTimeout(300);
   // folga com aprovação: só o subordinado pendente tem botões; quem já respondeu não vê "Vou participar"
   await page.getByText('Folga teste hierarquia').first().click(); await page.waitForTimeout(600); await shot('07b-folga-hierarquia');
-  console.log('botões Aprovar na folga (esperado 1, só Vinicius):', await page.getByRole('button', { name: 'Aprovar' }).count());
+  console.log('botões Aprovar na folga (esperado 1, só Daniel):', await page.getByRole('button', { name: 'Aprovar' }).count());
   console.log('"Vou participar" some depois de responder:', await page.getByRole('button', { name: /Vou participar/ }).count() === 0, '| mostra resposta:', await page.getByText('Você vai participar.').count() > 0);
   await page.getByRole('button', { name: 'alterar' }).click(); await page.waitForTimeout(300);
   console.log('"alterar" mostra os botões de novo:', await page.getByRole('button', { name: /Vou participar/ }).count() === 1);
   await page.getByRole('button', { name: 'Aprovar' }).first().click(); await page.waitForTimeout(600);
-  console.log('aprovou Vinicius:', JSON.stringify(writes.filter(w => w[0] === 'RPC' && /aprovar_presenca/.test(w[1])).map(w => JSON.parse(w[3]).p_usuario)));
+  console.log('aprovou Daniel:', JSON.stringify(writes.filter(w => w[0] === 'RPC' && /aprovar_presenca/.test(w[1])).map(w => JSON.parse(w[3]).p_usuario)));
   await page.mouse.click(1420, 20); await page.waitForTimeout(300);
   await page.getByText('Este mês', { exact: true }).last().click().catch(() => {}); await page.waitForTimeout(300);
   // novo evento
@@ -185,25 +186,25 @@ let lastEmail = 'giovanna.cintra@scpma.local';
   // usuários e perfil
   await page.evaluate(() => {});
   await page.locator('aside').first().hover(); await page.getByText('Usuários', { exact: true }).first().click(); await page.waitForTimeout(400); await shot('10-usuarios');
-  // aba Banco de horas: só o bloco da área de quem lança (Giovanna = SCPMA)
+  // aba Banco de horas: só o bloco da área de quem lança (Ana = SCPMA)
   await page.getByRole('button', { name: /Banco de horas/ }).click(); await page.waitForTimeout(300);
   console.log('banco de horas blocos:', await page.getByText('SCPMA — Subsecretaria').count(), '| SMA oculto:', await page.getByText('SMA — Monitoramento e Avaliação').count() === 0);
   await page.getByText('SCPMA — Subsecretaria').click(); await page.waitForTimeout(300); await shot('10b-banco-horas');
-  const bhRow = page.locator('.hub-bh-row', { hasText: 'Paulo Scalco' }), bhIn = bhRow.getByLabel('Bancão 52h'), bh8 = bhRow.getByLabel('Bancão 8h');
+  const bhRow = page.locator('.hub-bh-row', { hasText: 'Bruno Lima' }), bhIn = bhRow.getByLabel('Bancão 52h'), bh8 = bhRow.getByLabel('Bancão 8h');
   await bhIn.click(); await bhIn.pressSequentially('523'); await page.waitForTimeout(200);
   console.log('máscara 523 ->', await bhIn.inputValue());
   await bhIn.press('Enter'); await page.waitForTimeout(500);
   const bhRpc = () => writes.filter(w => w[0] === 'RPC' && /agenda_bh_definir/.test(w[1])).map(w => w[3]);
-  console.log('salvou:', JSON.stringify(bhRpc()), '| total Paulo:', await bhRow.innerText().then(t => /05:23h/.test(t)));
+  console.log('salvou:', JSON.stringify(bhRpc()), '| total Bruno:', await bhRow.innerText().then(t => /05:23h/.test(t)));
   await bhIn.fill(''); await bhIn.pressSequentially('1032'); await bhRow.getByRole('button', { name: 'Salvar' }).first().click(); await page.waitForTimeout(500);
-  console.log('sobrescreveu:', JSON.stringify(bhRpc().slice(-1)), '| total Paulo:', await bhRow.innerText().then(t => /10:32h/.test(t) && !/05:23h/.test(t)));
+  console.log('sobrescreveu:', JSON.stringify(bhRpc().slice(-1)), '| total Bruno:', await bhRow.innerText().then(t => /10:32h/.test(t) && !/05:23h/.test(t)));
   await bhIn.fill(''); await bhIn.pressSequentially('575'); await bhIn.press('Enter'); await page.waitForTimeout(300);
   console.log('minutos > 59 barrados:', bhRpc().length === 2);
   await bh8.click(); await bh8.pressSequentially('228'); await bh8.press('Enter'); await page.waitForTimeout(500);
   console.log('bancão 8h:', JSON.stringify(bhRpc().slice(-1)), '| total 52h+8h = 13:00h:', await bhRow.innerText().then(t => /13:00h/.test(t)), '| total não editável:', await bhRow.locator('input').count() === 2);
   await page.getByRole('button', { name: 'Usuários', exact: true }).first().click(); await page.waitForTimeout(300);
   await page.mouse.move(900, 400);
-  await page.locator('aside').first().locator('button').filter({ hasText: 'Giovanna' }).first().click(); await page.waitForTimeout(500);
+  await page.locator('aside').first().locator('button').filter({ hasText: 'Ana' }).first().click(); await page.waitForTimeout(500);
   await page.fill('input[placeholder="Nº de matrícula"]', '12345');
   await page.getByRole('button', { name: /Salvar alterações/ }).click(); await page.waitForTimeout(800); await shot('11-perfil');
   console.log('perfil banco de horas:', await page.getByText('Banco de horas p/ semaninha').count(), '|', [await page.getByText('Bancão 52h', { exact: true }).count(), await page.getByText('05:23h').count(), await page.getByText('04:37h').count(), await page.getByText('10:00h').count()].join(','), '|', await page.getByText('Atualizado até 16/11/2026').count());
@@ -215,9 +216,9 @@ let lastEmail = 'giovanna.cintra@scpma.local';
   console.log('perfil gravou:', JSON.stringify(pf && pf[3]));
   // admin: editar dados de outra pessoa
   await page.locator('aside').first().hover(); await page.getByText('Usuários', { exact: true }).first().click(); await page.mouse.move(900, 400); await page.waitForTimeout(400);
-  await page.getByText('Jeovah Quintino da Silva', { exact: true }).first().click(); await page.waitForTimeout(800);
+  await page.getByText('Carlos Eduardo Rocha', { exact: true }).first().click(); await page.waitForTimeout(800);
   await page.screenshot({ path: SHOTS + '/13-editar-usuario.png' });
-  await page.locator('label:has-text("Nome completo") input').last().fill('Jeovah Quintino da Silva Jr');
+  await page.locator('label:has-text("Nome completo") input').last().fill('Carlos Eduardo Rocha Jr');
   await page.locator('label:has-text("Matrícula") input').last().fill('55555');
   await page.locator('label:has-text("Nº do patrimônio") input').last().fill('ABC-1');
   await page.locator('label:has-text("Possui notebook") input').check();
@@ -225,22 +226,22 @@ let lastEmail = 'giovanna.cintra@scpma.local';
   console.log('admin perfil:', JSON.stringify(writes.filter(w => w[1].startsWith('perfis') && w[3] && w[3].id === '22222222-2222-2222-2222-222222222222').map(w => w[3])));
   console.log('rpc nome:', JSON.stringify(writes.filter(w => w[0] === 'RPC' && /set_nome/.test(w[1])).map(w => w[3])));
   console.log('admin patrimonio:', JSON.stringify(writes.filter(w => w[1].startsWith('patrimonio')).map(w => w[3])));
-  await page.getByText('Paulo Scalco', { exact: true }).first().click(); await page.waitForTimeout(800);
+  await page.getByText('Bruno Lima', { exact: true }).first().click(); await page.waitForTimeout(800);
   console.log('campos sem conta:', await page.locator('label:has-text("CPF") input').count());
   await page.screenshot({ path: SHOTS + '/14-sem-conta.png' });
   await page.getByRole('button', { name: 'Cancelar' }).click();
   await page.locator('label:has-text("Matrícula") input').count().then(n => console.log('modal fechado:', n));
   // pessoas
   await page.locator('aside').first().hover(); await page.getByText('Central', { exact: true }).first().click(); await page.mouse.move(900, 400); await page.waitForTimeout(250); await page.getByRole('button', { name: 'Organograma', exact: true }).first().click(); await page.waitForTimeout(500); await page.mouse.move(900, 400); await shot('12-organograma');
-  console.log('organograma mostra nome corrigido:', await page.getByText('Jeovah Renomeado Silva').count() > 0);
-  await page.getByText('Jeovah Renomeado Silva').first().scrollIntoViewIfNeeded(); await page.mouse.move(900,400); await page.waitForTimeout(300); await page.screenshot({ path: SHOTS + '/15-org-cargo.png' });
-  console.log('linha abaixo do Jeovah:', await page.getByText('Jeovah Renomeado Silva').first().evaluate(el => el.nextElementSibling && el.nextElementSibling.innerText));
+  console.log('organograma mostra nome corrigido:', await page.getByText('Carlos Renomeado Rocha').count() > 0);
+  await page.getByText('Carlos Renomeado Rocha').first().scrollIntoViewIfNeeded(); await page.mouse.move(900,400); await page.waitForTimeout(300); await page.screenshot({ path: SHOTS + '/15-org-cargo.png' });
+  console.log('linha abaixo do Carlos:', await page.getByText('Carlos Renomeado Rocha').first().evaluate(el => el.nextElementSibling && el.nextElementSibling.innerText));
   await page.locator('aside').first().hover(); await page.getByText('Colegiados', { exact: true }).first().click(); await page.mouse.move(900,400); await page.waitForTimeout(400); await page.screenshot({ path: SHOTS + '/16-colegiados.png' });
   console.log('colegiados abre:', await page.locator('h1', { hasText: 'Colegiados' }).count());
   await page.waitForTimeout(800); await page.screenshot({ path: SHOTS + '/21-colegiados.png', fullPage: true });
   console.log('colegiados cards:', await page.getByText('Conselho Estadual da Mulher', { exact: true }).count(), '| contador:', await page.getByText(/^21 colegiados$/).count());
-  await page.locator('aside button', { hasText: 'Jeovah Quintino Silva' }).first().click(); await page.waitForTimeout(300);
-  console.log('filtro Jeovah:', await page.getByText(/de 21 colegiados/).first().innerText().catch(() => 'NÃO ACHOU'));
+  await page.locator('aside button', { hasText: 'Carlos Eduardo Rocha' }).first().click(); await page.waitForTimeout(300);
+  console.log('filtro Carlos:', await page.getByText(/de 21 colegiados/).first().innerText().catch(() => 'NÃO ACHOU'));
   const [pc] = await Promise.all([page.waitForEvent('popup', { timeout: 5000 }).catch(() => null), page.getByRole('button', { name: 'PDF' }).first().click()]);
   console.log('pdf colegiados linhas:', pc ? await pc.locator('tbody tr').count() : 'SEM POPUP'); if (pc) await pc.close();
   await page.getByRole('button', { name: /^Portarias/ }).first().click(); await page.waitForTimeout(400);
@@ -260,14 +261,14 @@ let lastEmail = 'giovanna.cintra@scpma.local';
   await page.getByRole('button', { name: /^Colegiados/ }).first().click(); await page.waitForTimeout(200);
   await page.locator('aside').first().hover(); await page.getByText('Central', { exact: true }).first().click(); await page.mouse.move(900, 400); await page.waitForTimeout(250); await page.getByRole('button', { name: 'Organograma', exact: true }).first().click(); await page.mouse.move(900,400); await page.waitForTimeout(400);
   console.log('aniversariantes de outubro:', await page.getByText(/06\/10|07\/10/).count());
-  await page.getByText('Heuler Neves de Assis').first().click(); await page.waitForTimeout(300);
-  console.log('cartão Heuler tem telefone:', await page.getByText('62 9 0000-0029').count() > 0, '| e-mail:', await page.getByText('servidor.teste@exemplo.gov.br').count() > 0, '| aniversário:', await page.getByText(/11 de Janeiro/i).count() > 0);
+  await page.getByText('Fábio Nogueira Reis').first().click(); await page.waitForTimeout(300);
+  console.log('cartão Fábio tem telefone:', await page.getByText('62 9 0000-0029').count() > 0, '| e-mail:', await page.getByText('servidor.teste@exemplo.gov.br').count() > 0, '| aniversário:', await page.getByText(/11 de Janeiro/i).count() > 0);
   await page.mouse.click(10, 450);
   await page.getByRole('button', { name: /Novo evento/ }).click(); await page.waitForTimeout(400);
   await page.fill('input[placeholder="Ex.: Curso de Planejamento"]', 'Reunião com pessoas escolhidas');
   await page.locator('label:has-text("Participantes") select').selectOption('lista'); await page.waitForTimeout(300);
-  await page.fill('input[placeholder="Buscar por nome ou unidade"]', 'jeovah'); await page.waitForTimeout(200);
-  await page.getByRole('button', { name: /Jeovah Quintino da Silva/ }).first().click(); await page.waitForTimeout(200);
+  await page.fill('input[placeholder="Buscar por nome ou unidade"]', 'carlos'); await page.waitForTimeout(200);
+  await page.getByRole('button', { name: /Carlos Eduardo Rocha/ }).first().click(); await page.waitForTimeout(200);
   await page.screenshot({ path: SHOTS + '/17-escolher-pessoas.png' });
   const n0 = writes.length;
   await page.getByRole('button', { name: /Criar evento/ }).click(); await page.waitForTimeout(1200);
@@ -291,7 +292,7 @@ let lastEmail = 'giovanna.cintra@scpma.local';
   await page.getByRole('button', { name: /^Salvar$/ }).last().click(); await page.waitForTimeout(600);
   console.log('assplan salvou:', JSON.stringify(writes.filter(w => w[1].startsWith('patrimonio_itens')).map(w => [w[0], w[3] && w[3].setor, w[3] && w[3].numero])));
   await page.locator('aside').first().hover(); await page.getByText('Central', { exact: true }).first().click(); await page.mouse.move(900, 400); await page.waitForTimeout(250); await page.getByRole('button', { name: 'Organograma', exact: true }).first().click(); await page.mouse.move(900, 400); await page.waitForTimeout(400);
-  await page.getByText('Jeovah Renomeado Silva').first().click(); await page.waitForTimeout(800);
+  await page.getByText('Carlos Renomeado Rocha').first().click(); await page.waitForTimeout(800);
   console.log('dados internos no cartão:', await page.getByText('Dados internos · só administradores').count(), await page.getByText('111.222.333-44').count());
   await page.screenshot({ path: SHOTS + '/20-cartao-admin.png' });
   await page.mouse.click(10, 450);
@@ -305,12 +306,12 @@ let lastEmail = 'giovanna.cintra@scpma.local';
   console.log('agenda Unidades:', await page.locator('h1', { hasText: /^Unidades$/ }).count(), '| formatos:', JSON.stringify(await page.locator('main button', { hasText: /^(Lista|Por unidade)$/ }).allInnerTexts()));
   await page.getByRole('button', { name: 'Por unidade', exact: true }).first().click(); await page.waitForTimeout(300); await shot('22-agenda-unidades');
   await page.locator('aside').first().hover(); await page.getByText('Início', { exact: true }).first().click(); await page.mouse.move(900, 400); await page.waitForTimeout(300);
-  console.log('visão geral férias:', await page.getByText('De férias hoje', { exact: true }).count(), '| Jeovah listado:', await page.locator('main').getByText('Jeovah Quintino da Silva').count() > 0, '| sem "Ver todas":', await page.getByText('Ver todas →').count() === 0);
+  console.log('visão geral férias:', await page.getByText('De férias hoje', { exact: true }).count(), '| Carlos listado:', await page.locator('main').getByText('Carlos Eduardo Rocha').count() > 0, '| sem "Ver todas":', await page.getByText('Ver todas →').count() === 0);
   await shot('22-visao-geral');
   await page.locator('aside').first().hover(); await page.getByText('Central', { exact: true }).first().click(); await page.mouse.move(900, 400); await page.waitForTimeout(250); await page.getByRole('button', { name: 'Organograma', exact: true }).first().click(); await page.mouse.move(900, 400); await page.waitForTimeout(500);
-  const vin = page.getByText('Vinicius Mamede Salum Chaer').first();
-  console.log('organograma Vinicius:', await page.getByText('Vinicius Mamede Salum Chaer').count(), '| nota:', await page.getByText('Superintendente de Monitoramento (Substituindo Daiany)').count(), '| Daiany como chefe:', await page.getByText('Daiany de Oliveira Santos').count());
-  await vin.scrollIntoViewIfNeeded(); await page.mouse.move(900, 400); await page.waitForTimeout(200); await page.screenshot({ path: SHOTS + '/23-vinicius.png' });
+  const vin = page.getByText('Daniel Martins Prado').first();
+  console.log('organograma Daniel:', await page.getByText('Daniel Martins Prado').count(), '| nota:', await page.getByText('Superintendente de Monitoramento (Substituindo Elisa)').count(), '| Elisa como chefe:', await page.getByText('Elisa Moreira Campos').count());
+  await vin.scrollIntoViewIfNeeded(); await page.mouse.move(900, 400); await page.waitForTimeout(200); await page.screenshot({ path: SHOTS + '/23-daniel.png' });
   // Documentos
   await page.locator('aside').first().hover(); await page.getByText('Usuários', { exact: true }).first().click(); await page.mouse.move(900, 400); await page.waitForTimeout(300);
   await page.getByText('Documentos e projetos', { exact: true }).first().click(); await page.waitForTimeout(600);

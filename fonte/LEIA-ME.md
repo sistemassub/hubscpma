@@ -9,7 +9,6 @@ para que qualquer pessoa (ou uma nova sessão do Claude) consiga continuar o tra
 | `head.html` | fontes, estilos e as regras para celular (telas menores que 760 px) |
 | `markup.html` | o layout: login, menu lateral, páginas, janelas (modais) |
 | `logic.js` | toda a lógica: Supabase, permissões, organograma, agenda, férias, usuários, documentos, colegiados |
-| `orgimgs.json` | fotos do Paulo e do Achilles (as demais vêm de links do Drive) |
 | `logo.png` | ícone da aba do navegador |
 | `atualizar.py` | regrava o `index.html` a partir dos arquivos acima |
 | `testes/` | testes no Chromium com um Supabase simulado (`test.js` completo, `mobile.js` para celular) |
@@ -35,10 +34,10 @@ A proteção está no banco (RLS), não no código:
 - **Arquivos (Storage):** `fotos-perfil` (público), `anexos-eventos` e `documentos-admin` (privados).
 - **Regras de permissão:** administrador edita tudo; patrimônio, documentos e ASSPLAN só administrador.
 - **Aprovação de férias e folgas (hierarquia):** aprova quem é chefe da pessoa (direto ou acima, tabela
-  `hierarquia_superiores`) **ou** quem tem a unidade dela em `aprovadores_ferias_escopo` (substitutos, como Otávio e Luice).
+  `hierarquia_superiores`) **ou** quem tem a unidade dela em `aprovadores_ferias_escopo` (substitutos da chefia).
   Ninguém aprova a si mesmo nem quem está acima dele ou no mesmo nível. A regra fica na função
   `agenda_pode_aprovar_pessoa`, usada por `agenda_aprovar_presenca` e pelo gatilho de férias; o site repete a mesma
-  regra só para decidir onde mostrar os botões. Daiany e Vinicius estão cadastrados como "mesmo nível" (um acima do outro).
+  regra só para decidir onde mostrar os botões. A superintendente titular e o substituto da SMA estão cadastrados como "mesmo nível" (um acima do outro).
   A coluna `usuarios_autorizados.pode_aprovar_ferias` é só informativa e se atualiza sozinha a partir do escopo.
 - **Prazos e datas (antigo "Calendário de datas · SCPMA"):** camada própria do Calendário, separada dos eventos
   (não entra na Lista de eventos, relatórios nem convites). Tabela `prazos` (categoria geceg/enc/mensal/ind/outro, título,
@@ -65,7 +64,7 @@ A proteção está no banco (RLS), não no código:
 - **Banco de horas da semaninha:** `banco_horas_lancamentos` (horas em minutos; coluna `banco` = '52h' ou '8h', um valor por
   pessoa e bancão, gravado pela função `agenda_bh_definir`; o Total é a soma e não é editável),
   `banco_horas_areas` ("atualizado até" de SCPMA, SMA e SUPLAN) e `banco_horas_editores` (quem lança em cada área:
-  Giovanna na SCPMA, Otávio na SMA, Simone na SUPLAN). A área vem da unidade da pessoa (`agenda_area_de`).
+  um assessor por superintendência). A área vem da unidade da pessoa (`agenda_area_de`).
   Cada lançamento só é visto pela própria pessoa (caixinha no Perfil) e por quem lança naquela área
   (aba "Banco de horas" em Usuários); administradores não veem por serem administradores.
 - **Perfis no organograma:** a visão `perfis_publicos` roda com as permissões de quem consulta (`security_invoker`) e lê da
@@ -73,9 +72,14 @@ A proteção está no banco (RLS), não no código:
 - **Dados pessoais** (e-mail, celular, aniversário do organograma, CPF etc.) ficam só no banco e só aparecem após o login —
   **nunca** coloque esses dados no código deste repositório (ele é público).
 
+## Organograma (nomes, cargos, fotos)
+Não ficam no código (o repositório é público): estão na tabela `organograma` (id, superior_id, cargo, nome, foto, substitui, nota,
+ordem), lida só depois do login. Substituição de chefia: no registro de quem substitui, `substitui` = id da chefia e `nota` = texto
+exibido abaixo do nome. Os testes usam um organograma fictício (`testes/organograma.json`).
+
 ## Para adicionar uma pessoa
 1. Banco: inserir em `usuarios_autorizados` (nome_usuario, nome_completo, unidade, nivel_acesso), em `organograma_contatos` (org_id, e-mail, telefone, aniversário)
    e em `hierarquia_superiores` (nome_usuario, superior = nome_usuario do chefe; uma linha por chefe). Se a pessoa for chefe, incluir também
    a(s) unidade(s) dela em `aprovadores_ferias_escopo`.
-2. `logic.js`: incluir a linha no vetor `ORG0` (id, id do superior, cargo, nome completo...), com o nome igual ao `nome_completo`.
-3. Rodar `atualizar.py`, testar e publicar.
+2. Banco: incluir a pessoa na tabela `organograma` (id novo, superior_id, cargo, nome igual ao `nome_completo`, foto, ordem) — não é preciso mexer no código.
+3. Não é preciso publicar o site: a pessoa aparece no Hub no próximo login.

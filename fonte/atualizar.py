@@ -15,11 +15,6 @@ LOGO_UUID = '552723aa-cb77-48c9-bb00-2226fceeef20'   # ícone do Hub (aba do nav
 SUPA_UUID = '172cf468-e562-442b-9f6c-cbedd9763e63'   # supabase-js embutido no pacote
 
 head, markup, logic = LER('head.html'), LER('markup.html'), LER('logic.js')
-imgs = json.load(open(os.path.join(FONTE, 'orgimgs.json'), encoding='utf-8'))
-for k in ('1', '30'):
-    marca = "'__ORG%s_IMG__'" % k
-    assert logic.count(marca) == 1, marca
-    logic = logic.replace(marca, json.dumps(imgs[k]))
 
 extra = ('\n<title>Hub SCPMA</title>\n<link rel="icon" type="image/png" href="' + LOGO_UUID + '">\n'
          '<script src="' + SUPA_UUID + '"></script>\n')

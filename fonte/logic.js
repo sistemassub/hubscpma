@@ -1,13 +1,12 @@
 <script type="text/x-dc" data-dc-script="">
 // Fotos embutidas viram blob: (o ";" de um data: URI quebra o style dos avatares)
 const blobUrl = s => { try { const i = s.indexOf(','), bin = atob(s.slice(i + 1)), u = new Uint8Array(bin.length); for (let k = 0; k < bin.length; k++) u[k] = bin.charCodeAt(k); return URL.createObjectURL(new Blob([u], { type: s.slice(5, s.indexOf(';')) })); } catch (e) { return ''; } };
-const RES = id => blobUrl(({ org1: '__ORG1_IMG__', org30: '__ORG30_IMG__' })[id]);
-// Organograma: e-mail, celular e aniversário NÃO ficam no código (repositório público); vêm da tabela organograma_contatos após o login
-const ORG0 = [[1,null,"Subsecretário de Planejamento, Monitoramento e Avaliação","Paulo Scalco","","","fotos/org-1.jpg",""],[2,1,"Assessora de Normas, Governança e Gestão de Planejamento","Luice Ferreira","","","https://drive.google.com/thumbnail?id=1y8PK4f1Xk-R2nJhuOzzWqc3Dz39CUGA5&sz=w200",""],[16,2,"Assessora Executiva","Adriana Freitas","","","https://drive.google.com/thumbnail?id=10tLCxGkYvYjNJF4toDSg5Hce5bxLgDDP&sz=w200",""],[4,2,"Assessora de Marketing","Giovanna Silva Cintra","","","https://drive.google.com/thumbnail?id=1iEA-ICfdIPFqgg0-NylcgwcCpiCYz12A&sz=w200",""],[5,2,"Assessora Administrativa","Cristina Gomes Ribeiro","","","https://drive.google.com/thumbnail?id=1AbgCXZ3bVtH7-UDXmX1FeDU6KNDxKlb4&sz=w200",""],[3,2,"Assessora Executiva","Karine Martins de Oliveira","","","https://drive.google.com/thumbnail?id=1b7zsVoE27fH9Wi78vKOvbb0oZOj8OK0k&sz=w200",""],[35,30,"Gerência de Avaliação de Programas e Políticas Públicas","Rhayneman Rogério Macedo","","","",""],[6,1,"Superintendente de Planejamento","Vagner Bruno","","","https://drive.google.com/thumbnail?id=1RgR4om29gPGy432Xq9R9Y_9XvnjH1r-H&sz=w200",""],[7,6,"Assessora de Planejamento","Heloisa de Sousa Bastos","","","https://drive.google.com/thumbnail?id=1JQimWTILj-0REz4FsfBT2HAX9nx8Qg-k&sz=w200",""],[8,6,"Assessora de Planejamento","Sablina Lemes Valim","","","",""],[9,6,"Gerente de Planejamento","Armando Melo","","","https://drive.google.com/thumbnail?id=129JIVu9fcJyehDDCxi7bi3pItKdcV5qm&sz=w200",""],[10,9,"Gerência de Planejamento","Raquel Rezende","","","https://drive.google.com/thumbnail?id=13yJgMfFb8vXZqN3B3SC1pm5-xvRdWSit&sz=w200",""],[11,9,"Gerência de Planejamento","Antônio Alan de Freitas","","","https://drive.google.com/thumbnail?id=1n6rxwToWpDHeOzh7oMQf7U3kUeW8Tj20&sz=w200",""],[12,9,"Gerência de Planejamento","Ana Paula De Carvalho Ferreira","","","https://drive.google.com/thumbnail?id=1nI1WrVHWjguw8CgN1mB6FpO7SVLCqqiZ&sz=w200",""],[13,14,"Gerências de Políticas de médio e longo prazo","Camila Rocha","","","https://drive.google.com/thumbnail?id=14K0QjahKMWdX7orQYzblHdU94w3SHe4p&sz=w200",""],[14,6,"Gerente de Políticas de médio e longo prazo","Evelyn Cruvinel","","","https://drive.google.com/thumbnail?id=1pWwaLW0JPZcWWs1vOPjEKw4KMlIxwDU6&sz=w200",""],[15,14,"Gerências de Políticas de médio e longo prazo","Eduardo Mesquita","","","https://drive.google.com/thumbnail?id=1WiZMFua1aHXWkZpT6GQBQLcTSZrrUnBi&sz=w200",""],[17,14,"Gerências de Políticas de médio e longo prazo","Polyana Pamela","","","https://drive.google.com/thumbnail?id=1HraQSSCB7dY9MtiBDKW7S81dsHoALrFs&sz=w200",""],[18,1,"Superintendente de Monitoramento","Daiany de Oliveira Santos","","","https://drive.google.com/thumbnail?id=1Y5p6RiuzawPn_UROl1H28TD3kO4B1KKn&sz=w200",""],[19,18,"Assessor de Monitoramento","Otávio Wudson Cordeiro Cintra","","","https://drive.google.com/thumbnail?id=1Yiem81XH4qX6Am00YTS2z3zF3PgOBFHR&sz=w200",""],[20,18,"Gerente de Monitoramento","Cassiano Brito","","","https://drive.google.com/thumbnail?id=1PBc6Omy8U93BUUd-7RsVL7oGkFUD3GhN&sz=w200",""],[21,20,"Gerência de Monitoramento","Jeovah Quintino da Silva","","","https://drive.google.com/thumbnail?id=1brrIN4mqN_WsoLacTPwUZ3KM1YupVGz2&sz=w200",""],[22,20,"Gerência de Monitoramento","Rita de Cassia","","","https://drive.google.com/thumbnail?id=1l-hp2ew8lf7oY3QGDI5QbcH8ExPtBCsO&sz=w200",""],[23,20,"Gerência de Monitoramento","Karine Duarte Brandão","","","https://drive.google.com/thumbnail?id=1hZvQEWBCKG5l-ZJMsXmcJ9cNUFlqTi9M&sz=w200",""],[24,30,"Gerência de Avaliação de Programas e Políticas Públicas","Henrique Mesquita Tonha","","","https://drive.google.com/thumbnail?id=1s5g_YWTLq372lomABigLBDBYQlbcoiES&sz=w200",""],[25,20,"Gerência de Monitoramento","Cleiton Moraes","","","https://drive.google.com/thumbnail?id=1nzr-l9ao1Wc9mFbCMmwd2bkgU0p1A_NJ&sz=w200",""],[26,20,"Gerência de Monitoramento","Lívia Almeida Maroclo","","","https://drive.google.com/thumbnail?id=1g390WlNUX33AWSTzJF_AztgoeNMY4_Ao&sz=w200",""],[27,20,"Gerência de Monitoramento","Marcela Cortez","","","https://drive.google.com/thumbnail?id=1ySFwDNGfnF9xKkESDNJi2_4S7Clo6XEB&sz=w200",""],[28,20,"Gerência de Monitoramento","Nancy Santana","","","https://drive.google.com/thumbnail?id=1KF-CYlG5wDuI2g5LWN9JoAPj0Ar1epra&sz=w200",""],[29,20,"Gerência de Monitoramento","Heuler Neves de Assis","","","https://drive.google.com/thumbnail?id=1jNLahPggK1p_hVoNeDz7nhROt9LWuDlC&sz=w200",""],[30,18,"Gerente de Avaliação de Programas e Políticas Públicas","Achilles Mascarenhas Carvalho","","","fotos/org-30.png",""],[31,30,"Gerência de Avaliação de Programas e Políticas Públicas","Izael Julio Silva","","","https://drive.google.com/thumbnail?id=1oBtDlxQSGMgsw7hLDgBJ6RnPUmUEofDi&sz=w200",""],[32,9,"Gerência de Planejamento","Fernanda Araújo Vieira","","","",""],[33,30,"Gerência de Avaliação de Programas e Políticas Públicas","Iduardo Donizet Gomes Júnior","","","",""],[34,20,"Gerência de Monitoramento","Luciana Vieira da Silva","","","",""],[36,9,"Gerência de Planejamento","Karen Quezia de Oliveira","","","",""],[37,18,"Superintendente de Monitoramento","Vinicius Mamede Salum Chaer","","","",""],[38,6,"Assessora de Planejamento","Simone Alves dos Santos Jorge","","","",""],[39,2,"Assessor de Inovação","Marcos Vinicius Branquinho Xavier","","","",""]];
+// Organograma: nomes, cargos, chefias, fotos e contatos NÃO ficam no código (repositório público);
+// vêm das tabelas organograma e organograma_contatos, só depois do login (ver loadOrgContacts)
 // Substituições no organograma: quem aparece no lugar da chefia, com a nota abaixo do nome
-const SUBSTITUI = { 18: { por: 37, nota: 'Superintendente de Monitoramento (Substituindo Daiany)' } };
-const SUBST_IDS = new Set(Object.values(SUBSTITUI).map(x => x.por));
-const ORG = ORG0.map(o => o[0] === 1 ? o.slice(0, 6).concat(RES("org1"), o.slice(7)) : o[0] === 30 ? o.slice(0, 6).concat(RES("org30"), o.slice(7)) : o);
+const SUBSTITUI = {}; // { id da chefia: { por: id de quem a substitui, nota } } — preenchido a partir do banco
+const SUBST_IDS = new Set();
+const ORG = []; // [id, id da chefia, cargo, nome, e-mail, celular, foto, aniversário] — preenchido após o login
 const UNITS = { scpma:['SCPMA','#0b4f9c'], sma:['SMA','#1f9d4c'], gemonit:['GEMONIT','#5b8fd6'], gappp:['GAPPP','#c99a00'], suplan:['SUPLAN','#7cc576'], geplan:['GEPLAN','#0f7a5c'], gpmlp:['GPMLP','#0b2b55'] };
 const UNIT_ROOT = { 9:'geplan', 14:'gpmlp', 6:'suplan', 20:'gemonit', 30:'gappp', 18:'sma' };
 const UNIT_FULL = { scpma:'Subsecretaria Central de Planejamento, Monitoramento e Avaliação', sma:'Superintendência de Monitoramento', gemonit:'Gerência de Monitoramento', gappp:'Gerência de Avaliação de Programas e Políticas Públicas', suplan:'Superintendência de Planejamento', geplan:'Gerência de Planejamento', gpmlp:'Gerência de Políticas de Médio e Longo Prazo' };
@@ -466,8 +465,16 @@ class Component extends DCLogic {
     await this.loadOrgContacts();
     this.enter(sv);
   }
-  // Contatos do organograma (só para quem fez login): preenche e-mail, celular e aniversário no ORG
+  // Organograma e contatos (só para quem fez login): monta o ORG e preenche e-mail, celular e aniversário
   async loadOrgContacts() {
+    try {
+      const { data: org, error: eo } = await this.sb().from('organograma').select('id,superior_id,cargo,nome,foto,substitui,nota').order('ordem');
+      if (eo) throw eo;
+      ORG.length = 0; Object.keys(SUBSTITUI).forEach(k => delete SUBSTITUI[k]); SUBST_IDS.clear();
+      (org || []).forEach(r => {
+        ORG.push([r.id, r.superior_id, r.cargo || '', r.nome, '', '', r.foto && /^data:/.test(r.foto) ? blobUrl(r.foto) : (r.foto || ''), '']);
+        if (r.substitui) { SUBSTITUI[r.substitui] = { por: r.id, nota: r.nota || '' }; SUBST_IDS.add(r.id); } });
+    } catch (e) { console.warn('[Hub] Erro ao carregar o organograma:', errMsg(e)); }
     try {
       const { data, error } = await this.sb().from('organograma_contatos').select('org_id,email,telefone,aniversario');
       if (error) throw error;
@@ -475,7 +482,7 @@ class Component extends DCLogic {
       this.setState({ orgContactsAt: Date.now() });
     } catch (e) { console.warn('[Hub] Erro ao carregar contatos do organograma:', errMsg(e)); }
   }
-  clearOrgContacts() { ORG.forEach(o => { o[4] = ''; o[5] = ''; o[7] = ''; }); }
+  clearOrgContacts() { ORG.length = 0; Object.keys(SUBSTITUI).forEach(k => delete SUBSTITUI[k]); SUBST_IDS.clear(); } // ao sair, nada do organograma fica na memória
   enter(sv) {
     this.setState({ me: sv, logged: true, view: 'inicio', lp: '', lp2: '', lstep: 'login', lmsg: '', busy: false, uSel: this.cu(sv).unit });
     this.postLogin(sv);
@@ -1231,8 +1238,8 @@ class Component extends DCLogic {
       const sub = Object.values(SUBSTITUI).find(x => x.por === o[0]);
       return { id: o[0], name: nm, role: sub ? sub.nota : ((pf.cargo || '').trim() || o[2]), email: o[4], mailto: 'mailto:' + o[4], tel, img, hasImg: !!img, bgImg: img ? 'url("' + img + '")' : 'none', bday, d: bday, initials: ini(nm), unitId: u, unit: UNITS[u][0], color: UNITS[u][1], short: nm.split(' ').slice(0, 3).join(' '), open: () => { this.setState({ person: o[0] }); this.loadPersonAdmin(o[0]); }, hideImg }; };
     const people = ORG.map(P);
-    const byId = id => people.find(p => p.id === id);
-    // chefia exibida (considera substituições, ex.: Vinicius no lugar da Daiany)
+    const byId = id => people.find(p => p.id === id) || P([id, null, '', 'Carregando organograma', '', '', '', '']); // organograma só chega depois do login
+    // chefia exibida (considera substituições cadastradas no organograma: quem responde pela chefia)
     const headOf = id => byId((SUBSTITUI[id] || {}).por || id);
 
     const goView = (v, extra) => prevent(() => this.setState({ view: v, rail: false, ...(extra || {}) }));
@@ -1443,7 +1450,7 @@ class Component extends DCLogic {
     const plist = people.filter(p => (!dU.length || dU.includes(p.unitId)) && (!q || (p.name + ' ' + p.role + ' ' + p.unit).toLowerCase().includes(q)))
       .slice().sort((a, b) => a.name.localeCompare(b.name, 'pt', { sensitivity: 'base' })); // ordem alfabética (primeiro nome)
     const kids = id => ORG.filter(o => o[1] === id && !SUBST_IDS.has(o[0])).sort((x, z) => x[3].localeCompare(z[3], 'pt'));
-    const brs = kids(1); const staffB = brs.find(b => !kids(b[0]).some(c => kids(c[0]).length));
+    const brs = kids(1); const staffB = brs.find(b => !kids(b[0]).some(c => kids(c[0]).length)) || [0];
     const org = { top: byId(1), staff: { head: byId(staffB[0]), members: kids(staffB[0]).map(o => byId(o[0])) },
       branches: brs.filter(b => b !== staffB).map(b => { const ch = kids(b[0]); const hp = headOf(b[0]);
         return { head: hp, unit: hp.unit, color: hp.color, assessores: ch.filter(c => !kids(c[0]).length).map(o => byId(o[0])), hasAss: ch.some(c => !kids(c[0]).length),
