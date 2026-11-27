@@ -46,6 +46,54 @@ const ANEXOS_BUCKET = 'anexos-eventos';
 const DOCS_BUCKET = 'documentos-admin';
 const PORT_BUCKET = 'portarias'; // PDFs públicos: o portal do PPA lê a tabela portarias e linka estes arquivos
 const PORTAL_PPA = 'https://ppa.go.gov.br/elementor-200795/';
+// Leitura automática do PDF da portaria (pdf.js, carregado só quando alguém escolhe um PDF)
+const PDFJS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+let _pdfjs = null;
+// o leitor roda na própria página (sem "worker"): o Hub é um pacote único e não pode iniciar workers
+const carregarScript = src => new Promise((ok, erro) => { const sc = document.createElement('script'); sc.src = src; sc.onload = ok; sc.onerror = () => erro(new Error('não carregou: ' + src)); document.head.appendChild(sc); });
+const carregarPdfjs = () => _pdfjs || (_pdfjs = (async () => {
+  if (!window.pdfjsLib) await carregarScript(PDFJS_URL);
+  if (!(window.pdfjsWorker && window.pdfjsWorker.WorkerMessageHandler)) await carregarScript(PDFJS_URL.replace('pdf.min.js', 'pdf.worker.min.js'));
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_URL.replace('pdf.min.js', 'pdf.worker.min.js');
+  return window.pdfjsLib; })().catch(e => { _pdfjs = null; throw e; }));
+const PT_MESES = { janeiro: 1, fevereiro: 2, 'março': 3, marco: 3, abril: 4, maio: 5, junho: 6, julho: 7, agosto: 8, setembro: 9, outubro: 10, novembro: 11, dezembro: 12 };
+const semAcento = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const portariaDoTexto = (txt, orgaosConhecidos) => {
+  const linhas = String(txt || '').replace(/ /g, ' ').split(/\n/).map(l => l.replace(/[ \t]+/g, ' ').trim()).filter(Boolean);
+  const plano = linhas.join(' ');
+  const out = { nome: '', data: '', orgao: '', ementa: '' };
+  const h = plano.match(/PORTARIA\s+(ECONOMIA\s+)?N\s*[º°o.]*\s*(\d[\d.]*)\s*,?\s*DE\s+(\d{1,2})\s*[º°o]?\s+DE\s+([A-Za-zÀ-ÿ]+)\s+DE\s+(\d{4})/i);
+  if (h) { const mes = PT_MESES[semAcento(h[4])];
+    if (mes) { out.data = h[5] + '-' + String(mes).padStart(2, '0') + '-' + String(+h[3]).padStart(2, '0');
+      out.nome = 'Portaria ' + (h[1] ? 'Economia ' : '') + 'nº ' + h[2] + ', de ' + (+h[3]) + ' de ' + h[4].toLowerCase() + ' de ' + h[5]; } }
+  // ementa: texto do Art. 1º (até o Art. 2º); se ele só introduz uma citação ("...:"), usa a linha-resumo abaixo do título
+  const a1 = plano.match(/\bArt\.?\s*1(?!\d)\s*[º°o]?\s*\.?\s*-?\s*(.+?)(?=\s*\bArt\.?\s*2(?!\d)\s*[º°o]?|\s*Par[áa]grafo\s+[úu]nico|\s*§\s*1|$)/);
+  let em = a1 ? a1[1].trim().replace(/:\s*$/, '.') : '';
+  if (!em || em.length > 1500) {
+    const i = linhas.findIndex(l => /PORTARIA\s+(ECONOMIA\s+)?N/i.test(l));
+    const res = i >= 0 ? linhas.slice(i + 1).find(l => !/^(A|O)\s+SECRET[ÁA]RI/i.test(l) && l.length > 15) : '';
+    if (res && res.length < 400) em = res; }
+  out.ementa = em.replace(/\s+/g, ' ').trim();
+  // órgão: "referente à X - SIGLA"; completa com o nome já usado em portarias anteriores
+  const lista = (orgaosConhecidos || []).filter(Boolean), base = o => semAcento(String(o).split(/\s+[–-]\s+/)[0]).trim();
+  const ref = out.ementa.match(/referente\s+(?:à|ao|às|aos|a)\s+(.+?)(?=,|\s+conforme\b|\s+com\s+a\b|\s+denominad|\s+no\s+âmbito|\.\s*$|$)/i);
+  let org = ref ? ref[1].trim().replace(/\s+-\s+/g, ' – ').replace(/[.;]$/, '') : '';
+  if (/^(metas|o\s+exerc|ao\s+exerc|as\s+metas)/i.test(org)) org = '';
+  const conhecido = org ? lista.find(o => base(o) === base(org)) : null;
+  if (conhecido) org = conhecido;
+  if (!org) { const alvo = semAcento(out.ementa); let melhor = '';
+    lista.forEach(o => { const b = base(o); if (b.length > 8 && alvo.includes(b) && b.length > base(melhor).length) melhor = o; }); org = melhor; }
+  if (!org && /caderno\s+de\s+revis/i.test(out.ementa)) org = lista.find(o => /^geral\b/i.test(o)) || 'Geral (todos os órgãos)';
+  out.orgao = org;
+  return out;
+};
+// junta o texto de uma página do pdf.js sem partir palavras (o pdf.js separa letras ligadas como "fi")
+const pdfPaginaTexto = c => { let t = '', fim = null, y = null;
+  c.items.forEach(it => { const x = it.transform[4], yy = it.transform[5], h = Math.abs(it.transform[3]) || 10;
+    if (y !== null && Math.abs(yy - y) > h * 0.5) t += '\n'; else if (fim !== null && x - fim > h * 0.15) t += ' ';
+    t += it.str; fim = x + (it.width || 0); y = yy; if (it.hasEOL) { t += '\n'; fim = null; y = null; } });
+  return t; };
+
 // só aceita endereços http(s); sem esquema, assume https://
 const toUrl = v => { v = String(v || '').trim(); if (!v) return ''; if (!/^[a-z][a-z0-9+.-]*:/i.test(v)) v = 'https://' + v; return /^https?:\/\/[^\s]+$/i.test(v) ? v : ''; };
 const UNIT_BY_NAME = { SCPMA:'scpma', SMA:'sma', GEMONIT:'gemonit', GAPPP:'gappp', SUPLAN:'suplan', GEPLAN:'geplan', GPMLP:'gpmlp' };
@@ -827,6 +875,22 @@ class Component extends DCLogic {
   portOpen(p) { this._portFile = null;
     this.setState({ portEdit: p ? { id: p.id, nome: p.nome, data: p.data || '', orgao: p.orgao, ementa: p.ementa, arquivo_url: p.arquivo_url || '', arquivo_caminho: p.arquivo_caminho || '', publicado: p.publicado !== false, fileName: '', conf: false }
       : { nome: '', data: TODAY, orgao: '', ementa: '', arquivo_url: '', arquivo_caminho: '', publicado: true, fileName: '', conf: false } }); }
+  async portLer(f) {
+    this.setState(st => ({ portEdit: st.portEdit && { ...st.portEdit, lendo: 'Lendo o PDF…', lido: '' } }));
+    try {
+      const lib = await carregarPdfjs();
+      const doc = await lib.getDocument({ data: new Uint8Array(await f.arrayBuffer()) }).promise; let txt = '';
+      for (let n = 1; n <= Math.min(3, doc.numPages); n++) txt += pdfPaginaTexto(await (await doc.getPage(n)).getTextContent()) + '\n';
+      const r = portariaDoTexto(txt, [...new Set((this.state.portList || []).map(p => p.orgao))]);
+      const achou = ['nome', 'data', 'orgao', 'ementa'].filter(k => r[k]);
+      this.setState(st => { const e = st.portEdit; if (!e) return {}; const n = { ...e, lendo: '' };
+        achou.forEach(k => { if (!e.id || !String(e[k] || '').trim()) n[k] = r[k]; });
+        n.lido = !txt.trim() ? 'Não consegui ler o texto deste PDF (parece ser uma imagem escaneada). Preencha os campos abaixo.'
+          : achou.length === 4 ? 'Preenchido a partir do PDF — confira antes de salvar.'
+          : 'Preenchi o que encontrei no PDF; complete ' + ['nome', 'data', 'orgao', 'ementa'].filter(k => !r[k]).map(k => ({ nome: 'o nome', data: 'a data', orgao: 'o órgão', ementa: 'a ementa' })[k]).join(', ') + '.';
+        return { portEdit: n }; });
+    } catch (x) { console.warn('[Hub] Erro ao ler o PDF:', x); this.setState(st => ({ portEdit: st.portEdit && { ...st.portEdit, lendo: '', lido: 'Não consegui ler o PDF automaticamente. Preencha os campos abaixo.' } })); }
+  }
   async portSave() {
     const e = this.state.portEdit; if (!e || this.state.portBusy) return;
     const nome = (e.nome || '').trim(), orgao = (e.orgao || '').trim(), ementa = (e.ementa || '').trim(), f = this._portFile;
@@ -1585,7 +1649,8 @@ class Component extends DCLogic {
         const setT = k => ev => { const v = ev.target.value; this.setState(st => ({ portEdit: { ...st.portEdit, [k]: v, conf: false } })); };
         return { open: true, title: e.id ? 'Editar portaria' : 'Nova portaria', e, set: ['nome', 'data', 'orgao', 'ementa', 'arquivo_url'].reduce((o, k) => (o[k] = setT(k), o), {}),
           orgaos: [...new Set((s.portList || []).map(p => p.orgao))].sort((a, b) => a.localeCompare(b, 'pt')).map(o => ({ o })),
-          pick: ev => { const f = (ev.target.files || [])[0]; ev.target.value = ''; this._portFile = f || null; this.setState(st => ({ portEdit: { ...st.portEdit, fileName: f ? f.name : '' } })); },
+          pick: ev => { const f = (ev.target.files || [])[0]; ev.target.value = ''; this._portFile = f || null; this.setState(st => ({ portEdit: { ...st.portEdit, fileName: f ? f.name : '' } })); if (f) this.portLer(f); },
+          lendo: e.lendo || '', hasLendo: !!e.lendo, lido: e.lido || '', hasLido: !!e.lido && !e.lendo, lidoBg: /^Preenchido/.test(e.lido || '') ? '#eaf6ee' : '#fdf1c4', lidoFg: /^Preenchido/.test(e.lido || '') ? '#146c35' : '#7a5d00',
           fileTxt: e.fileName ? 'Novo PDF: ' + e.fileName : (e.arquivo_url ? 'PDF atual mantido' : 'Nenhum PDF escolhido'), hasCur: !!e.arquivo_url && !e.fileName, cur: e.arquivo_url,
           pub: !!e.publicado, setPub: ev => { const v = !!ev.target.checked; this.setState(st => ({ portEdit: { ...st.portEdit, publicado: v } })); },
           canDel: !!e.id, delTxt: e.conf ? 'Confirmar exclusão' : 'Excluir', delBg: e.conf ? '#fdecea' : 'transparent', saveTxt: s.portBusy ? 'Salvando…' : (e.publicado ? 'Salvar e publicar' : 'Salvar'),

@@ -37,6 +37,9 @@ let lastEmail = 'giovanna.cintra@scpma.local';
   page.on('pageerror', e => errors.push('pageerror: ' + e.message));
   page.on('console', m => { if (m.type() === 'error' && !/ERR_|Failed to load|WebSocket|net::/.test(m.text())) errors.push('console: ' + m.text()); });
   page.on('dialog', d => d.accept());
+  // leitor de PDF (pdf.js): em ambiente sem internet, PDFJS_DIR aponta para o pacote pdfjs-dist@3.11.174
+  if (process.env.PDFJS_DIR) await page.context().route(/cdnjs\.cloudflare\.com\/ajax\/libs\/pdf\.js\/3\.11\.174\//, r => r.fulfill({ contentType: 'application/javascript', headers: { 'access-control-allow-origin': '*' },
+    body: require('fs').readFileSync(process.env.PDFJS_DIR + '/build/' + r.request().url().split('/').pop()) }));
   await page.route(/supabase\.co/, async route => {
     const req = route.request(), u = new URL(req.url()), p = u.pathname, m = req.method();
     const json = (b, s = 200) => route.fulfill({ status: s, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify(b) });
@@ -330,9 +333,14 @@ let lastEmail = 'giovanna.cintra@scpma.local';
   await page.fill('textarea[placeholder="Fica aprovada…"]', 'Fica aprovada a revisão de metas físicas do PPA 2024–2027.');
   await page.getByRole('button', { name: /Salvar e publicar/ }).click(); await page.waitForTimeout(200);
   console.log('sem PDF barrada:', writes.filter(w => w[1] === 'portarias').length === 0);
-  await page.locator('input[type="file"][accept^="application/pdf"]').setInputFiles({ name: 'Portaria 320.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF-1.4 teste') });
+  // leitura automática: PDF de uma portaria real (Portaria Economia nº 258 – SANEAGO)
+  await page.fill('input[placeholder^="Ex.: Portaria Economia"]', ''); await page.fill('input[placeholder^="Ex.: Secretaria de Estado da Saúde"]', ''); await page.fill('textarea[placeholder="Fica aprovada…"]', '');
+  await page.locator('input[type="file"][accept^="application/pdf"]').setInputFiles(path.join(__dirname, 'portaria-exemplo.pdf'));
+  await page.waitForFunction(() => !document.body.innerText.includes('Lendo o PDF'), null, { timeout: 20000 }).catch(() => {}); await page.waitForTimeout(300);
+  console.log('PDF lido:', JSON.stringify([await page.inputValue('input[placeholder^="Ex.: Portaria Economia"]'), await page.inputValue('input[type="date"] >> nth=-1'), await page.inputValue('input[placeholder^="Ex.: Secretaria de Estado da Saúde"]'), (await page.inputValue('textarea[placeholder="Fica aprovada…"]')).slice(0, 60)]), '| aviso:', await page.getByText('Preenchido a partir do PDF — confira antes de salvar.').count());
+  await shot('29-portaria-lida');
   await page.getByRole('button', { name: /Salvar e publicar/ }).click(); await page.waitForTimeout(700);
-  console.log('PDF enviado:', JSON.stringify(writes.filter(w => w[0] === 'PORT-UP').map(w => w[1].replace(/\d{10,}/, 'TS'))), '| gravou:', JSON.stringify(writes.filter(w => w[1] === 'portarias').map(w => [w[0], w[3].nome, w[3].orgao, w[3].publicado, /\/storage\/v1\/object\/public\/portarias\//.test(w[3].arquivo_url)])));
+  console.log('PDF enviado:', JSON.stringify(writes.filter(w => w[0] === 'PORT-UP').map(w => w[1].replace(/\/\d{10,}-/, '/TS-'))), '| gravou:', JSON.stringify(writes.filter(w => w[1] === 'portarias').map(w => [w[0], w[3].nome, w[3].orgao, w[3].publicado, /\/storage\/v1\/object\/public\/portarias\//.test(w[3].arquivo_url)])));
   await shot('28-portarias');
   // ===== Prazos e datas no calendário
   await page.locator('aside').first().hover(); await page.getByText('Calendário', { exact: true }).first().click(); await page.mouse.move(900, 400); await page.waitForTimeout(400);
