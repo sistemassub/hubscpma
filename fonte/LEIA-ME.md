@@ -52,7 +52,8 @@ A proteção está no banco (RLS), não no código:
   `fonte/portal-ppa/portarias-widget.html` (colado uma vez no widget HTML do Elementor), que lê as portarias publicadas direto
   do banco com a chave pública; se o banco não responder, mostra as linhas fixas que estão no próprio código.
   Ao escolher o PDF no Hub, ele é lido no navegador (pdf.js 3.11.174, carregado do cdnjs só nessa hora) e `portariaDoTexto`
-  preenche nome, data, órgão (completa a sigla com órgãos já usados) e ementa (texto do Art. 1º). Teste: `PDFJS_DIR=<pdfjs-dist>/package`
+  preenche nome, data, órgão (completa a sigla com órgãos já usados) e ementa (resumida por `ementaResumida` a partir do
+  Art. 1º, no padrão do portal: "Fica aprovada a … do Plano Plurianual – PPA para o quadriênio …, referente à <órgão>, conforme Anexo desta Portaria."). Teste: `PDFJS_DIR=<pdfjs-dist>/package`
   em ambiente sem internet; o PDF de exemplo é `testes/portaria-exemplo.pdf` (portaria pública).
 - **Banco de horas da semaninha:** `banco_horas_lancamentos` (horas em minutos; coluna `banco` = '52h' ou '8h', um valor por
   pessoa e bancão, gravado pela função `agenda_bh_definir`; o Total é a soma e não é editável),

@@ -58,6 +58,40 @@ const carregarPdfjs = () => _pdfjs || (_pdfjs = (async () => {
   return window.pdfjsLib; })().catch(e => { _pdfjs = null; throw e; }));
 const PT_MESES = { janeiro: 1, fevereiro: 2, 'março': 3, marco: 3, abril: 4, maio: 5, junho: 6, julho: 7, agosto: 8, setembro: 9, outubro: 10, novembro: 11, dezembro: 12 };
 const semAcento = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+// Ementa curta no padrão do portal: "<Fica aprovada> <o quê> do Plano Plurianual – PPA para o quadriênio AAAA–AAAA, referente à <órgão>[, complemento], conforme Anexo desta Portaria."
+const ementaResumida = (art1, orgao) => {
+  const t = String(art1 || '').replace(/\s+/g, ' ').trim().replace(/\.\s*$/, '');
+  if (!t) return '';
+  const q = t.match(/(20\d\d)\s*[–-]\s*(20\d\d)/), quad = q ? q[1] + '–' + q[2] : '2024–2027';
+  const ppa = 'Plano Plurianual – PPA para o quadriênio ' + quad;
+  const prepRef = (t.match(/referente\s+(à|ao|às|aos)\s/i) || [])[1] || 'à';
+  const ref = orgao ? ', referente ' + prepRef + ' ' + orgao : '';
+  // Retificação: "Retifica a Portaria nº X, de …, referente à publicação do …"
+  let m = t.match(/^Retific\w*\s+a\s+(Portaria\s+n\s*[º°o]?\s*[\d.]+,\s*de\s+\d{1,2}\s+de\s+[A-Za-zÀ-ÿ]+\s+de\s+\d{4})/i);
+  if (m) { const pub = t.match(/que\s+publica\s+(o|a)\s+(.+?)(?:\s+20\d\d\s*[–-]\s*20\d\d)?(?:,|$)/i);
+    return 'Retifica a ' + m[1] + (pub ? ', referente à publicação d' + pub[1].toLowerCase() + ' ' + pub[2].replace(/\s+do\s+Plano\s+Plurianual.*$/i, '') + ' do Plano Plurianual (PPA) ' + quad : ref) + '.'; }
+  m = t.match(/^(Ficam?\s+aprovad[ao]s?)\b\s*/i);
+  if (!m) { const frase = t.split(/(?<=\.)\s/)[0]; return (frase.length > 320 ? frase.slice(0, 317).replace(/\s+\S*$/, '') + '…' : frase.replace(/\.?$/, '.')); }
+  const verbo = m[1].charAt(0).toUpperCase() + m[1].slice(1);
+  // tira os trechos intercalados (", no âmbito …, em decorrência …,") até chegar no objeto "a …"/"as …"
+  let resto = t.slice(m[0].length).replace(/^,.*?,\s*(?=(?:a|as|o|os)\s)/i, '').trim();
+  const om = resto.match(/^((?:a|as|o|os)\s.+?)(?=\s+(?:do|no|ao)\s+Plano\s+Plurianual|,\s*(?:referente|conforme|compreendendo|denominad|com\s)|\s+conforme\s|$)/i);
+  let objeto = om ? om[1].trim() : resto;
+  let naEntrega = '';
+  const me = objeto.match(/^(.+?)\s+d[ao]s?\s+Entrega:?\s*(.+)$/i);
+  if (me) { objeto = me[1].trim(); naEntrega = me[2].trim(); }
+  const prepPPA = (resto.match(/^(?:a|as|o|os)\s.+?\s+(do|no|ao)\s+Plano\s+Plurianual/i) || [])[1] || 'do';
+  const temPPA = /Plano\s+Plurianual/i.test(objeto);
+  const nomeEnt = (t.match(/denominad[ao]s?:?\s*(.+?)(?:,\s*conforme|$)/i) || [])[1];
+  const comp = (t.match(/,\s*(com\s+a\s+inclus[ãa]o\s+.+?)(?=,\s*conforme|$)/i) || [])[1];
+  const anexo = (t.match(/conforme\s+(?:especificad[oa]\s+n[oa]\s+)?(Anexo(?:\s+[ÚU]nico)?)\s+desta\s+Portaria/i) || t.match(/(Anexo(?:\s+[ÚU]nico)?)\s+desta\s+Portaria/i) || [])[1];
+  let e = verbo + ' ' + objeto + (temPPA ? '' : ' ' + prepPPA + ' ' + ppa) + ref;
+  if (nomeEnt) e += ', denominada: ' + nomeEnt.replace(/\.$/, '');
+  else if (naEntrega) e += ', na entrega ' + naEntrega;
+  else if (comp) e += ', ' + comp;
+  if (!nomeEnt && anexo) e += ', conforme ' + anexo.replace(/unico/i, 'Único') + ' desta Portaria';
+  return e.replace(/\s+/g, ' ').replace(/\s+,/g, ',') + '.';
+};
 const portariaDoTexto = (txt, orgaosConhecidos) => {
   const linhas = String(txt || '').replace(/ /g, ' ').split(/\n/).map(l => l.replace(/[ \t]+/g, ' ').trim()).filter(Boolean);
   const plano = linhas.join(' ');
@@ -85,6 +119,7 @@ const portariaDoTexto = (txt, orgaosConhecidos) => {
     lista.forEach(o => { const b = base(o); if (b.length > 8 && alvo.includes(b) && b.length > base(melhor).length) melhor = o; }); org = melhor; }
   if (!org && /caderno\s+de\s+revis/i.test(out.ementa)) org = lista.find(o => /^geral\b/i.test(o)) || 'Geral (todos os órgãos)';
   out.orgao = org;
+  out.ementa = ementaResumida(out.ementa, org) || out.ementa; // resumida, no padrão do portal
   return out;
 };
 // junta o texto de uma página do pdf.js sem partir palavras (o pdf.js separa letras ligadas como "fi")
