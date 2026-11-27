@@ -55,6 +55,11 @@ A proteção está no banco (RLS), não no código:
   preenche nome, data, órgão (completa a sigla com órgãos já usados) e ementa (resumida por `ementaResumida` a partir do
   Art. 1º, no padrão do portal: "Fica aprovada a … do Plano Plurianual – PPA para o quadriênio …, referente à <órgão>, conforme Anexo desta Portaria."). Teste: `PDFJS_DIR=<pdfjs-dist>/package`
   em ambiente sem internet; o PDF de exemplo é `testes/portaria-exemplo.pdf` (portaria pública).
+- **Portarias dos colegiados:** aba Colegiados → Portarias. Tabela `colegiado_portarias` (colegiado_id, nome, data, ementa, PDF
+  no Storage `portarias/colegiados/`); todos os logados consultam, só administradores cadastram. Ficam separadas das portarias do
+  PPA e não vão para o portal.
+- **Navegação:** menu = Início · Calendário · Unidades (agenda: Lista | Por unidade) · Central (Unidades · Organograma · Diretório) ·
+  Colegiados · Usuários. Relatórios e a página de Férias saíram do menu; quem está de férias aparece na Visão Geral (Início).
 - **Banco de horas da semaninha:** `banco_horas_lancamentos` (horas em minutos; coluna `banco` = '52h' ou '8h', um valor por
   pessoa e bancão, gravado pela função `agenda_bh_definir`; o Total é a soma e não é editável),
   `banco_horas_areas` ("atualizado até" de SCPMA, SMA e SUPLAN) e `banco_horas_editores` (quem lança em cada área:

@@ -115,10 +115,10 @@
               <span style="font-size:13px;color:#c9d8ec">{{ nextEv.meta }}{{ nextEv.dot }}<span style="color:#f5c518">{{ nextEv.rel }}</span></span>
             </div>
           </button>
-          <button sc-camel-on-click="{{ goFerias }}" style="text-align:left;border:0;background:#f6f8f7;border-radius:20px;padding:22px;display:flex;flex-direction:column;justify-content:space-between;gap:16px" style-hover="background:#edf1ef">
+          <div style="text-align:left;background:#f6f8f7;border-radius:20px;padding:22px;display:flex;flex-direction:column;justify-content:space-between;gap:16px">
             <span style="width:36px;height:36px;border-radius:50%;background:#dcf2e3;color:#1f9d4c;display:grid;place-items:center;font-size:18px"><i class="ph-duotone ph-umbrella"></i></span>
             <div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:600;font-size:40px;line-height:1;letter-spacing:-0.04em">{{ stat.ferias }}</span><span style="font-size:13px;color:#5f6b65">de férias hoje</span></div>
-          </button>
+          </div>
           <div style="background:#f6f8f7;border-radius:20px;padding:22px;display:flex;flex-direction:column;justify-content:space-between;gap:16px">
             <span style="width:36px;height:36px;border-radius:50%;background:#fdf1c4;color:#9a7700;display:grid;place-items:center;font-size:18px"><i class="ph-duotone ph-cake"></i></span>
             <div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:600;font-size:40px;line-height:1;letter-spacing:-0.04em">{{ anivCount }}</span><span style="font-size:13px;color:#5f6b65">aniversariantes no mês</span><span style="font-size:12px;color:#7a5d00;margin-top:6px;line-height:1.4">{{ anivNames }}</span></div>
@@ -147,21 +147,31 @@
         </section>
         <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:28px;align-items:start">
           <section style="display:flex;flex-direction:column;gap:16px">
-            <div style="display:flex;justify-content:space-between;align-items:baseline">
-              <h2 style="margin:0;font-weight:600;font-size:20px;letter-spacing:-0.02em">Férias</h2>
-              <a href="#" sc-camel-on-click="{{ goFerias }}" style="font-size:14px">Ver todas →</a>
-            </div>
+            <h2 style="margin:0;font-weight:600;font-size:20px;letter-spacing:-0.02em;display:flex;gap:8px;align-items:center"><i class="ph-duotone ph-umbrella" style="color:#1f9d4c"></i>De férias hoje</h2>
             <div style="background:#f6f8f7;border-radius:20px;display:flex;flex-direction:column;padding:8px 18px">
-              <sc-for list="{{ feriasRows }}" as="p" hint-placeholder-count="4">
-                <div data-mk="keep" style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:12px 0">
+              <sc-if value="{{ ferHojeVazio }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;color:#5f6b65;padding:12px 0">Ninguém de férias hoje.</span></sc-if>
+              <sc-for list="{{ ferHoje }}" as="p" hint-placeholder-count="3">
+                <div data-mk="keep" style="display:grid;grid-template-columns:8px minmax(0,1fr) auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #e9eeeb">
+                  <span style="width:8px;height:8px;border-radius:50%;background:{{ p.color }}"></span>
                   <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
-                    <span style="font-size:14px;font-weight:500">{{ p.name }}</span>
-                    <span style="font-size:12px;color:#5f6b65">{{ p.unit }} · {{ p.kind }} · {{ p.period }}</span>
+                    <span style="font-size:14px;font-weight:600">{{ p.name }}</span>
+                    <span style="font-size:12px;color:#5f6b65">{{ p.unit }} · {{ p.kind }} · {{ p.volta }}</span>
                   </div>
-                  <span style="font-size:12px;font-weight:500;padding:3px 10px;border-radius:999px;background:{{ p.badgeBg }};color:{{ p.badgeFg }};white-space:nowrap">{{ p.rel }}</span>
+                  <span style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:#fdf1c4;color:#7a5d00;white-space:nowrap">{{ p.until }}</span>
                 </div>
               </sc-for>
             </div>
+            <sc-if value="{{ temFerProx }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:4px">
+                <span style="font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#7a867f">Próximas</span>
+                <sc-for list="{{ ferProx }}" as="p" hint-placeholder-count="2">
+                  <div data-mk="keep" style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 2px">
+                    <span style="font-size:13px;min-width:0"><b style="font-weight:500">{{ p.name }}</b> <span style="color:#7a867f">· {{ p.unit }} · {{ p.period }}</span></span>
+                    <span style="font-size:12px;color:#0b4f9c;white-space:nowrap">{{ p.rel }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
           </section>
           <section style="display:flex;flex-direction:column;gap:16px">
             <h2 style="margin:0;font-weight:600;font-size:20px;letter-spacing:-0.02em">Sistemas</h2>
@@ -197,6 +207,11 @@
             </sc-for>
           </div>
         </div>
+        <sc-if value="{{ ag.isUni }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:2px;background:#f2f5f4;border-radius:12px;padding:3px;align-self:flex-start">
+            <sc-for list="{{ ag.formatos }}" as="f" hint-placeholder-count="2"><button sc-camel-on-click="{{ f.pick }}" style="border:0;background:{{ f.bg }};color:{{ f.fg }};box-shadow:{{ f.sh }};border-radius:10px;padding:7px 14px;font-size:13px;font-weight:{{ f.fw }};display:flex;gap:6px;align-items:center"><i class="{{ f.icon }}"></i>{{ f.name }}</button></sc-for>
+          </div>
+        </sc-if>
 
         <sc-if value="{{ ag.isCal }}" hint-placeholder-val="{{ true }}">
           <div style="display:flex;flex-direction:column;gap:16px">
@@ -698,12 +713,18 @@
             <h1 style="margin:0;font-weight:600;font-size:44px;letter-spacing:-0.04em;line-height:1">Colegiados</h1>
             <span style="font-size:15px;color:#5f6b65">{{ col.summary }}</span>
           </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <sc-if value="{{ col.isLista }}" hint-placeholder-val="{{ true }}">          <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button sc-camel-on-click="{{ col.excel }}" title="Exportar para Excel" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:11px 14px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-file-xls" style="color:#1f9d4c"></i>Excel</button>
             <button sc-camel-on-click="{{ col.pdf }}" title="Gerar PDF" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:11px 14px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-file-pdf" style="color:#b42318"></i>PDF</button>
             <sc-if value="{{ col.isAdm }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ col.add }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:14px;padding:11px 16px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap" style-hover="background:#178040"><i class="ph-bold ph-plus"></i>Novo colegiado</button></sc-if>
           </div>
+          </sc-if>
         </div>
+        <div style="display:flex;gap:4px;background:#f2f5f4;border-radius:14px;padding:4px;align-self:flex-start">
+          <sc-for list="{{ col.tabs }}" as="t" hint-placeholder-count="2"><button sc-camel-on-click="{{ t.pick }}" style="border:0;border-radius:10px;padding:9px 16px;font-size:14px;font-weight:{{ t.fw }};background:{{ t.bg }};color:{{ t.fg }};display:flex;gap:8px;align-items:center"><i class="{{ t.icon }}"></i>{{ t.name }}</button></sc-for>
+        </div>
+        <sc-if value="{{ col.isLista }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:24px">
         <div data-mk="two" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
           <sc-for list="{{ col.stats }}" as="k" hint-placeholder-count="4"><div style="background:#f6f8f7;border-radius:20px;padding:18px 20px;display:flex;flex-direction:column;gap:2px"><span style="font-size:34px;font-weight:600;letter-spacing:-0.04em;line-height:1">{{ k.v }}</span><span style="font-size:13px;color:#5f6b65">{{ k.l }}</span></div></sc-for>
         </div>
@@ -736,6 +757,7 @@
                   </div>
                   <sc-if value="{{ c.hasObs }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#3d4943;background:#f6f8f7;border-radius:10px;padding:8px 10px">{{ c.observacoes }}</span></sc-if>
                   <div style="border-top:1px solid #f0f3f1;padding-top:12px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+                    <sc-if value="{{ c.hasPort }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ c.verPort }}" style="align-self:flex-start;border:0;background:transparent;padding:0;font-size:13px;font-weight:600;color:#0b4f9c;display:flex;gap:6px;align-items:center"><i class="ph-duotone ph-scroll"></i>{{ c.portTxt }}</button></sc-if>
                     <sc-if value="{{ c.hasSei }}" hint-placeholder-val="{{ true }}"><a href="{{ c.sei }}" target="_blank" rel="noopener" style="font-size:13px;font-weight:600;display:flex;gap:6px;align-items:center"><i class="ph-duotone ph-files"></i>{{ c.seiLabel }} ↗</a></sc-if>
                     <sc-if value="{{ c.noSei }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#9aa5a0;display:flex;gap:6px;align-items:center"><i class="ph-duotone ph-files"></i>Sem processo SEI cadastrado</span></sc-if>
                   </div>
@@ -751,94 +773,37 @@
             </div>
           </aside>
         </div>
+        </div>
+        </sc-if>
+        <sc-if value="{{ col.isPort }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <div style="position:relative;flex:1;min-width:220px">
+                <i class="ph-duotone ph-magnifying-glass" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7a867f;font-size:16px"></i>
+                <input value="{{ col.cp.q }}" sc-camel-on-input="{{ col.cp.setQ }}" placeholder="Buscar por número, colegiado ou assunto" style="width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border:1px solid #e4e8e6;border-radius:14px;font-size:14px;background:#f6f8f7">
+              </div>
+              <sc-raw-select value="{{ col.cp.filtro }}" sc-camel-on-change="{{ col.cp.setFiltro }}" style="padding:11px 12px;border:1px solid #e4e8e6;border-radius:14px;font-size:14px;background:#fff;max-width:320px"><sc-for list="{{ col.cp.opts }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.n }}</option></sc-for></sc-raw-select>
+              <sc-if value="{{ col.isAdm }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ col.cp.novo }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:14px;padding:11px 16px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap"><i class="ph-bold ph-plus"></i>Nova portaria</button></sc-if>
+            </div>
+            <span style="font-size:13px;color:#5f6b65">{{ col.cp.resumo }}</span>
+            <sc-if value="{{ col.cp.loading }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;color:#7a867f">Carregando portarias…</span></sc-if>
+            <sc-if value="{{ col.cp.empty }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;color:#7a867f">Nenhuma portaria encontrada.</span></sc-if>
+            <sc-for list="{{ col.cp.list }}" as="p" hint-placeholder-count="3">
+              <div style="border:1px solid #e4e8e6;border-radius:16px;padding:14px 16px;display:flex;gap:14px;align-items:flex-start;background:#fff">
+                <span style="flex:none;width:40px;height:40px;border-radius:12px;background:#fbe1e1;color:#b42318;display:grid;place-items:center;font-size:20px"><i class="ph-duotone ph-file-pdf"></i></span>
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+                  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><sc-if value="{{ p.hasUrl }}" hint-placeholder-val="{{ true }}"><a href="{{ p.url }}" target="_blank" rel="noopener" style="font-size:15px;font-weight:600;color:#0b4f9c">{{ p.nome }}</a></sc-if><sc-if value="{{ p.noUrl }}" hint-placeholder-val="{{ false }}"><span style="font-size:15px;font-weight:600">{{ p.nome }}</span></sc-if><sc-if value="{{ p.hasData }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#7a867f">{{ p.data }}</span></sc-if></div>
+                  <span style="font-size:13px;font-weight:600;color:#3d4943">{{ p.col }}</span>
+                  <sc-if value="{{ p.hasEm }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#5f6b65;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">{{ p.ementa }}</span></sc-if>
+                </div>
+                <sc-if value="{{ col.isAdm }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ p.edit }}" title="Editar" style="flex:none;border:1px solid #e4e8e6;background:#fff;border-radius:10px;padding:7px 10px;font-size:13px;font-weight:600;display:flex;gap:5px;align-items:center"><i class="ph-bold ph-pencil-simple"></i>Editar</button></sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
       </div>
     </sc-if>
 
-    <sc-if value="{{ v.relatorios }}" hint-placeholder-val="{{ false }}">
-      <div style="display:flex;flex-direction:column;gap:24px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap">
-          <div style="display:flex;flex-direction:column;gap:4px">
-            <span style="font-size:12px;color:#7a867f">Gestão</span>
-            <h1 style="margin:0;font-weight:600;font-size:44px;letter-spacing:-0.04em;line-height:1">Relatórios</h1>
-            <span style="font-size:15px;color:#5f6b65">Indicadores da agenda institucional · {{ rel.period }}</span>
-          </div>
-          <div style="display:flex;gap:8px"><button sc-camel-on-click="{{ rel.excel }}" title="Exportar para Excel" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:11px 14px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-file-xls" style="color:#1f9d4c"></i>Excel</button><button sc-camel-on-click="{{ rel.pdf }}" title="Gerar PDF" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:11px 14px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-file-pdf" style="color:#b42318"></i>PDF</button></div>
-          <div style="display:flex;gap:2px;background:#f2f5f4;border-radius:12px;padding:3px;flex-wrap:wrap">
-            <sc-for list="{{ rel.cats }}" as="c" hint-placeholder-count="5">
-              <button sc-camel-on-click="{{ c.pick }}" style="border:0;background:{{ c.bg }};color:{{ c.fg }};box-shadow:{{ c.sh }};font-weight:{{ c.fw }};border-radius:10px;padding:7px 12px;font-size:13px">{{ c.name }}</button>
-            </sc-for>
-          </div>
-        </div>
-        <div style="background:#fdf6dc;border-radius:20px;padding:18px 22px;display:flex;gap:18px;align-items:center;flex-wrap:wrap">
-          <span style="width:46px;height:46px;border-radius:14px;background:#f5c518;color:#0b2b55;display:grid;place-items:center;font-size:22px;flex:none"><i class="ph-duotone ph-umbrella"></i></span>
-          <div style="display:flex;flex-direction:column;gap:2px;min-width:120px">
-            <span style="font-size:13px;font-weight:600;color:#7a5d00">De férias hoje</span>
-            <span style="display:flex;gap:6px;align-items:baseline"><b style="font-size:30px;font-weight:600;letter-spacing:-0.03em;line-height:1">{{ rel.ferN }}</b><span style="font-size:13px;color:#7a5d00">{{ rel.ferUnit }}</span></span>
-          </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;flex:1;min-width:0">
-            <sc-if value="{{ rel.ferNone }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;color:#7a5d00">Ninguém está de férias hoje.</span></sc-if>
-            <sc-for list="{{ rel.ferList }}" as="p" hint-placeholder-count="1"><span style="background:#fff;border-radius:999px;padding:6px 12px;font-size:13px;display:flex;gap:6px;align-items:center"><span style="width:7px;height:7px;border-radius:50%;background:{{ p.color }}"></span><b style="font-weight:600">{{ p.name }}</b><span style="color:#7a867f">{{ p.kind }} · até {{ p.until }}</span></span></sc-for>
-          </div>
-        </div>
-        <div data-mk="two" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
-          <sc-for list="{{ rel.kpis }}" as="k" hint-placeholder-count="4">
-            <div style="background:#f6f8f7;border-radius:20px;padding:18px 20px;display:flex;flex-direction:column;gap:10px">
-              <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#5f6b65">{{ k.label }}</span><i class="{{ k.icon }}" style="color:{{ k.color }};font-size:20px"></i></div>
-              <span style="font-size:40px;font-weight:600;letter-spacing:-0.04em;line-height:1">{{ k.value }}</span>
-              <span style="font-size:12px;color:#7a867f">{{ k.sub }}</span>
-            </div>
-          </sc-for>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px">
-          <sc-for list="{{ rel.donuts }}" as="c" hint-placeholder-count="3">
-            <div style="background:#f6f8f7;border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:16px">
-              <span style="font-size:17px;font-weight:600;letter-spacing:-0.01em">{{ c.title }}</span>
-              <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
-                <div style="width:120px;height:120px;border-radius:50%;background:{{ c.grad }};display:grid;place-items:center;flex:none">
-                  <div style="width:66px;height:66px;border-radius:50%;background:#f6f8f7;display:flex;flex-direction:column;align-items:center;justify-content:center"><b style="font-size:20px;font-weight:600;line-height:1">{{ c.total }}</b><span style="font-size:10px;color:#7a867f">eventos</span></div>
-                </div>
-                <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:140px">
-                  <sc-if value="{{ c.empty }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#7a867f">Sem dados.</span></sc-if>
-                  <sc-for list="{{ c.rows }}" as="r" hint-placeholder-count="3">
-                    <div data-mk="keep" style="display:grid;grid-template-columns:12px minmax(0,1fr) 24px 38px;gap:8px;align-items:center;font-size:13px">
-                      <span style="width:10px;height:10px;border-radius:3px;background:{{ r.color }}"></span>
-                      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.label }}</span>
-                      <b style="font-weight:600;text-align:right">{{ r.value }}</b>
-                      <span style="color:#7a867f;text-align:right;font-size:12px">{{ r.pct }}</span>
-                    </div>
-                  </sc-for>
-                </div>
-              </div>
-            </div>
-          </sc-for>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px">
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <span style="font-size:17px;font-weight:600">Próximos</span>
-            <sc-if value="{{ rel.nextNone }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;color:#7a867f">Nenhum evento a seguir.</span></sc-if>
-            <sc-for list="{{ rel.next }}" as="e" hint-placeholder-count="3">
-              <button sc-camel-on-click="{{ e.view }}" data-mk="keep" style="border:0;text-align:left;background:#fff;box-shadow:inset 0 0 0 1px #e4e8e6;border-radius:14px;padding:10px 14px 10px 0;display:grid;grid-template-columns:4px 52px minmax(0,1fr);gap:12px;align-items:center;overflow:hidden" style-hover="background:#f8fafd">
-                <span style="width:4px;align-self:stretch;background:{{ e.color }}"></span>
-                <span style="display:flex;flex-direction:column;align-items:center"><b style="font-size:20px;font-weight:600;line-height:1">{{ e.d }}</b><span style="font-size:10px;letter-spacing:0.08em;color:#7a867f">{{ e.mon }}</span></span>
-                <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ e.title }}</span><span style="font-size:12px;color:#7a867f">{{ e.meta }}</span></span>
-              </button>
-            </sc-for>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <span style="font-size:17px;font-weight:600">Cancelados</span>
-            <sc-if value="{{ rel.cancNone }}" hint-placeholder-val="{{ false }}"><span style="font-size:14px;color:#7a867f">Nenhum evento cancelado.</span></sc-if>
-            <sc-for list="{{ rel.canc }}" as="e" hint-placeholder-count="1">
-              <button sc-camel-on-click="{{ e.view }}" data-mk="keep" style="border:0;text-align:left;background:#fff;box-shadow:inset 0 0 0 1px #e4e8e6;border-radius:14px;padding:12px 14px 12px 0;display:grid;grid-template-columns:4px 28px minmax(0,1fr) auto;gap:10px;align-items:center;overflow:hidden" style-hover="background:#fdf5f5">
-                <span style="width:4px;align-self:stretch;background:#b42318"></span>
-                <i class="ph-duotone ph-x-circle" style="color:#b42318;font-size:18px"></i>
-                <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ e.title }}</span><span style="font-size:12px;color:#7a867f">{{ e.meta }}</span></span>
-                <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:#fbe1e1;color:#b42318">Cancelado</span>
-              </button>
-            </sc-for>
-          </div>
-        </div>
-      </div>
-    </sc-if>
 
     <sc-if value="{{ v.usuarios }}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;flex-direction:column;gap:24px">
@@ -1020,35 +985,6 @@
       </div>
     </sc-if>
 
-    <sc-if value="{{ v.ferias }}" hint-placeholder-val="{{ false }}">
-      <div style="display:flex;flex-direction:column;gap:24px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px">
-          <div style="display:flex;flex-direction:column;gap:4px">
-            <h1 style="margin:0;font-weight:600;font-size:44px;letter-spacing:-0.04em;line-height:1">Férias</h1>
-            <span style="font-size:15px;color:#5f6b65">{{ fer.summary }}</span>
-          </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap"><button sc-camel-on-click="{{ fer.excel }}" title="Exportar para Excel" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:11px 14px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-file-xls" style="color:#1f9d4c"></i>Excel</button><button sc-camel-on-click="{{ fer.pdf }}" title="Gerar PDF" style="border:1px solid #e4e8e6;background:#fff;border-radius:14px;padding:11px 14px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;white-space:nowrap"><i class="ph-duotone ph-file-pdf" style="color:#b42318"></i>PDF</button><button sc-camel-on-click="{{ openFerias }}" style="border:0;border-radius:999px;background:#f5c518;color:#0b2b55;padding:10px 18px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center" style-hover="background:#e6b600"><i class="ph-bold ph-plus"></i>Solicitar férias</button></div>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px">
-          <sc-for list="{{ fer.list }}" as="p" hint-placeholder-count="4">
-            <div style="background:{{ p.bg }};color:{{ p.fg }};border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:14px">
-              <div style="display:flex;justify-content:space-between;align-items:center">
-                <span style="font-size:12px;font-weight:500;padding:3px 10px;border-radius:999px;background:{{ p.badgeBg }};color:{{ p.badgeFg }}">{{ p.status }}</span>
-                <span style="font-size:12px;color:{{ p.sub }}">{{ p.kind }}</span>
-              </div>
-              <div style="display:flex;gap:12px;align-items:center">
-                <span style="width:44px;height:44px;border-radius:50%;background:{{ p.avBg }};color:{{ p.avFg }};display:grid;place-items:center;font-weight:600;font-size:14px">{{ p.initials }}</span>
-                <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:16px;font-weight:600">{{ p.name }}</span><span style="font-size:12px;color:{{ p.sub }}">{{ p.role }}</span></div>
-              </div>
-              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
-                <span style="font-size:22px;font-weight:600;letter-spacing:-0.03em">{{ p.period }}</span>
-                <span style="font-size:13px;color:{{ p.sub }}">{{ p.rel }}</span>
-              </div>
-            </div>
-          </sc-for>
-        </div>
-      </div>
-    </sc-if>
 
     <sc-if value="{{ v.perfil }}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;flex-direction:column;gap:24px">
@@ -1352,6 +1288,37 @@
         <div style="display:flex;justify-content:flex-end;gap:8px;padding:14px 22px;border-top:1px solid #e4e8e6">
           <button sc-camel-on-click="{{ usr.assplan.cancel }}" style="border:1px solid #e4e8e6;background:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:500">Cancelar</button>
           <button sc-camel-on-click="{{ usr.assplan.save }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:600">Salvar</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ cpe.open }}" hint-placeholder-val="{{ false }}">
+    <div sc-camel-on-click="{{ cpe.close }}" style="position:fixed;inset:0;background:#0b2b5566;display:grid;place-items:center;z-index:75;padding:20px">
+      <div sc-camel-on-click="{{ stop }}" style="width:min(640px,100%);max-height:calc(100vh - 40px);overflow:auto;background:#fff;border-radius:24px;box-shadow:0 30px 80px #0b2b5544">
+        <div style="background:#0b3d7a;color:#fff;padding:18px 22px;font-size:18px;font-weight:600;display:flex;gap:10px;align-items:center"><i class="ph-duotone ph-scroll"></i>{{ cpe.title }}</div>
+        <div style="padding:20px 22px;display:grid;grid-template-columns:minmax(0,1fr) 170px;gap:14px">
+          <div style="display:flex;flex-direction:column;gap:8px;grid-column:1/-1">
+            <span style="font-size:13px;font-weight:600;color:#3d4943">PDF da portaria <span style="font-weight:400;color:#7a867f">— escolha o PDF e o Hub preenche os campos sozinho</span></span>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <label style="border:1px solid #e4e8e6;background:#fff;border-radius:12px;padding:9px 14px;font-size:14px;font-weight:600;display:flex;gap:6px;align-items:center;cursor:pointer"><i class="ph-bold ph-upload-simple"></i>Escolher PDF<input type="file" accept="application/pdf,.pdf" sc-camel-on-change="{{ cpe.pick }}" style="display:none"></label>
+              <span style="font-size:13px;color:#5f6b65">{{ cpe.fileTxt }}</span>
+              <sc-if value="{{ cpe.hasCur }}" hint-placeholder-val="{{ false }}"><a href="{{ cpe.cur }}" target="_blank" rel="noopener" style="font-size:13px;color:#0b4f9c;font-weight:600">abrir</a></sc-if>
+            </div>
+            <sc-if value="{{ cpe.hasLendo }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#0b4f9c">{{ cpe.lendo }}</span></sc-if>
+            <sc-if value="{{ cpe.hasLido }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;border-radius:10px;padding:8px 10px;background:{{ cpe.lidoBg }};color:{{ cpe.lidoFg }}">{{ cpe.lido }}</span></sc-if>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5f6b65">ou cole o link do PDF<input value="{{ cpe.e.arquivo_url }}" sc-camel-on-input="{{ cpe.set.arquivo_url }}" placeholder="https://…" style="padding:9px 12px;border:1px solid #e4e8e6;border-radius:10px;font-size:13px;background:#fff"></label>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943;grid-column:1/-1">Colegiado<sc-raw-select value="{{ cpe.e.colegiado_id }}" sc-camel-on-change="{{ cpe.set.colegiado_id }}" style="padding:10px 12px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"><sc-for list="{{ cpe.opts }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}">{{ o.n }}</option></sc-for></sc-raw-select></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Portaria<input value="{{ cpe.e.nome }}" sc-camel-on-input="{{ cpe.set.nome }}" maxlength="200" placeholder="Ex.: Portaria nº 123, de 10 de março de 2026" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943">Data<input type="date" value="{{ cpe.e.data }}" sc-camel-on-input="{{ cpe.set.data }}" style="padding:10px 12px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3d4943;grid-column:1/-1">Assunto / ementa (opcional)<textarea value="{{ cpe.e.ementa }}" sc-camel-on-input="{{ cpe.set.ementa }}" maxlength="3000" rows="4" placeholder="Ex.: Designa os representantes da Secretaria no Conselho…" style="padding:11px 14px;border:1px solid #e4e8e6;border-radius:12px;font-size:14px;font-weight:400;background:#fff;resize:vertical;line-height:1.45"></textarea></label>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:14px 22px;border-top:1px solid #e4e8e6">
+          <sc-if value="{{ cpe.canDel }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ cpe.del }}" style="border:0;background:{{ cpe.delBg }};color:#b42318;border-radius:10px;padding:10px 12px;font-size:14px;font-weight:600">{{ cpe.delTxt }}</button></sc-if>
+          <span style="flex:1"></span>
+          <button sc-camel-on-click="{{ cpe.close }}" style="border:1px solid #e4e8e6;background:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:500">Cancelar</button>
+          <button sc-camel-on-click="{{ cpe.save }}" style="border:0;background:#1f9d4c;color:#fff;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:600">{{ cpe.saveTxt }}</button>
         </div>
       </div>
     </div>

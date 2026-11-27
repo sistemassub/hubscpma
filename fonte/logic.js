@@ -3,7 +3,7 @@
 const blobUrl = s => { try { const i = s.indexOf(','), bin = atob(s.slice(i + 1)), u = new Uint8Array(bin.length); for (let k = 0; k < bin.length; k++) u[k] = bin.charCodeAt(k); return URL.createObjectURL(new Blob([u], { type: s.slice(5, s.indexOf(';')) })); } catch (e) { return ''; } };
 const RES = id => blobUrl(({ org1: '__ORG1_IMG__', org30: '__ORG30_IMG__' })[id]);
 // Organograma: e-mail, celular e aniversário NÃO ficam no código (repositório público); vêm da tabela organograma_contatos após o login
-const ORG0 = [[1,null,"Subsecretário de Planejamento, Monitoramento e Avaliação","Paulo Scalco","","","fotos/org-1.jpg",""],[2,1,"Assessora de Normas, Governança e Gestão de Planejamento","Luice Ferreira","","","https://drive.google.com/thumbnail?id=1y8PK4f1Xk-R2nJhuOzzWqc3Dz39CUGA5&sz=w200",""],[16,2,"Assessora Executiva","Adriana Freitas","","","https://drive.google.com/thumbnail?id=10tLCxGkYvYjNJF4toDSg5Hce5bxLgDDP&sz=w200",""],[4,2,"Assessora de Marketing","Giovanna Silva Cintra","","","https://drive.google.com/thumbnail?id=1iEA-ICfdIPFqgg0-NylcgwcCpiCYz12A&sz=w200",""],[5,2,"Assessora Administrativa","Cristina Gomes Ribeiro","","","https://drive.google.com/thumbnail?id=1AbgCXZ3bVtH7-UDXmX1FeDU6KNDxKlb4&sz=w200",""],[3,2,"Assessora Executiva","Karine Martins de Oliveira","","","https://drive.google.com/thumbnail?id=1b7zsVoE27fH9Wi78vKOvbb0oZOj8OK0k&sz=w200",""],[35,30,"Gerência de Avaliação de Programas e Políticas Públicas","Rhayneman Rogério Macedo","","","",""],[6,1,"Superintendente de Planejamento","Vagner Bruno","","","https://drive.google.com/thumbnail?id=1RgR4om29gPGy432Xq9R9Y_9XvnjH1r-H&sz=w200",""],[7,6,"Assessora de Planejamento","Heloisa de Sousa Bastos","","","https://drive.google.com/thumbnail?id=1JQimWTILj-0REz4FsfBT2HAX9nx8Qg-k&sz=w200",""],[8,6,"Assessora de Planejamento","Sablina Lemes Valim","","","",""],[9,6,"Gerente de Planejamento","Armando Melo","","","https://drive.google.com/thumbnail?id=129JIVu9fcJyehDDCxi7bi3pItKdcV5qm&sz=w200",""],[10,9,"Gerência de Planejamento","Raquel Rezende","","","https://drive.google.com/thumbnail?id=13yJgMfFb8vXZqN3B3SC1pm5-xvRdWSit&sz=w200",""],[11,9,"Gerência de Planejamento","Antônio Alan de Freitas","","","https://drive.google.com/thumbnail?id=1n6rxwToWpDHeOzh7oMQf7U3kUeW8Tj20&sz=w200",""],[12,9,"Gerência de Planejamento","Ana Paula De Carvalho Ferreira","","","https://drive.google.com/thumbnail?id=1nI1WrVHWjguw8CgN1mB6FpO7SVLCqqiZ&sz=w200",""],[13,9,"Gerência de Planejamento","Camila Rocha","","","https://drive.google.com/thumbnail?id=14K0QjahKMWdX7orQYzblHdU94w3SHe4p&sz=w200",""],[14,6,"Gerente de Políticas de médio e longo prazo","Evelyn Cruvinel","","","https://drive.google.com/thumbnail?id=1pWwaLW0JPZcWWs1vOPjEKw4KMlIxwDU6&sz=w200",""],[15,14,"Gerências de Políticas de médio e longo prazo","Eduardo Mesquita","","","https://drive.google.com/thumbnail?id=1WiZMFua1aHXWkZpT6GQBQLcTSZrrUnBi&sz=w200",""],[17,14,"Gerências de Políticas de médio e longo prazo","Polyana Pamela","","","https://drive.google.com/thumbnail?id=1HraQSSCB7dY9MtiBDKW7S81dsHoALrFs&sz=w200",""],[18,1,"Superintendente de Monitoramento","Daiany de Oliveira Santos","","","https://drive.google.com/thumbnail?id=1Y5p6RiuzawPn_UROl1H28TD3kO4B1KKn&sz=w200",""],[19,18,"Assessor de Monitoramento","Otávio Wudson Cordeiro Cintra","","","https://drive.google.com/thumbnail?id=1Yiem81XH4qX6Am00YTS2z3zF3PgOBFHR&sz=w200",""],[20,18,"Gerente de Monitoramento","Cassiano Brito","","","https://drive.google.com/thumbnail?id=1PBc6Omy8U93BUUd-7RsVL7oGkFUD3GhN&sz=w200",""],[21,20,"Gerência de Monitoramento","Jeovah Quintino da Silva","","","https://drive.google.com/thumbnail?id=1brrIN4mqN_WsoLacTPwUZ3KM1YupVGz2&sz=w200",""],[22,20,"Gerência de Monitoramento","Rita de Cassia","","","https://drive.google.com/thumbnail?id=1l-hp2ew8lf7oY3QGDI5QbcH8ExPtBCsO&sz=w200",""],[23,20,"Gerência de Monitoramento","Karine Duarte Brandão","","","https://drive.google.com/thumbnail?id=1hZvQEWBCKG5l-ZJMsXmcJ9cNUFlqTi9M&sz=w200",""],[24,30,"Gerência de Avaliação de Programas e Políticas Públicas","Henrique Mesquita Tonha","","","https://drive.google.com/thumbnail?id=1s5g_YWTLq372lomABigLBDBYQlbcoiES&sz=w200",""],[25,20,"Gerência de Monitoramento","Cleiton Moraes","","","https://drive.google.com/thumbnail?id=1nzr-l9ao1Wc9mFbCMmwd2bkgU0p1A_NJ&sz=w200",""],[26,20,"Gerência de Monitoramento","Lívia Almeida Maroclo","","","https://drive.google.com/thumbnail?id=1g390WlNUX33AWSTzJF_AztgoeNMY4_Ao&sz=w200",""],[27,20,"Gerência de Monitoramento","Marcela Cortez","","","https://drive.google.com/thumbnail?id=1ySFwDNGfnF9xKkESDNJi2_4S7Clo6XEB&sz=w200",""],[28,20,"Gerência de Monitoramento","Nancy Santana","","","https://drive.google.com/thumbnail?id=1KF-CYlG5wDuI2g5LWN9JoAPj0Ar1epra&sz=w200",""],[29,20,"Gerência de Monitoramento","Heuler Neves de Assis","","","https://drive.google.com/thumbnail?id=1jNLahPggK1p_hVoNeDz7nhROt9LWuDlC&sz=w200",""],[30,18,"Gerente de Avaliação de Programas e Políticas Públicas","Achilles Mascarenhas Carvalho","","","fotos/org-30.png",""],[31,30,"Gerência de Avaliação de Programas e Políticas Públicas","Izael Julio Silva","","","https://drive.google.com/thumbnail?id=1oBtDlxQSGMgsw7hLDgBJ6RnPUmUEofDi&sz=w200",""],[32,9,"Gerência de Planejamento","Fernanda Araújo Vieira","","","",""],[33,30,"Gerência de Avaliação de Programas e Políticas Públicas","Iduardo Donizet Gomes Júnior","","","",""],[34,20,"Gerência de Monitoramento","Luciana Vieira da Silva","","","",""],[36,9,"Gerência de Planejamento","Karen Quezia de Oliveira","","","",""],[37,18,"Superintendente de Monitoramento","Vinicius Mamede Salum Chaer","","","",""],[38,6,"Assessora de Planejamento","Simone Alves dos Santos Jorge","","","",""],[39,2,"Assessor de Inovação","Marcos Vinicius Branquinho Xavier","","","",""]];
+const ORG0 = [[1,null,"Subsecretário de Planejamento, Monitoramento e Avaliação","Paulo Scalco","","","fotos/org-1.jpg",""],[2,1,"Assessora de Normas, Governança e Gestão de Planejamento","Luice Ferreira","","","https://drive.google.com/thumbnail?id=1y8PK4f1Xk-R2nJhuOzzWqc3Dz39CUGA5&sz=w200",""],[16,2,"Assessora Executiva","Adriana Freitas","","","https://drive.google.com/thumbnail?id=10tLCxGkYvYjNJF4toDSg5Hce5bxLgDDP&sz=w200",""],[4,2,"Assessora de Marketing","Giovanna Silva Cintra","","","https://drive.google.com/thumbnail?id=1iEA-ICfdIPFqgg0-NylcgwcCpiCYz12A&sz=w200",""],[5,2,"Assessora Administrativa","Cristina Gomes Ribeiro","","","https://drive.google.com/thumbnail?id=1AbgCXZ3bVtH7-UDXmX1FeDU6KNDxKlb4&sz=w200",""],[3,2,"Assessora Executiva","Karine Martins de Oliveira","","","https://drive.google.com/thumbnail?id=1b7zsVoE27fH9Wi78vKOvbb0oZOj8OK0k&sz=w200",""],[35,30,"Gerência de Avaliação de Programas e Políticas Públicas","Rhayneman Rogério Macedo","","","",""],[6,1,"Superintendente de Planejamento","Vagner Bruno","","","https://drive.google.com/thumbnail?id=1RgR4om29gPGy432Xq9R9Y_9XvnjH1r-H&sz=w200",""],[7,6,"Assessora de Planejamento","Heloisa de Sousa Bastos","","","https://drive.google.com/thumbnail?id=1JQimWTILj-0REz4FsfBT2HAX9nx8Qg-k&sz=w200",""],[8,6,"Assessora de Planejamento","Sablina Lemes Valim","","","",""],[9,6,"Gerente de Planejamento","Armando Melo","","","https://drive.google.com/thumbnail?id=129JIVu9fcJyehDDCxi7bi3pItKdcV5qm&sz=w200",""],[10,9,"Gerência de Planejamento","Raquel Rezende","","","https://drive.google.com/thumbnail?id=13yJgMfFb8vXZqN3B3SC1pm5-xvRdWSit&sz=w200",""],[11,9,"Gerência de Planejamento","Antônio Alan de Freitas","","","https://drive.google.com/thumbnail?id=1n6rxwToWpDHeOzh7oMQf7U3kUeW8Tj20&sz=w200",""],[12,9,"Gerência de Planejamento","Ana Paula De Carvalho Ferreira","","","https://drive.google.com/thumbnail?id=1nI1WrVHWjguw8CgN1mB6FpO7SVLCqqiZ&sz=w200",""],[13,14,"Gerências de Políticas de médio e longo prazo","Camila Rocha","","","https://drive.google.com/thumbnail?id=14K0QjahKMWdX7orQYzblHdU94w3SHe4p&sz=w200",""],[14,6,"Gerente de Políticas de médio e longo prazo","Evelyn Cruvinel","","","https://drive.google.com/thumbnail?id=1pWwaLW0JPZcWWs1vOPjEKw4KMlIxwDU6&sz=w200",""],[15,14,"Gerências de Políticas de médio e longo prazo","Eduardo Mesquita","","","https://drive.google.com/thumbnail?id=1WiZMFua1aHXWkZpT6GQBQLcTSZrrUnBi&sz=w200",""],[17,14,"Gerências de Políticas de médio e longo prazo","Polyana Pamela","","","https://drive.google.com/thumbnail?id=1HraQSSCB7dY9MtiBDKW7S81dsHoALrFs&sz=w200",""],[18,1,"Superintendente de Monitoramento","Daiany de Oliveira Santos","","","https://drive.google.com/thumbnail?id=1Y5p6RiuzawPn_UROl1H28TD3kO4B1KKn&sz=w200",""],[19,18,"Assessor de Monitoramento","Otávio Wudson Cordeiro Cintra","","","https://drive.google.com/thumbnail?id=1Yiem81XH4qX6Am00YTS2z3zF3PgOBFHR&sz=w200",""],[20,18,"Gerente de Monitoramento","Cassiano Brito","","","https://drive.google.com/thumbnail?id=1PBc6Omy8U93BUUd-7RsVL7oGkFUD3GhN&sz=w200",""],[21,20,"Gerência de Monitoramento","Jeovah Quintino da Silva","","","https://drive.google.com/thumbnail?id=1brrIN4mqN_WsoLacTPwUZ3KM1YupVGz2&sz=w200",""],[22,20,"Gerência de Monitoramento","Rita de Cassia","","","https://drive.google.com/thumbnail?id=1l-hp2ew8lf7oY3QGDI5QbcH8ExPtBCsO&sz=w200",""],[23,20,"Gerência de Monitoramento","Karine Duarte Brandão","","","https://drive.google.com/thumbnail?id=1hZvQEWBCKG5l-ZJMsXmcJ9cNUFlqTi9M&sz=w200",""],[24,30,"Gerência de Avaliação de Programas e Políticas Públicas","Henrique Mesquita Tonha","","","https://drive.google.com/thumbnail?id=1s5g_YWTLq372lomABigLBDBYQlbcoiES&sz=w200",""],[25,20,"Gerência de Monitoramento","Cleiton Moraes","","","https://drive.google.com/thumbnail?id=1nzr-l9ao1Wc9mFbCMmwd2bkgU0p1A_NJ&sz=w200",""],[26,20,"Gerência de Monitoramento","Lívia Almeida Maroclo","","","https://drive.google.com/thumbnail?id=1g390WlNUX33AWSTzJF_AztgoeNMY4_Ao&sz=w200",""],[27,20,"Gerência de Monitoramento","Marcela Cortez","","","https://drive.google.com/thumbnail?id=1ySFwDNGfnF9xKkESDNJi2_4S7Clo6XEB&sz=w200",""],[28,20,"Gerência de Monitoramento","Nancy Santana","","","https://drive.google.com/thumbnail?id=1KF-CYlG5wDuI2g5LWN9JoAPj0Ar1epra&sz=w200",""],[29,20,"Gerência de Monitoramento","Heuler Neves de Assis","","","https://drive.google.com/thumbnail?id=1jNLahPggK1p_hVoNeDz7nhROt9LWuDlC&sz=w200",""],[30,18,"Gerente de Avaliação de Programas e Políticas Públicas","Achilles Mascarenhas Carvalho","","","fotos/org-30.png",""],[31,30,"Gerência de Avaliação de Programas e Políticas Públicas","Izael Julio Silva","","","https://drive.google.com/thumbnail?id=1oBtDlxQSGMgsw7hLDgBJ6RnPUmUEofDi&sz=w200",""],[32,9,"Gerência de Planejamento","Fernanda Araújo Vieira","","","",""],[33,30,"Gerência de Avaliação de Programas e Políticas Públicas","Iduardo Donizet Gomes Júnior","","","",""],[34,20,"Gerência de Monitoramento","Luciana Vieira da Silva","","","",""],[36,9,"Gerência de Planejamento","Karen Quezia de Oliveira","","","",""],[37,18,"Superintendente de Monitoramento","Vinicius Mamede Salum Chaer","","","",""],[38,6,"Assessora de Planejamento","Simone Alves dos Santos Jorge","","","",""],[39,2,"Assessor de Inovação","Marcos Vinicius Branquinho Xavier","","","",""]];
 // Substituições no organograma: quem aparece no lugar da chefia, com a nota abaixo do nome
 const SUBSTITUI = { 18: { por: 37, nota: 'Superintendente de Monitoramento (Substituindo Daiany)' } };
 const SUBST_IDS = new Set(Object.values(SUBSTITUI).map(x => x.por));
@@ -92,7 +92,7 @@ const ementaResumida = (art1, orgao) => {
   if (!nomeEnt && anexo) e += ', conforme ' + anexo.replace(/unico/i, 'Único') + ' desta Portaria';
   return e.replace(/\s+/g, ' ').replace(/\s+,/g, ',') + '.';
 };
-const portariaDoTexto = (txt, orgaosConhecidos) => {
+const portariaDoTexto = (txt, orgaosConhecidos, opts) => {
   const linhas = String(txt || '').replace(/ /g, ' ').split(/\n/).map(l => l.replace(/[ \t]+/g, ' ').trim()).filter(Boolean);
   const plano = linhas.join(' ');
   const out = { nome: '', data: '', orgao: '', ementa: '' };
@@ -119,7 +119,7 @@ const portariaDoTexto = (txt, orgaosConhecidos) => {
     lista.forEach(o => { const b = base(o); if (b.length > 8 && alvo.includes(b) && b.length > base(melhor).length) melhor = o; }); org = melhor; }
   if (!org && /caderno\s+de\s+revis/i.test(out.ementa)) org = lista.find(o => /^geral\b/i.test(o)) || 'Geral (todos os órgãos)';
   out.orgao = org;
-  out.ementa = ementaResumida(out.ementa, org) || out.ementa; // resumida, no padrão do portal
+  if (!(opts && opts.resumir === false)) out.ementa = ementaResumida(out.ementa, org) || out.ementa; // resumida, no padrão do portal
   return out;
 };
 // junta o texto de uma página do pdf.js sem partir palavras (o pdf.js separa letras ligadas como "fi")
@@ -236,7 +236,7 @@ class Component extends DCLogic {
     uSel: 'scpma', uCat: 'all', pTab: 'unidades', q: '', unitF: 'all', person: null,
     events: [], modal: false, editId: null, viewId: null, f: null, err: false, files: [],
     prof: { cargo: '', tel: '', bday: '', mat: '', pc: '', arm: '', cpf: '', foto: '' }, profSaved: '', rail: false, nivelF: 'all',
-    me: null, users: [], portList: [], portLoaded: false, portEdit: null, portQ: '', portBusy: false, feriasScope: {}, hier: {}, rsvpEdit: '', prazos: [], pzOff: lsGet('hub-pz-off', []), pfUtil: lsGet('hub-pz-pf', true), pzEdit: null, bh: { lanc: [], areas: {}, editores: [] }, bhOpen: '', bhIn: {},
+    me: null, users: [], colTab: 'lista', cpList: [], cpLoaded: false, cpEdit: null, cpQ: '', cpCol: '', cpBusy: false, portList: [], portLoaded: false, portEdit: null, portQ: '', portBusy: false, feriasScope: {}, hier: {}, rsvpEdit: '', prazos: [], pzOff: lsGet('hub-pz-off', []), pfUtil: lsGet('hub-pz-pf', true), pzEdit: null, bh: { lanc: [], areas: {}, editores: [] }, bhOpen: '', bhIn: {},
     online: false, connecting: true, busy: false, backendProblem: '', publicProfiles: {}, presencas: {}, presencaCounts: {}, myNextId: '', myNextDone: false,
     notifs: [], notifOpen: false, toast: null, toastErr: false, saving: false, uEdit: null, myPat: null, publicByUser: {}, convEv: {}, presencaQuem: {}, np1: '', np2: '', pwBusy: false, usrTab: 'usuarios', patItens: [], patLoaded: false, patEdit: null, patQ: '', personAdm: {}, resetInfo: null, colItens: [], colLoaded: false, colQ: '', colPessoa: '', colMine: false, colEdit: null,
     docPastas: [], docArqs: [], docLoaded: false, docPasta: null, docQ: '', docBusy: false, docFolderEdit: null, docFileEdit: null, docLinkEdit: null };
@@ -847,6 +847,58 @@ class Component extends DCLogic {
   }
 
   // ===== Colegiados =====
+  // ===== Portarias dos colegiados (aba Portarias em Colegiados) =====
+  async loadColPortarias() {
+    try { const { data, error } = await this.sb().from('colegiado_portarias').select('id,colegiado_id,nome,data,ementa,arquivo_url,arquivo_caminho').order('data', { ascending: false, nullsFirst: false }).order('id', { ascending: false });
+      if (error) throw error; this.setState({ cpList: data || [], cpLoaded: true }); }
+    catch (e) { console.warn('[Hub] Erro ao carregar portarias dos colegiados:', errMsg(e)); this.setState({ cpLoaded: true }); }
+  }
+  cpOpen(p, colId) { this._cpFile = null;
+    this.setState({ cpEdit: p ? { id: p.id, colegiado_id: p.colegiado_id ? String(p.colegiado_id) : '', nome: p.nome, data: p.data || '', ementa: p.ementa || '', arquivo_url: p.arquivo_url || '', arquivo_caminho: p.arquivo_caminho || '', fileName: '', conf: false }
+      : { colegiado_id: colId ? String(colId) : '', nome: '', data: TODAY, ementa: '', arquivo_url: '', arquivo_caminho: '', fileName: '', conf: false } }); }
+  async cpLer(f) {
+    this.setState(st => ({ cpEdit: st.cpEdit && { ...st.cpEdit, lendo: 'Lendo o PDF…', lido: '' } }));
+    try {
+      const lib = await carregarPdfjs(); const doc = await lib.getDocument({ data: new Uint8Array(await f.arrayBuffer()) }).promise; let txt = '';
+      for (let n = 1; n <= Math.min(3, doc.numPages); n++) txt += pdfPaginaTexto(await (await doc.getPage(n)).getTextContent()) + '\n';
+      const r = portariaDoTexto(txt, [], { resumir: false }), alvo = semAcento(txt);
+      const col = (this.state.colItens || []).map(c => ({ c, n: [c.sigla, c.nome].filter(x => x && String(x).trim().length >= 3).filter(x => new RegExp('(^|[^a-z0-9])' + semAcento(x).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '([^a-z0-9]|$)').test(alvo)).length })).filter(x => x.n).sort((a, b) => b.n - a.n)[0];
+      this.setState(st => { const e = st.cpEdit; if (!e) return {}; const n = { ...e, lendo: '' };
+        ['nome', 'data', 'ementa'].forEach(k => { if (r[k] && (!e.id || !String(e[k] || '').trim())) n[k] = r[k]; });
+        if (col && !e.colegiado_id) n.colegiado_id = String(col.c.id);
+        n.lido = !txt.trim() ? 'Não consegui ler o texto deste PDF (parece ser uma imagem escaneada). Preencha os campos abaixo.' : 'Preenchido a partir do PDF — confira antes de salvar.';
+        return { cpEdit: n }; });
+    } catch (x) { console.warn('[Hub] Erro ao ler o PDF:', x); this.setState(st => ({ cpEdit: st.cpEdit && { ...st.cpEdit, lendo: '', lido: 'Não consegui ler o PDF automaticamente. Preencha os campos abaixo.' } })); }
+  }
+  async cpSave() {
+    const e = this.state.cpEdit; if (!e || this.state.cpBusy) return;
+    const nome = (e.nome || '').trim(), f = this._cpFile; let url = (e.arquivo_url || '').trim();
+    if (!e.colegiado_id) return this.notify('Escolha o colegiado.', true);
+    if (!nome) return this.notify('Informe o número/nome da portaria.', true);
+    if (!f && url && !/^https:\/\/\S+$/i.test(url)) return this.notify('O link do PDF precisa começar com https://', true);
+    if (f && (f.type !== 'application/pdf' && !/\.pdf$/i.test(f.name))) return this.notify('O arquivo precisa ser um PDF.', true);
+    if (f && f.size > 20 * 1024 * 1024) return this.notify('O PDF passa de 20 MB.', true);
+    this.setState({ cpBusy: true }); let novo = null;
+    try {
+      if (f) { const seguro = f.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Za-z0-9._-]+/g, '_');
+        novo = 'colegiados/' + Date.now() + '-' + seguro;
+        const up = await this.sb().storage.from(PORT_BUCKET).upload(novo, f, { upsert: false, contentType: 'application/pdf' }); if (up.error) throw up.error;
+        url = this.sb().storage.from(PORT_BUCKET).getPublicUrl(novo).data.publicUrl; }
+      const row = { colegiado_id: +e.colegiado_id, nome, data: e.data || null, ementa: (e.ementa || '').trim() || null, arquivo_url: url || null, arquivo_caminho: novo || (url && url === e.arquivo_url ? e.arquivo_caminho || null : null), atualizado_em: new Date().toISOString() };
+      const { error } = await (e.id ? this.sb().from('colegiado_portarias').update(row).eq('id', e.id) : this.sb().from('colegiado_portarias').insert(row));
+      if (error) { if (novo) await this.sb().storage.from(PORT_BUCKET).remove([novo]); throw error; }
+      if (e.arquivo_caminho && e.arquivo_caminho !== row.arquivo_caminho) await this.sb().storage.from(PORT_BUCKET).remove([e.arquivo_caminho]).catch(() => {});
+      this._cpFile = null; this.setState({ cpEdit: null, cpBusy: false }); await this.loadColPortarias(); this.notify(e.id ? 'Portaria atualizada.' : 'Portaria adicionada.');
+    } catch (x) { this.setState({ cpBusy: false }); this.notify('Erro ao salvar a portaria: ' + errMsg(x), true); }
+  }
+  async cpDel() {
+    const e = this.state.cpEdit; if (!e || !e.id) return;
+    if (!e.conf) return this.setState({ cpEdit: { ...e, conf: true } });
+    try { const { error } = await this.sb().from('colegiado_portarias').delete().eq('id', e.id); if (error) throw error;
+      if (e.arquivo_caminho) await this.sb().storage.from(PORT_BUCKET).remove([e.arquivo_caminho]).catch(() => {});
+      this.setState({ cpEdit: null }); await this.loadColPortarias(); this.notify('Portaria excluída.'); }
+    catch (x) { this.notify('Erro ao excluir: ' + errMsg(x), true); }
+  }
   async loadColegiados() {
     try { const { data, error } = await this.sb().from('colegiados').select('*').order('ordem').order('id'); if (error) throw error; this.setState({ colItens: data || [], colLoaded: true }); }
     catch (e) { console.warn('[Hub] Erro ao carregar colegiados:', e); this.setState({ colLoaded: true }); this.notify('Não foi possível carregar os colegiados: ' + errMsg(e), true); }
@@ -1181,12 +1233,12 @@ class Component extends DCLogic {
 
     const goView = (v, extra) => prevent(() => this.setState({ view: v, rail: false, ...(extra || {}) }));
     const navDef = [
-      ['', [['Início','ph-house',['inicio']],['Calendário','ph-calendar-blank',['agenda','cal']],['Lista de eventos','ph-list-bullets',['agenda','lista']],['Todas as unidades','ph-stack',['agenda','unidade']]]],
-      ['Pessoas', [['Servidores e unidades','ph-users-three',['pessoas','unidades']],['Organograma','ph-tree-structure',['pessoas','org']],['Colegiados','ph-users-four',['colegiados']]]],
-      ['Gestão', [['Relatórios','ph-chart-bar',['relatorios']],['Usuários','ph-user',['usuarios']]]],
+      ['', [['Início','ph-house',['inicio']],['Calendário','ph-calendar-blank',['agenda','cal']],['Unidades','ph-stack',['agenda','lista']]]],
+      ['Pessoas', [['Central','ph-users-three',['pessoas','unidades']],['Colegiados','ph-users-four',['colegiados']]]],
+      ['Gestão', [['Usuários','ph-user',['usuarios']]]],
       ['Atalhos externos', [['Portal SIPOFE','ph-monitor',null,'https://goiasgovbr.sharepoint.com/sites/SIPOFE'],['Conecta SIPOFE','ph-address-book',null,'https://sistemassub.github.io/contatossipofe/#home']]],
     ];
-    const isOn = t => !!t && t[0] === view && (!t[1] || (view === 'agenda' ? s.agTab === t[1] : view === 'pessoas' ? (s.pTab === t[1] || (t[1] === 'unidades' && s.pTab === 'diretorio')) : true));
+    const isOn = t => !!t && t[0] === view && (!t[1] || (view === 'agenda' ? (s.agTab === t[1] || (t[1] === 'lista' && s.agTab === 'unidade')) : true));
     const navGroups = navDef.map(([label, items], gi) => ({ label: label || ' ', pt: gi ? '10px' : '0', labelOp: s.rail && label ? 1 : 0,
       items: items.map(([lb, ic, t, url]) => { const on = isOn(t); return { label: lb, icon: 'ph-duotone ' + ic, href: url || '#', target: url ? '_blank' : '_self',
         go: t ? goView(t[0], t[1] ? (t[0] === 'agenda' ? { agTab: t[1] } : { pTab: t[1] }) : {}) : () => {}, bg: on ? '#f5c518' : 'transparent', color: on ? '#0b3d7a' : '#c9d8ec' }; }) }));
@@ -1217,15 +1269,21 @@ class Component extends DCLogic {
       badgeBg: now ? '#fdf1c4' : '#e7eef8', badgeFg: now ? '#7a5d00' : '#0b4f9c' }; };
     const ferSorted = fers.filter(e => e.end >= TODAY).sort((a, b) => eS(a).localeCompare(eS(b)));
     const feriasRows = ferSorted.slice(0, 6).map(ferRow);
+    // Visão geral: quem está de férias hoje (até quando) e as próximas
+    const ferHoje = ferNow.slice().sort((a, b) => a.end.localeCompare(b.end)).map(e => ({ name: e.person || e.title, unit: UNITS[e.unit][0], color: UNITS[e.unit][1], kind: e.kind || 'Férias',
+      until: 'até ' + dm(e.end) + (e.end.slice(0, 4) !== TODAY.slice(0, 4) ? '/' + e.end.slice(0, 4) : ''), volta: 'volta ' + rel(diff(TODAY, addDays(e.end, 1))) }));
+    const ferProx = ferSorted.filter(e => !covers(e, TODAY)).slice(0, 4).map(ferRow);
     const links = [['SIPOFE','Portal da Rede de Planejamento (SharePoint)','ph-share-network','#1f9d4c','#fff','https://goiasgovbr.sharepoint.com/sites/SIPOFE'],['Projetos SCPMA','Acompanhamento dos projetos da SCPMA','ph-kanban','#0b4f9c','#fff','https://projetoscpma.netlify.app/'],['Portal do Aluno','Cursos e capacitações','ph-graduation-cap','#f5c518','#0b3d7a','https://sgc.escoladegoverno.go.gov.br/'],['SEI','Sistema Eletrônico de Informações','ph-files','#0b3d7a','#fff','https://sei.go.gov.br/']]
       .map(([name, desc, ic, bg, fg, url]) => ({ name, desc: url ? desc : desc + ' · link em breve', icon: 'ph-duotone ' + ic, bg, fg, url, hasUrl: !!url, noUrl: !url }));
     const curMon = TODAY.slice(5, 7), curMonName = MONTHS[+curMon - 1];
     const aniv = people.filter(p => p.bday && p.bday.slice(3, 5) === curMon).sort((a, b) => a.bday.localeCompare(b.bday));
 
     // ---------- Agenda
-    const agT = { cal: ['Calendário', 'Navegue pelos meses e visualizações'], lista: ['Lista de eventos', 'Busque e filtre compromissos'], unidade: ['Todas as unidades', 'Selecione uma unidade para visualizar sua agenda'] };
+    const agT = { cal: ['Calendário', 'Navegue pelos meses e visualizações'], lista: ['Unidades', 'Compromissos de todas as unidades — busque e filtre na lista'], unidade: ['Unidades', 'Selecione uma unidade para visualizar sua agenda'] };
     const ag = { title: agT[s.agTab][0], sub: agT[s.agTab][1], isCal: s.agTab === 'cal', isLista: s.agTab === 'lista', isUnidade: s.agTab === 'unidade',
-      tabs: [['cal','Calendário','ph-calendar-blank'],['lista','Lista','ph-list-bullets'],['unidade','Por unidade','ph-stack']].map(([id, name, ic]) => { const on = s.agTab === id; return { name, icon: 'ph-duotone ' + ic, pick: set({ agTab: id }), bg: on ? '#1f9d4c' : 'transparent', fg: on ? '#fff' : '#3d4943', fw: on ? '600' : '500' }; }) };
+      tabs: [['cal','Calendário','ph-calendar-blank'],['lista','Unidades','ph-stack']].map(([id, name, ic]) => { const on = s.agTab === id || (id === 'lista' && s.agTab === 'unidade'); return { name, icon: 'ph-duotone ' + ic, pick: set({ agTab: id }), bg: on ? '#1f9d4c' : 'transparent', fg: on ? '#fff' : '#3d4943', fw: on ? '600' : '500' }; }),
+      isUni: s.agTab === 'lista' || s.agTab === 'unidade',
+      formatos: [['lista','Lista','ph-list-bullets'],['unidade','Por unidade','ph-stack']].map(([id, name, ic]) => { const on = s.agTab === id; return { name, icon: 'ph-duotone ' + ic, pick: set({ agTab: id }), bg: on ? '#fff' : 'transparent', fg: on ? '#0b3d7a' : '#7a867f', sh: on ? '0 1px 3px #0b2b5524' : 'none', fw: on ? '600' : '500' }; }) };
     const [y, m] = s.ym;
     const unitOk = (e, arr) => !arr.length || arr.includes(e.unit);
     const calAll = all.filter(e => unitOk(e, s.calUnits));
@@ -1378,15 +1436,16 @@ class Component extends DCLogic {
     const octS = TODAY.slice(0, 8) + '01', octE = addDays(iso(+TODAY.slice(0, 4), +curMon, 1), -1);
     const q = s.q.trim().toLowerCase();
     const dU = s.dUnits || [];
-    const plist = people.filter(p => (!dU.length || dU.includes(p.unitId)) && (!q || (p.name + ' ' + p.role + ' ' + p.unit).toLowerCase().includes(q)));
+    const plist = people.filter(p => (!dU.length || dU.includes(p.unitId)) && (!q || (p.name + ' ' + p.role + ' ' + p.unit).toLowerCase().includes(q)))
+      .slice().sort((a, b) => a.name.localeCompare(b.name, 'pt', { sensitivity: 'base' })); // ordem alfabética (primeiro nome)
     const kids = id => ORG.filter(o => o[1] === id && !SUBST_IDS.has(o[0])).sort((x, z) => x[3].localeCompare(z[3], 'pt'));
     const brs = kids(1); const staffB = brs.find(b => !kids(b[0]).some(c => kids(c[0]).length));
     const org = { top: byId(1), staff: { head: byId(staffB[0]), members: kids(staffB[0]).map(o => byId(o[0])) },
       branches: brs.filter(b => b !== staffB).map(b => { const ch = kids(b[0]); const hp = headOf(b[0]);
         return { head: hp, unit: hp.unit, color: hp.color, assessores: ch.filter(c => !kids(c[0]).length).map(o => byId(o[0])), hasAss: ch.some(c => !kids(c[0]).length),
           groups: ch.filter(c => kids(c[0]).length).map(g => { const gp = byId(g[0]); return { head: gp, unit: gp.unit, color: gp.color, members: kids(g[0]).map(o => byId(o[0])) }; }) }; }) };
-    const pe = { title: peT[s.pTab][0], sub: peT[s.pTab][1], isUnidades: s.pTab === 'unidades', isDir: s.pTab === 'diretorio', isOrg: s.pTab === 'org', total: people.length,
-      tabs: [['unidades','Unidades','ph-buildings'],['diretorio','Diretório','ph-address-book'],['org','Organograma','ph-tree-structure']].map(([id, name, ic]) => { const on = s.pTab === id; return { name, icon: 'ph-duotone ' + ic, pick: set({ pTab: id }), bg: on ? '#1f9d4c' : 'transparent', fg: on ? '#fff' : '#3d4943', fw: on ? '600' : '500' }; }),
+    const pe = { title: 'Central', sub: peT[s.pTab][1], isUnidades: s.pTab === 'unidades', isDir: s.pTab === 'diretorio', isOrg: s.pTab === 'org', total: people.length,
+      tabs: [['unidades','Unidades','ph-buildings'],['org','Organograma','ph-tree-structure'],['diretorio','Diretório','ph-address-book']].map(([id, name, ic]) => { const on = s.pTab === id; return { name, icon: 'ph-duotone ' + ic, pick: set({ pTab: id }), bg: on ? '#1f9d4c' : 'transparent', fg: on ? '#fff' : '#3d4943', fw: on ? '600' : '500' }; }),
       unitCards: Object.entries(UNITS).map(([id, [sigla, color]]) => { const ps = people.filter(p => p.unitId === id); const hd = headOf(UNIT_HEAD[id]); const ue = evs.filter(e => e.unit === id);
         return { sigla, color, full: UNIT_FULL[id], avs: ps.slice(0, 5), hasMore: ps.length > 5, more: '+' + (ps.length - 5), head: hd.name, n: ps.length,
           oct: ue.filter(e => eS(e) <= octE && e.end >= octS).length, next: ue.filter(e => eS(e) >= TODAY && eS(e) <= octE).length, open: set({ pTab: 'diretorio', dUnits: [id], q: '' }) }; }),
@@ -1407,6 +1466,7 @@ class Component extends DCLogic {
 
 
     // ---------- Colegiados
+    if (s.logged && view === 'colegiados' && !s.cpLoaded && !this._cpLoading) { this._cpLoading = true; this.loadColPortarias().finally(() => { this._cpLoading = false; }); }
     if (s.logged && view === 'colegiados' && !s.colLoaded && !this._colLoading) { this._colLoading = true; this.loadColegiados().finally(() => { this._colLoading = false; }); }
     const splitP = v => String(v || '').split('\n').map(x => x.trim()).filter(Boolean);
     const personOf = n => people.find(p => sameName(p.name, n)) || people.find(p => { const a = normName(p.name).split(' '), b = normName(n).split(' '); return a[0] === b[0] && b.includes(a[a.length - 1]); }) || null;
@@ -1422,7 +1482,17 @@ class Component extends DCLogic {
     const colRowsX = () => colList.map(it => [it.nome, it.sigla, it.tit.join(' / '), it.sup.join(' / '), it.processo_sei, it.observacoes]);
     const setCe = k => e => { const v = e.target.value; this.setState(st => ({ colEdit: { ...st.colEdit, [k]: v } })); };
     const mineN = colAll.filter(it => it.tit.concat(it.sup).some(isMe)).length;
+    const cpN = {}; (s.cpList || []).forEach(p => { cpN[p.colegiado_id] = (cpN[p.colegiado_id] || 0) + 1; });
+    const colNome = id => { const c = (s.colItens || []).find(x => +x.id === +id); return c ? (c.sigla ? c.sigla + ' — ' : '') + c.nome : 'Colegiado não informado'; };
+    const cpq = semAcento((s.cpQ || '').trim());
+    const cpRows = (s.cpList || []).filter(p => (!s.cpCol || String(p.colegiado_id) === String(s.cpCol)) && (!cpq || semAcento(p.nome + ' ' + (p.ementa || '') + ' ' + colNome(p.colegiado_id)).includes(cpq)))
+      .map(p => ({ nome: p.nome, url: p.arquivo_url || '', hasUrl: !!p.arquivo_url, noUrl: !p.arquivo_url, data: p.data ? p.data.split('-').reverse().join('/') : '', hasData: !!p.data, col: colNome(p.colegiado_id), ementa: p.ementa || '', hasEm: !!p.ementa, edit: () => this.cpOpen(p) }));
     const col = { loading: !s.colLoaded, empty: s.colLoaded && !colList.length, isAdm: !!(me && me.admin),
+      tabs: [['lista', 'Colegiados', 'ph-users-four'], ['portarias', 'Portarias', 'ph-scroll']].map(([id, name, ic]) => { const on = (s.colTab || 'lista') === id; return { name: name + (id === 'portarias' && (s.cpList || []).length ? ' (' + s.cpList.length + ')' : ''), icon: 'ph-duotone ' + ic, pick: set({ colTab: id }), bg: on ? '#1f9d4c' : 'transparent', fg: on ? '#fff' : '#3d4943', fw: on ? '600' : '500' }; }),
+      isLista: (s.colTab || 'lista') === 'lista', isPort: s.colTab === 'portarias',
+      cp: { list: cpRows, empty: s.cpLoaded && !cpRows.length, loading: !s.cpLoaded, q: s.cpQ || '', setQ: e => this.setState({ cpQ: e.target.value }), filtro: s.cpCol || '', setFiltro: e => this.setState({ cpCol: e.target.value }),
+        opts: [{ v: '', n: 'Todos os colegiados' }].concat((s.colItens || []).map(c => ({ v: String(c.id), n: (c.sigla ? c.sigla + ' — ' : '') + c.nome }))), novo: () => this.cpOpen(null, s.cpCol || ''),
+        resumo: (s.cpList || []).length + ' portaria(s) de ' + Object.keys(cpN).filter(k => k !== 'null').length + ' colegiado(s)' },
       summary: colAll.length + ' colegiados · ' + Object.keys(pessoasCol).length + ' servidores representando a SCPMA',
       stats: [{ v: colAll.length, l: 'colegiados' }, { v: Object.keys(pessoasCol).length, l: 'servidores' }, { v: colAll.filter(it => it.processo_sei).length, l: 'com processo SEI' }, { v: colAll.filter(it => !it.tit.length).length, l: 'sem titular definido' }],
       q: s.colQ || '', setQ: e => this.setState({ colQ: e.target.value }),
@@ -1431,9 +1501,10 @@ class Component extends DCLogic {
       count: colList.length === colAll.length ? colAll.length + ' colegiados' : colList.length + ' de ' + colAll.length + ' colegiados',
       people: Object.entries(pessoasCol).map(([k, v]) => ({ k, ...v, n: v.t + v.s })).sort((a, b) => b.n - a.n || a.nome.localeCompare(b.nome, 'pt')).map(v => { const c = chip(v.nome); const on = cpes === v.k;
         return { ...c, det: (v.t ? v.t + ' titular' : '') + (v.t && v.s ? ' · ' : '') + (v.s ? v.s + ' suplente' : ''), n: v.n, bg: on ? '#e7eef8' : 'transparent', border: on ? '#0b4f9c' : 'transparent', pick: () => this.setState({ colPessoa: on ? '' : v.k }) }; }),
-      list: colList.map(it => { const mine = it.tit.concat(it.sup).some(isMe), proc = (String(it.processo_sei).match(/id_procedimento=(\d+)/) || [])[1] || '';
+      list: colList.map(it => { const nPort = cpN[it.id] || 0, verPort = () => this.setState({ colTab: 'portarias', cpCol: String(it.id), cpQ: '' }); const mine = it.tit.concat(it.sup).some(isMe), proc = (String(it.processo_sei).match(/id_procedimento=(\d+)/) || [])[1] || '';
         return { ...it, hasSigla: !!it.sigla, mark: it.sigla || it.nome.split(' ').filter(w => w.length > 3).slice(0, 2).map(w => w[0]).join('').toUpperCase(),
           tits: it.tit.map(n => chip(n, 'Titular')), sups: it.sup.map(n => chip(n, 'Suplente')), noTit: !it.tit.length, noSup: !it.sup.length,
+          hasPort: nPort > 0, portTxt: nPort === 1 ? '1 portaria' : nPort + ' portarias', verPort,
           hasSei: !!storableUrl(it.processo_sei), sei: storableUrl(it.processo_sei), seiLabel: proc ? 'Processo SEI · procedimento ' + proc : 'Abrir no SEI', noSei: !it.processo_sei,
           hasObs: !!it.observacoes, border: mine ? '#f5c518' : '#e4e8e6', mine, edit: () => this.setState({ colEdit: { ...it } }), del: () => this.delColegiado(it) }; }),
       excel: () => this.exportCsv('colegiados-scpma', colHead, colRowsX()), pdf: () => this.exportPdf('Colegiados — Hub SCPMA', 'Representações da SCPMA', colHead, colRowsX()),
@@ -1680,6 +1751,15 @@ class Component extends DCLogic {
       calF, uniF, dirF, usrF, col, saveProf: () => this.saveProfile(),
       reset: { show: !!s.resetInfo, nome: s.resetInfo ? s.resetInfo.nome : '', usuario: s.resetInfo ? s.resetInfo.usuario : '', senha: s.resetInfo ? s.resetInfo.senha : '',
         copy: () => { try { navigator.clipboard.writeText(s.resetInfo.senha); this.notify('Senha copiada.'); } catch (e) {} }, close: () => this.setState({ resetInfo: null }) },
+      cpe: (() => { const e = s.cpEdit; if (!e) return { open: false };
+        const setC = k => ev => { const v = ev.target.value; this.setState(st => ({ cpEdit: { ...st.cpEdit, [k]: v, conf: false } })); };
+        return { open: true, title: e.id ? 'Editar portaria do colegiado' : 'Nova portaria do colegiado', e, set: ['colegiado_id', 'nome', 'data', 'ementa', 'arquivo_url'].reduce((o, k) => (o[k] = setC(k), o), {}),
+          opts: [{ v: '', n: 'Escolha o colegiado…' }].concat((s.colItens || []).map(c => ({ v: String(c.id), n: (c.sigla ? c.sigla + ' — ' : '') + c.nome }))),
+          pick: ev => { const f = (ev.target.files || [])[0]; ev.target.value = ''; this._cpFile = f || null; this.setState(st => ({ cpEdit: { ...st.cpEdit, fileName: f ? f.name : '' } })); if (f) this.cpLer(f); },
+          fileTxt: e.fileName ? 'Novo PDF: ' + e.fileName : (e.arquivo_url ? 'PDF atual mantido' : 'Nenhum PDF escolhido'), hasCur: !!e.arquivo_url && !e.fileName, cur: e.arquivo_url,
+          lendo: e.lendo || '', hasLendo: !!e.lendo, lido: e.lido || '', hasLido: !!e.lido && !e.lendo, lidoBg: /^Preenchido/.test(e.lido || '') ? '#eaf6ee' : '#fdf1c4', lidoFg: /^Preenchido/.test(e.lido || '') ? '#146c35' : '#7a5d00',
+          canDel: !!e.id, delTxt: e.conf ? 'Confirmar exclusão' : 'Excluir', delBg: e.conf ? '#fdecea' : 'transparent', saveTxt: s.cpBusy ? 'Salvando…' : 'Salvar',
+          save: () => this.cpSave(), del: () => this.cpDel(), close: () => { this._cpFile = null; this.setState({ cpEdit: null }); } }; })(),
       pte: (() => { const e = s.portEdit; if (!e) return { open: false };
         const setT = k => ev => { const v = ev.target.value; this.setState(st => ({ portEdit: { ...st.portEdit, [k]: v, conf: false } })); };
         return { open: true, title: e.id ? 'Editar portaria' : 'Nova portaria', e, set: ['nome', 'data', 'orgao', 'ementa', 'arquivo_url'].reduce((o, k) => (o[k] = setT(k), o), {}),
@@ -1708,7 +1788,7 @@ class Component extends DCLogic {
       notif: { open: s.notifOpen, count: unread, has: unread > 0, list: notifList, empty: !notifList.length,
         toggle: () => { const o = !s.notifOpen; this.setState({ notifOpen: o }); if (o && unread) this.markAllRead(); }, close: set({ notifOpen: false }) },
       toast: { show: !!s.toast, msg: s.toast || '', bg: s.toastErr ? '#b42318' : '#0b3d7a', icon: 'ph-duotone ' + (s.toastErr ? 'ph-warning-circle' : 'ph-check-circle') },
-      navGroups, v, hl, nextEv, stat: { ferias: ferNow.length }, upcoming, feriasRows, links, aniv, anivCount: aniv.length, anivNames: aniv.map(p => p.name.split(' ')[0] + ' ' + p.bday).join(' · '),
+      navGroups, v, hl, nextEv, stat: { ferias: ferNow.length }, upcoming, feriasRows, ferHoje, ferHojeVazio: !ferHoje.length, ferProx, temFerProx: ferProx.length > 0, links, aniv, anivCount: aniv.length, anivNames: aniv.map(p => p.name.split(' ')[0] + ' ' + p.bday).join(' · '),
       ag, cal, sel, lista, porUnidade, pe, org, rel: relV, usr, fer, prof, setProf,
       dows: ['SEG','TER','QUA','QUI','SEX','SÁB','DOM'], prevMonth: shift(-1), nextMonth: shift(1), pickToday: () => this.setState({ day: TODAY, ym: [+TODAY.slice(0, 4), +curMon - 1] }),
       railW: s.rail ? '248px' : '72px', railTextOp: s.rail ? 1 : 0, railShadow: s.rail ? '12px 0 40px #0b2b5533' : 'none',
